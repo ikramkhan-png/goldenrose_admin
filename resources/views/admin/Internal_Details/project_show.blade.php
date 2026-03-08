@@ -338,52 +338,98 @@
     {{-- =========== CALCULATIONS TAB =========== --}}
     @if($tab === 'calculations')
     @php
-        // Get all calculations
-        $totalBilled = $project->billings ? $project->billings->sum('amount') : 0;
-        $serviceCost = $project->assignedServices ? $project->assignedServices->sum('rate') : 0;
-        $totalExpenses = $project->expenses ? $project->expenses->sum('amount') : 0;
-        $netProfit = $totalBilled - $serviceCost - $totalExpenses;
+        // Get all calculations - Budget is the contract value, billings are additional invoices
         $budget = $project->budget ?? 0;
-        $budgetUtilization = $budget > 0 ? ($serviceCost / $budget) * 100 : 0;
+        $totalBilled = $project->billings ? $project->billings->sum('amount_billed') : 0;
+        $totalPaid = $project->billings ? $project->billings->sum('amount_paid') : 0;
+        
+        // Total Contract Value = Budget + Additional Billings
+        $totalContractValue = $budget + $totalBilled;
+        
+        // Service costs and expenses
+        $serviceCost = $project->assignedServices ? $project->assignedServices->sum('total_cost') : 0;
+        $totalExpenses = $project->expenses ? $project->expenses->sum('amount') : 0;
+        
+        // Total costs = Services + Expenses
+        $totalCosts = $serviceCost + $totalExpenses;
+        
+        // Net Profit = Total Contract Value - Total Costs
+        $netProfit = $totalContractValue - $totalCosts;
+        
+        // Remaining to be paid = Total Contract Value - Total Paid
+        $remainingBalance = $totalContractValue - $totalPaid;
+        
+        // Budget utilization based on costs vs contract value
+        $budgetUtilization = $totalContractValue > 0 ? ($totalCosts / $totalContractValue) * 100 : 0;
     @endphp
     
     <div class="row">
-        {{-- BUDGET CARD --}}
+        {{-- TOTAL CONTRACT VALUE CARD --}}
         <div class="col-md-3 mb-3">
             <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <h6 class="fw-bold mb-2">💼 Project Budget</h6>
-                <h3 class="fw-bold mb-3">{{ number_format($budget, 2) }}</h3>
-                <p class="mb-0 small">Total budget allocation</p>
+                <h6 class="fw-bold mb-2">💼 Total Contract Value</h6>
+                <h3 class="fw-bold mb-3">{{ number_format($totalContractValue, 2) }}</h3>
+                <p class="mb-0 small">Budget: {{ number_format($budget, 2) }} + Billed: {{ number_format($totalBilled, 2) }}</p>
             </div>
         </div>
 
-        {{-- SERVICES COST CARD --}}
+        {{-- TOTAL PAID CARD --}}
         <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                <h6 class="fw-bold mb-2">💵 Total Paid</h6>
+                <h3 class="fw-bold mb-3">{{ number_format($totalPaid, 2) }}</h3>
+                <p class="mb-0 small">Received from client</p>
+            </div>
+        </div>
+
+        {{-- REMAINING BALANCE CARD --}}
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, {{ $remainingBalance > 0 ? '#f093fb 0%, #f5576c' : '#11998e 0%, #38ef7d' }} 100%); color: white;">
+                <h6 class="fw-bold mb-2">⏳ Remaining Balance</h6>
+                <h3 class="fw-bold mb-3">{{ number_format($remainingBalance, 2) }}</h3>
+                <p class="mb-0 small">{{ $remainingBalance > 0 ? 'Due from client' : 'Fully paid' }}</p>
+            </div>
+        </div>
+
+        {{-- NET PROFIT CARD --}}
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, {{ $netProfit >= 0 ? '#4facfe 0%, #00f2fe' : '#d9534f 0%, #c12c2c' }} 100%); color: white;">
+                <h6 class="fw-bold mb-2">📈 Net Profit</h6>
+                <h3 class="fw-bold mb-3">{{ number_format($netProfit, 2) }}</h3>
+                <p class="mb-0 small">{{ $netProfit >= 0 ? 'Profit' : 'Loss' }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- SECOND ROW - COSTS BREAKDOWN --}}
+    <div class="row">
+        {{-- SERVICES COST CARD --}}
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333;">
                 <h6 class="fw-bold mb-2">📦 Services Cost</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($serviceCost, 2) }}</h3>
-                <div class="progress" style="height: 5px; background: rgba(255,255,255,0.3);">
-                    <div class="progress-bar" style="width: {{ min($budgetUtilization, 100) }}%; background: white;"></div>
-                </div>
-                <p class="mb-0 small mt-2">{{ number_format($budgetUtilization, 1) }}% of budget</p>
+                <p class="mb-0 small">Total service charges</p>
             </div>
         </div>
 
         {{-- TOTAL EXPENSES CARD --}}
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
                 <h6 class="fw-bold mb-2">💸 Total Expenses</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($totalExpenses, 2) }}</h3>
                 <p class="mb-0 small">All project expenses</p>
             </div>
         </div>
 
-        {{-- NET PROFIT CARD --}}
-        <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, {{ $netProfit >= 0 ? '#11998e 0%, #38ef7d' : '#d9534f 0%, #c12c2c' }} 100%); color: white;">
-                <h6 class="fw-bold mb-2">📈 Net Profit</h6>
-                <h3 class="fw-bold mb-3">{{ number_format($netProfit, 2) }}</h3>
-                <p class="mb-0 small">{{ $netProfit >= 0 ? 'Profit' : 'Loss' }}</p>
+        {{-- TOTAL COSTS CARD --}}
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333;">
+                <h6 class="fw-bold mb-2">🧾 Total Costs</h6>
+                <h3 class="fw-bold mb-3">{{ number_format($totalCosts, 2) }}</h3>
+                <div class="progress" style="height: 5px; background: rgba(0,0,0,0.1);">
+                    <div class="progress-bar bg-danger" style="width: {{ min($budgetUtilization, 100) }}%;"></div>
+                </div>
+                <p class="mb-0 small mt-2">{{ number_format($budgetUtilization, 1) }}% of contract value</p>
             </div>
         </div>
     </div>
@@ -394,10 +440,40 @@
             <h6 class="fw-bold text-dark mb-4">🧮 Financial Breakdown</h6>
             <div class="row">
                 <div class="col-md-6">
+                    <h6 class="text-muted mb-3">Revenue Calculation</h6>
+                    <table class="table table-sm">
+                        <tr>
+                            <td class="fw-bold">Project Budget</td>
+                            <td style="text-align: right; color: #667eea; font-weight: 600;">{{ number_format($budget, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">+ Additional Billings</td>
+                            <td style="text-align: right; color: #667eea; font-weight: 600;">{{ number_format($totalBilled, 2) }}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #667eea; background: rgba(102, 126, 234, 0.1);">
+                            <td class="fw-bold" style="color: #667eea;">= TOTAL CONTRACT VALUE</td>
+                            <td style="text-align: right; color: #667eea; font-weight: 700; font-size: 16px;">{{ number_format($totalContractValue, 2) }}</td>
+                        </tr>
+                    </table>
+                    
+                    <h6 class="text-muted mb-3 mt-4">Payment Status</h6>
+                    <table class="table table-sm">
+                        <tr>
+                            <td class="fw-bold">Total Paid by Client</td>
+                            <td style="text-align: right; color: #28a745; font-weight: 600;">{{ number_format($totalPaid, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Remaining Balance</td>
+                            <td style="text-align: right; color: {{ $remainingBalance > 0 ? '#d9534f' : '#28a745' }}; font-weight: 600;">{{ number_format($remainingBalance, 2) }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-3">Profit Calculation</h6>
                     <table class="table table-sm">
                         <tr style="border-bottom: 2px solid #667eea;">
-                            <td class="fw-bold">Total Billed Amount</td>
-                            <td style="text-align: right; color: #667eea; font-weight: 600;">{{ number_format($totalBilled, 2) }}</td>
+                            <td class="fw-bold">Total Contract Value</td>
+                            <td style="text-align: right; color: #667eea; font-weight: 600;">{{ number_format($totalContractValue, 2) }}</td>
                         </tr>
                         <tr>
                             <td class="fw-bold" style="color: #d9534f;">- Services Cost</td>
@@ -409,23 +485,19 @@
                         </tr>
                         <tr style="border-top: 2px solid #667eea; border-bottom: 2px solid #667eea; background: rgba(102, 126, 234, 0.1);">
                             <td class="fw-bold" style="color: #667eea;">= NET PROFIT</td>
-                            <td style="text-align: right; color: #667eea; font-weight: 700; font-size: 16px;">{{ number_format($netProfit, 2) }}</td>
+                            <td style="text-align: right; color: {{ $netProfit >= 0 ? '#28a745' : '#d9534f' }}; font-weight: 700; font-size: 16px;">{{ number_format($netProfit, 2) }}</td>
                         </tr>
                     </table>
-                </div>
-                <div class="col-md-6">
+                    
+                    <h6 class="text-muted mb-3 mt-4">Key Metrics</h6>
                     <table class="table table-sm">
-                        <tr style="border-bottom: 2px solid #667eea;">
-                            <td class="fw-bold">Budget vs. Services</td>
-                            <td style="text-align: right;">{{ number_format($budget - $serviceCost, 2) }} remaining</td>
-                        </tr>
                         <tr>
-                            <td class="fw-bold">Budget Utilization</td>
+                            <td class="fw-bold">Cost Utilization</td>
                             <td style="text-align: right;">{{ number_format($budgetUtilization, 2) }}%</td>
                         </tr>
-                        <tr style="border-bottom: 2px solid #667eea;">
-                            <td class="fw-bold">ROI (if applicable)</td>
-                            <td style="text-align: right;">{{ $totalBilled > 0 ? number_format(($netProfit / $totalBilled) * 100, 2) : 0 }}%</td>
+                        <tr>
+                            <td class="fw-bold">Profit Margin</td>
+                            <td style="text-align: right;">{{ $totalContractValue > 0 ? number_format(($netProfit / $totalContractValue) * 100, 2) : 0 }}%</td>
                         </tr>
                     </table>
                 </div>
