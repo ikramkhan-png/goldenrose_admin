@@ -28,6 +28,8 @@
         /* global theme overrides used across project */
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
         }
         .table tbody tr:hover {
             background-color: #f8f9fc !important;
@@ -282,7 +284,7 @@
     <!-- =========================
          MAIN CONTENT
     ========================== -->
-    <main class="p-4 flex-fill">
+    <main class="flex-fill" style="overflow-x: hidden;">
         @yield('content')
     </main>
 

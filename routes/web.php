@@ -24,11 +24,64 @@ use App\Http\Controllers\Admin\UserController;
 // ========== INCLUDE AUTH ROUTES ==========
 require __DIR__.'/auth.php';
 
+// ========== DEBUG ROUTES (REMOVE AFTER TESTING) ==========
+Route::get('/debug-auth', function () {
+    return [
+        'authenticated' => auth()->check(),
+        'user_id' => auth()->id(),
+        'user_email' => auth()->user()?->email ?? 'Not logged in',
+        'user_type' => auth()->user()?->type ?? 'N/A',
+        'session_id' => session()->getId(),
+        'has_session' => session()->has('_token'),
+        'intended_url' => session()->get('url.intended'),
+        'login_route_exists' => \Illuminate\Support\Facades\Route::has('login'),
+        'admin_dashboard_route_exists' => \Illuminate\Support\Facades\Route::has('admin.dashboard'),
+    ];
+});
+
+Route::get('/test-login-page', function () {
+    if (auth()->check()) {
+        return 'You are logged in as: ' . auth()->user()->email;
+    }
+    return view('admin.layouts.guest', [
+        'slot' => '<h1>TEST LOGIN PAGE - If you see this, routing works!</h1>'
+    ]);
+})->name('test.login');
+
+Route::get('/force-logout', function () {
+    auth()->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect('/login')->with('status', 'Force logged out! Session cleared.');
+});
+
 // ========== REDIRECT ROOT TO ADMIN OR LOGIN ==========
 Route::get('/', function () {
+    // Check authentication status
     if (auth()->check()) {
+        $user = auth()->user();
+        
+        // Redirect based on user role
+        try {
+            if ($user->hasRole('client')) {
+                return redirect()->route('client.dashboard');
+            } elseif ($user->hasRole('admin') || $user->hasRole('super_admin')) {
+                return redirect()->route('admin.dashboard');
+            }
+        } catch (\Exception $e) {
+            // Fallback to type field if role check fails
+            if ($user->type === 'client') {
+                return redirect()->route('client.dashboard');
+            } elseif (in_array($user->type, ['admin', 'super_admin'])) {
+                return redirect()->route('admin.dashboard');
+            }
+        }
+        
+        // Default redirect for authenticated users
         return redirect()->route('admin.dashboard');
     }
+    
+    // Not authenticated - redirect to login
     return redirect()->route('login');
 })->name('welcome');
 
@@ -167,4 +220,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 // --------- CLIENT ROUTES (Service & Project Clients) ---------
 Route::prefix('client')->name('client.')->middleware(['auth', 'client'])->group(function () {
     Route::get('dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+});
+
+// ========== CATCH-ALL FALLBACK ==========
+// Redirect any undefined routes to login if not authenticated, or dashboard if authenticated
+Route::fallback(function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        // Redirect based on user type
+        try {
+            if ($user->hasRole('client')) {
+                return redirect()->route('client.dashboard');
+            }
+        } catch (\Exception $e) {
+            if ($user->type === 'client') {
+                return redirect()->route('client.dashboard');
+            }
+        }
+        
+        // Default to admin dashboard for authenticated users
+        return redirect()->route('admin.dashboard');
+    }
+    
+    // Not authenticated - redirect to login
+    return redirect()->route('login')->with('error', 'The page you requested was not found. Please login to continue.');
 });

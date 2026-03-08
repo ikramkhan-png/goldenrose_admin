@@ -6,9 +6,14 @@ use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
 
-    // Registration is disabled - accounts are created by admins in the dashboard
-    // Volt::route('register', 'pages.auth.register')
-    //     ->name('register');
+    // ========== REGISTRATION DISABLED ==========
+    // Public registration is disabled for security.
+    // All user accounts (admins, clients, employees) must be created by administrators
+    // through the admin panel at /admin/users/create or /admin/clients/create
+    Route::get('register', function () {
+        return redirect()->route('login')
+            ->with('info', 'Public registration is disabled. Please contact an administrator to create an account.');
+    })->name('register');
 
     Volt::route('login', 'pages.auth.login')
         ->name('login');
