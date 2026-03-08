@@ -16,9 +16,37 @@
         </div>
 
         <div class="row mt-3 g-3">
+            @if(isset($project))
+            <div class="col-md-3">
+                <div class="info-box text-center">
+                    <small>Project Budget</small>
+                    <div class="fs-5">{{ number_format($budget ?? 0, 2) }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box text-center">
+                    <small>Additional Billings</small>
+                    <div class="fs-5">{{ number_format($additionalBilled ?? 0, 2) }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box text-center">
+                    <small>Total Contract Value</small>
+                    <div class="fs-5 text-info">{{ number_format($totalBilled ?? 0, 2) }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box text-center">
+                    <small>Remaining Balance</small>
+                    <div class="fs-5 {{ ($totalRemaining ?? 0) > 0 ? 'text-warning' : 'text-success' }}">
+                        {{ number_format($totalRemaining ?? 0, 2) }}
+                    </div>
+                </div>
+            </div>
+            @else
             <div class="col-md-4">
                 <div class="info-box text-center">
-                    <small>Total Billed</small>
+                    <small>Total Contract Value</small>
                     <div class="fs-5">{{ number_format($totalBilled ?? 0, 2) }}</div>
                 </div>
             </div>
@@ -36,6 +64,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 

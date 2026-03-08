@@ -94,33 +94,42 @@ class ProjectController extends Controller
         $project = Project::with(['billings'])->findOrFail($id);
         $billings = $project->billings;
 
-        $totalBilled = $billings->sum('amount_billed');
-        $totalPaid   = $billings->sum('amount_paid') ?? 0;
+        // Budget is the base contract value
+        $budget = $project->budget ?? 0;
+        
+        // Additional billings on top of budget
+        $additionalBilled = $billings->sum('amount_billed');
+        
+        // Total Contract Value = Budget + Additional Billings
+        $totalBilled = $budget + $additionalBilled;
+        
+        // Total paid from all billing records
+        $totalPaid = $billings->sum('amount_paid') ?? 0;
+        
+        // Remaining = Total Contract Value - Total Paid
         $totalRemaining = $totalBilled - $totalPaid;
 
-        $billingsByType = [
-            [
-                'type' => 'General',
-                'billings' => $billings->map(function($b) {
-                    return [
-                        'amount_billed' => $b->amount_billed,
-                        'amount_paid'   => $b->amount_paid ?? 0,
-                        'remaining'     => ($b->amount_billed ?? 0) - ($b->amount_paid ?? 0),
-                        'status'        => $b->status,
-                        'payment_date'  => $b->payment_date,
-                        'notes'         => $b->notes,
-                        'invoice'       => $b->invoice,
-                    ];
-                })->toArray()
-            ]
-        ];
+        // Prepare billings data for the view
+        $projectsBillings = $billings->map(function($b) {
+            return [
+                'amount_billed' => $b->amount_billed,
+                'amount_paid'   => $b->amount_paid ?? 0,
+                'remaining'     => ($b->amount_billed ?? 0) - ($b->amount_paid ?? 0),
+                'status'        => $b->status,
+                'payment_date'  => $b->payment_date,
+                'notes'         => $b->notes,
+                'invoice'       => $b->invoice,
+            ];
+        })->toArray();
 
         return view('admin.projects.finance_summary', compact(
             'project',
-            'billingsByType',
+            'projectsBillings',
             'totalBilled',
             'totalPaid',
-            'totalRemaining'
+            'totalRemaining',
+            'budget',
+            'additionalBilled'
         ));
     }
 
