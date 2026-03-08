@@ -23,17 +23,28 @@ class RedirectIfAuthenticated
                 // Redirect authenticated users to the appropriate dashboard
                 $user = Auth::guard($guard)->user();
                 
-                if ($user->hasRole('admin')) {
-                    return redirect()->route('admin.dashboard');
-                } elseif ($user->hasRole('client')) {
-                    return redirect()->route('client.dashboard');
+                // Check user roles using Spatie
+                try {
+                    if ($user->hasRole('admin') || $user->hasRole('super_admin')) {
+                        return redirect()->route('admin.dashboard');
+                    } elseif ($user->hasRole('client')) {
+                        return redirect()->route('client.dashboard');
+                    }
+                } catch (\Exception $e) {
+                    // If roles check fails, use type field as fallback
+                    if (in_array($user->type, ['admin', 'super_admin'])) {
+                        return redirect()->route('admin.dashboard');
+                    } elseif ($user->type === 'client') {
+                        return redirect()->route('client.dashboard');
+                    }
                 }
                 
-                // Fallback to admin dashboard
+                // Final fallback to admin dashboard (for authenticated users without proper roles)
                 return redirect()->route('admin.dashboard');
             }
         }
 
+        // User is NOT authenticated - allow them to proceed to login/register pages
         return $next($request);
     }
 }

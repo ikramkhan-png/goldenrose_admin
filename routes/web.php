@@ -26,9 +26,31 @@ require __DIR__.'/auth.php';
 
 // ========== REDIRECT ROOT TO ADMIN OR LOGIN ==========
 Route::get('/', function () {
+    // Check authentication status
     if (auth()->check()) {
+        $user = auth()->user();
+        
+        // Redirect based on user role
+        try {
+            if ($user->hasRole('client')) {
+                return redirect()->route('client.dashboard');
+            } elseif ($user->hasRole('admin') || $user->hasRole('super_admin')) {
+                return redirect()->route('admin.dashboard');
+            }
+        } catch (\Exception $e) {
+            // Fallback to type field if role check fails
+            if ($user->type === 'client') {
+                return redirect()->route('client.dashboard');
+            } elseif (in_array($user->type, ['admin', 'super_admin'])) {
+                return redirect()->route('admin.dashboard');
+            }
+        }
+        
+        // Default redirect for authenticated users
         return redirect()->route('admin.dashboard');
     }
+    
+    // Not authenticated - redirect to login
     return redirect()->route('login');
 })->name('welcome');
 
@@ -167,4 +189,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 // --------- CLIENT ROUTES (Service & Project Clients) ---------
 Route::prefix('client')->name('client.')->middleware(['auth', 'client'])->group(function () {
     Route::get('dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+});
+
+// ========== CATCH-ALL FALLBACK ==========
+// Redirect any undefined routes to login if not authenticated, or dashboard if authenticated
+Route::fallback(function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        // Redirect based on user type
+        try {
+            if ($user->hasRole('client')) {
+                return redirect()->route('client.dashboard');
+            }
+        } catch (\Exception $e) {
+            if ($user->type === 'client') {
+                return redirect()->route('client.dashboard');
+            }
+        }
+        
+        // Default to admin dashboard for authenticated users
+        return redirect()->route('admin.dashboard');
+    }
+    
+    // Not authenticated - redirect to login
+    return redirect()->route('login')->with('error', 'The page you requested was not found. Please login to continue.');
 });
