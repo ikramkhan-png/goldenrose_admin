@@ -162,26 +162,23 @@
     {{-- ================= FINANCE TAB ================= --}}
     @if($tab === 'finance')
         @php
-            $totalBilled = $project->billings->sum('amount_billed');
+            $budget = $project->budget ?? 0;
+            $additionalBilled = $project->billings->sum('amount_billed');
+            $totalBilled = $budget + $additionalBilled;
             $totalPaid = $project->billings->sum('amount_paid') ?? 0;
             $totalRemaining = $totalBilled - $totalPaid;
 
-            $billingsByType = [
-                [
-                    'type' => 'General',
-                    'billings' => $project->billings->map(function($b) {
-                        return [
-                            'amount_billed' => $b->amount_billed,
-                            'amount_paid'   => $b->amount_paid ?? 0,
-                            'remaining'     => ($b->amount_billed ?? 0) - ($b->amount_paid ?? 0),
-                            'status'        => $b->status,
-                            'payment_date'  => $b->payment_date,
-                            'notes'         => $b->notes,
-                            'invoice'       => $b->invoice,
-                        ];
-                    })->toArray()
-                ]
-            ];
+            $projectsBillings = $project->billings->map(function($b) {
+                return [
+                    'amount_billed' => $b->amount_billed,
+                    'amount_paid'   => $b->amount_paid ?? 0,
+                    'remaining'     => ($b->amount_billed ?? 0) - ($b->amount_paid ?? 0),
+                    'status'        => $b->status,
+                    'payment_date'  => $b->payment_date,
+                    'notes'         => $b->notes,
+                    'invoice'       => $b->invoice,
+                ];
+            })->toArray();
         @endphp
 
         @include('admin.projects.finance_summary')

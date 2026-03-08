@@ -106,13 +106,9 @@ class DashboardController extends Controller
             $presentToday = 0;
         }
         
-        // Calculate total revenue from project billings (amount_paid) + project budgets
+        // Calculate total revenue from project billings (amount_paid)
         try {
-            // Sum of all paid amounts from billings
-            $billingRevenue = ProjectBilling::sum('amount_paid') ?? 0;
-            // Sum of all project budgets
-            $budgetRevenue = Project::sum('budget') ?? 0;
-            $totalRevenue = $billingRevenue;
+            $totalRevenue = ProjectBilling::sum('amount_paid') ?? 0;
         } catch (\Exception $e) {
             $totalRevenue = 0;
         }
