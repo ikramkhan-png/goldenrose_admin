@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Client;
 use App\Models\Project;
+use App\Models\ProjectBilling;
 use App\Models\Employee;
 use App\Models\Service;
+use App\Models\Machinery;
+use App\Models\Manpower;
 use App\Models\Attendance;
 use App\Models\Department;
 use Carbon\Carbon;
@@ -16,67 +18,82 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Get total users count
         try {
-            // Get total counts
             $totalUsers = User::count();
         } catch (\Exception $e) {
             $totalUsers = 0;
         }
         
+        // Get admin users count (type = 'admin' or 'super_admin')
         try {
-            $adminUsers = User::whereIn('type', ['admin'])->count();
+            $adminUsers = User::whereIn('type', ['admin', 'super_admin'])->count();
         } catch (\Exception $e) {
             $adminUsers = 0;
         }
         
+        // Get total clients count (users with type = 'client')
         try {
-            $totalClients = Client::where('status', 'active')->count();
+            $totalClients = User::where('type', 'client')->count();
         } catch (\Exception $e) {
             $totalClients = 0;
         }
         
+        // Get client type breakdown from users table
+        try {
+            $serviceClients = User::where('type', 'client')
+                ->where('client_type', 'service')
+                ->count();
+        } catch (\Exception $e) {
+            $serviceClients = 0;
+        }
+        
+        try {
+            $projectClients = User::where('type', 'client')
+                ->where('client_type', 'project')
+                ->count();
+        } catch (\Exception $e) {
+            $projectClients = 0;
+        }
+        
+        // Get total projects count
         try {
             $totalProjects = Project::count();
         } catch (\Exception $e) {
             $totalProjects = 0;
         }
         
+        // Get projects in progress (no end_date or end_date in future)
+        try {
+            $projectsInProgress = Project::where(function($query) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>', Carbon::now());
+            })->count();
+        } catch (\Exception $e) {
+            $projectsInProgress = 0;
+        }
+        
+        // Get total employees count
         try {
             $totalEmployees = Employee::count();
         } catch (\Exception $e) {
             $totalEmployees = 0;
         }
         
+        // Get total services count (Machinery + Manpower)
         try {
-            $totalServices = Service::count();
+            $machineryCount = Machinery::count();
+            $manpowerCount = Manpower::count();
+            $totalServices = $machineryCount + $manpowerCount;
         } catch (\Exception $e) {
             $totalServices = 0;
         }
         
+        // Get departments count
         try {
             $departments = Department::count();
         } catch (\Exception $e) {
             $departments = 0;
-        }
-        
-        // Get client type breakdown
-        try {
-            $serviceClients = User::where('client_type', 'service')->count();
-        } catch (\Exception $e) {
-            $serviceClients = 0;
-        }
-        
-        try {
-            $projectClients = User::where('client_type', 'project')->count();
-        } catch (\Exception $e) {
-            $projectClients = 0;
-        }
-        
-        // Get projects in progress (based on end_date being in future)
-        try {
-            $projectsInProgress = Project::where('end_date', '>', Carbon::now())->count();
-        } catch (\Exception $e) {
-            $projectsInProgress = 0;
         }
         
         // Get today's attendance (employees with check-in)
@@ -89,10 +106,13 @@ class DashboardController extends Controller
             $presentToday = 0;
         }
         
-        // Calculate total revenue from project billings
+        // Calculate total revenue from project billings (amount_paid) + project budgets
         try {
-            $totalRevenue = \DB::table('project_billings')->sum('amount');
-            $totalRevenue = $totalRevenue ?? 0;
+            // Sum of all paid amounts from billings
+            $billingRevenue = ProjectBilling::sum('amount_paid') ?? 0;
+            // Sum of all project budgets
+            $budgetRevenue = Project::sum('budget') ?? 0;
+            $totalRevenue = $billingRevenue;
         } catch (\Exception $e) {
             $totalRevenue = 0;
         }
