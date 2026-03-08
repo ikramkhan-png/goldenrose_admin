@@ -24,6 +24,37 @@ use App\Http\Controllers\Admin\UserController;
 // ========== INCLUDE AUTH ROUTES ==========
 require __DIR__.'/auth.php';
 
+// ========== DEBUG ROUTES (REMOVE AFTER TESTING) ==========
+Route::get('/debug-auth', function () {
+    return [
+        'authenticated' => auth()->check(),
+        'user_id' => auth()->id(),
+        'user_email' => auth()->user()?->email ?? 'Not logged in',
+        'user_type' => auth()->user()?->type ?? 'N/A',
+        'session_id' => session()->getId(),
+        'has_session' => session()->has('_token'),
+        'intended_url' => session()->get('url.intended'),
+        'login_route_exists' => \Illuminate\Support\Facades\Route::has('login'),
+        'admin_dashboard_route_exists' => \Illuminate\Support\Facades\Route::has('admin.dashboard'),
+    ];
+});
+
+Route::get('/test-login-page', function () {
+    if (auth()->check()) {
+        return 'You are logged in as: ' . auth()->user()->email;
+    }
+    return view('admin.layouts.guest', [
+        'slot' => '<h1>TEST LOGIN PAGE - If you see this, routing works!</h1>'
+    ]);
+})->name('test.login');
+
+Route::get('/force-logout', function () {
+    auth()->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect('/login')->with('status', 'Force logged out! Session cleared.');
+});
+
 // ========== REDIRECT ROOT TO ADMIN OR LOGIN ==========
 Route::get('/', function () {
     // Check authentication status
