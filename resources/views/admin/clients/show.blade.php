@@ -36,6 +36,46 @@
 
     {{-- ================= SERVICES TAB ================= --}}
     @if($tab === 'services')
+        @php
+            // Calculate total service amount for this client
+            $totalServiceAmount = 0;
+            foreach($client->services as $svc) {
+                if($svc->hours > 0) {
+                    $totalServiceAmount += $svc->hours * $svc->hourly_rate;
+                } elseif($svc->days > 0) {
+                    $totalServiceAmount += $svc->days * $svc->daily_rate;
+                } else {
+                    $totalServiceAmount += $svc->months * $svc->monthly_rate;
+                }
+            }
+        @endphp
+
+        {{-- Total Service Amount Card --}}
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="opacity-75">Total Service Amount</small>
+                            <h3 class="mb-0 fw-bold">{{ number_format($totalServiceAmount, 2) }}</h3>
+                        </div>
+                        <i class="fas fa-calculator fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="opacity-75">Total Services</small>
+                            <h3 class="mb-0 fw-bold">{{ $client->services->count() }}</h3>
+                        </div>
+                        <i class="fas fa-cogs fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex justify-content-between mb-3 align-items-center">
             <h5>Services</h5>
             <div class="d-flex gap-2">
