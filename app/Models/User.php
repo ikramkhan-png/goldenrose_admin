@@ -46,5 +46,13 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\ClientService::class, 'client_id', 'id');
     }
 
-    
+    public function clientNotes()
+    {
+        return $this->hasMany(\App\Models\ClientNote::class, 'client_id', 'id');
+    }
+
+    public function clientQueries()
+    {
+        return $this->hasMany(\App\Models\ClientQuery::class, 'client_id', 'id');
+    }
 }

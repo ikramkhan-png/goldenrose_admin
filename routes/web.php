@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SalaryController;
 use App\Http\Controllers\Admin\ClientDashboardController;
+use App\Http\Controllers\Admin\ClientNoteController;
 use App\Http\Controllers\Admin\UserController;
 
 // ========== INCLUDE AUTH ROUTES ==========
@@ -215,11 +216,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('settings/optimize', [SettingsController::class, 'optimize'])->name('settings.optimize');
     Route::post('settings/backup', [SettingsController::class, 'backup'])->name('settings.backup');
     Route::post('settings/test-email', [SettingsController::class, 'testEmail'])->name('settings.testEmail');
+
+    // Client Notes & Queries (Admin side)
+    Route::post('client-notes', [ClientNoteController::class, 'store'])->name('client-notes.store');
+    Route::delete('client-notes/{id}', [ClientNoteController::class, 'destroy'])->name('client-notes.destroy');
+    Route::post('client-queries/{id}/reply', [ClientNoteController::class, 'replyToQuery'])->name('client-queries.reply');
 });
 
 // --------- CLIENT ROUTES (Service & Project Clients) ---------
 Route::prefix('client')->name('client.')->middleware(['auth', 'client'])->group(function () {
     Route::get('dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+    Route::post('query', [ClientDashboardController::class, 'storeQuery'])->name('query.store');
+    Route::post('note/{id}/read', [ClientDashboardController::class, 'markNoteRead'])->name('note.read');
 });
 
 // ========== CATCH-ALL FALLBACK ==========
