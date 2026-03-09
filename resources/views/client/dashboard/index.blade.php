@@ -149,7 +149,7 @@
                 </div>
                 <div class="col-md-4 text-end">
                     <span class="badge bg-light text-dark px-3 py-2">
-                        <i class="fas fa-user me-1"></i>{{ ucfirst($user->client_type) }} Client
+                        <i class="fas fa-user me-1"></i>{{ ucfirst($user->client_type ?? 'General') }} Client
                     </span>
                 </div>
             </div>
