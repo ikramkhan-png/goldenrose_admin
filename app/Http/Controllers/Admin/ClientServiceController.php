@@ -24,7 +24,7 @@ class ClientServiceController extends Controller
     {
         $client = User::with('services')->findOrFail($clientId);
 
-        $request->validate([
+        $validated = $request->validate([
             'amount_paid'  => 'required|numeric|min:0',
             'payment_date' => 'nullable|date',
             'status'       => 'required|in:pending,paid',
@@ -32,26 +32,34 @@ class ClientServiceController extends Controller
             'notes'        => 'nullable|string|max:500',
         ]);
 
+        // Check if client has services
+        if ($client->services->isEmpty()) {
+            return redirect()
+                ->back()
+                ->withErrors(['error' => 'Client has no services assigned. Please assign a service first.'])
+                ->withInput();
+        }
+
         $invoicePath = null;
         if ($request->hasFile('invoice')) {
             $invoicePath = $request->file('invoice')->store('invoices', 'public');
         }
 
-        $firstServiceId = $client->services->first()?->id;
+        $firstServiceId = $client->services->first()->id;
 
         ClientServiceBilling::create([
             'client_service_id' => $firstServiceId,
             'amount_billed'     => 0,
-            'amount_paid'       => $request->amount_paid,
-            'payment_date'      => $request->payment_date,
-            'status'            => $request->status,
+            'amount_paid'       => $validated['amount_paid'],
+            'payment_date'      => $validated['payment_date'],
+            'status'            => $validated['status'],
             'invoice'           => $invoicePath,
-            'notes'             => $request->notes,
+            'notes'             => $validated['notes'],
         ]);
 
         return redirect()
             ->route('admin.client-services.financeSummary', $clientId)
-            ->with('success', 'Billing added successfully');
+            ->with('success', 'Billing added successfully!');
     }
 
     // ========================

@@ -22,9 +22,9 @@ class ClientDashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Get assigned services with service details
+        // Get assigned services with service details and billings
         $services = ClientService::where('client_id', $user->id)
-            ->with('service')
+            ->with(['service', 'billings'])
             ->get();
 
         // Get assigned projects with billings and documents
@@ -34,6 +34,7 @@ class ClientDashboardController extends Controller
 
         // Calculate finance totals for services
         $totalServiceAmount = 0;
+        $totalServicePaid = 0;
         foreach ($services as $service) {
             if ($service->hours > 0) {
                 $totalServiceAmount += $service->hours * $service->hourly_rate;
@@ -42,7 +43,10 @@ class ClientDashboardController extends Controller
             } else {
                 $totalServiceAmount += $service->months * $service->monthly_rate;
             }
+            // Sum all payments for this service
+            $totalServicePaid += $service->billings->sum('amount_paid');
         }
+        $totalServiceRemaining = $totalServiceAmount - $totalServicePaid;
 
         // Calculate finance totals for projects (Budget + Billings)
         $totalProjectBudget = $projects->sum('budget');
@@ -78,6 +82,8 @@ class ClientDashboardController extends Controller
             'services',
             'projects',
             'totalServiceAmount',
+            'totalServicePaid',
+            'totalServiceRemaining',
             'totalProjectBudget',
             'totalProjectBilled',
             'totalProjectPaid',

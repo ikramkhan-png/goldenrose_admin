@@ -9,13 +9,18 @@
 
         {{-- Client --}}
         <div class="mb-3">
-            <label class="form-label">Client</label>
-            <select name="client_id" class="form-control" required>
+            <label class="form-label">Client <span class="text-danger">*</span></label>
+            <select name="client_id" class="form-control" required {{ request('client_id') ? 'readonly style="background-color: #e9ecef; pointer-events: none;"' : '' }}>
                 <option value="">Select Client</option>
                 @foreach($clients as $client)
-                    <option value="{{ $client->id }}">{{ $client->name }} ({{ $client->email }})</option>
+                    <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
+                        {{ $client->name }} ({{ $client->email }})
+                    </option>
                 @endforeach
             </select>
+            @if(request('client_id'))
+                <small class="text-muted">Auto-selected from client page</small>
+            @endif
         </div>
 
         {{-- Service Type --}}
