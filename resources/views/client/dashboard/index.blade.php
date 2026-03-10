@@ -253,120 +253,220 @@
         </div>
         @endif
 
-        <div class="row">
-            <!-- Services Section -->
-            <div class="col-lg-6 mb-4">
-                <div class="section-card h-100">
-                    <div class="section-header d-flex justify-content-between align-items-center">
-                        <h5><i class="fas fa-cogs me-2 text-primary"></i>Assigned Services</h5>
-                        <span class="badge badge-service">{{ $services->count() }} Services</span>
-                    </div>
-                    <div class="card-body p-0">
-                        @if($services->count() > 0)
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
+        <!-- ===== SERVICES SECTION WITH TABS ===== -->
+        <div class="section-card mb-4">
+            <div class="section-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-cogs me-2 text-primary"></i>My Services</h5>
+                <span class="badge badge-service">{{ $services->count() }} Services</span>
+            </div>
+            
+            <!-- Service Tabs -->
+            <ul class="nav nav-tabs px-3 pt-3" id="servicesTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="services-list-tab" data-bs-toggle="tab" data-bs-target="#services-list" type="button" role="tab">
+                        <i class="fas fa-list me-1"></i> Services List
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="services-finance-tab" data-bs-toggle="tab" data-bs-target="#services-finance" type="button" role="tab">
+                        <i class="fas fa-calculator me-1"></i> Finance
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content p-0" id="servicesTabContent">
+                <!-- Services List Tab -->
+                <div class="tab-pane fade show active" id="services-list" role="tabpanel">
+                    @if($services->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Service Name</th>
+                                        <th>Type</th>
+                                        <th>Rate Type</th>
+                                        <th>Duration</th>
+                                        <th>Rate</th>
+                                        <th class="text-end">Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($services as $index => $service)
+                                        @php
+                                            if($service->hours > 0) {
+                                                $rateType = 'Hourly';
+                                                $duration = $service->hours . ' hrs';
+                                                $rate = $service->hourly_rate;
+                                                $amount = $service->hours * $service->hourly_rate;
+                                            } elseif($service->days > 0) {
+                                                $rateType = 'Daily';
+                                                $duration = $service->days . ' days';
+                                                $rate = $service->daily_rate;
+                                                $amount = $service->days * $service->daily_rate;
+                                            } else {
+                                                $rateType = 'Monthly';
+                                                $duration = $service->months . ' months';
+                                                $rate = $service->monthly_rate;
+                                                $amount = $service->months * $service->monthly_rate;
+                                            }
+                                            $serviceType = class_basename($service->service_type ?? '');
+                                        @endphp
                                         <tr>
-                                            <th>Service</th>
-                                            <th>Rate Type</th>
-                                            <th>Duration</th>
-                                            <th class="text-end">Amount</th>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td><strong>{{ $service->service->name ?? '-' }}</strong></td>
+                                            <td><span class="badge bg-info">{{ $serviceType }}</span></td>
+                                            <td><span class="badge bg-secondary">{{ $rateType }}</span></td>
+                                            <td>{{ $duration }}</td>
+                                            <td>{{ number_format($rate, 2) }}</td>
+                                            <td class="text-end fw-bold text-primary">{{ number_format($amount, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light">
+                                        <td colspan="6" class="text-end fw-bold">Total Service Amount:</td>
+                                        <td class="text-end fw-bold text-success">{{ number_format($totalServiceAmount, 2) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    @else
+                        <div class="p-4 text-center text-muted">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>No services assigned yet</p>
+                        </div>
+                    @endif
+                </div>
+                
+                <!-- Services Finance Tab -->
+                <div class="tab-pane fade" id="services-finance" role="tabpanel">
+                    <!-- Finance Summary Cards -->
+                    <div class="row g-3 p-3">
+                        <div class="col-md-4">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <small class="opacity-75">Total Service Amount</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalServiceAmount, 2) }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                <small class="opacity-75">Total Paid</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalServicePaid, 2) }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <small class="opacity-75">Remaining Balance</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalServiceRemaining, 2) }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Billing Records -->
+                    <div class="px-3 pb-3">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-file-invoice me-2"></i>Payment History</h6>
+                        @php
+                            $allServiceBillings = $services->flatMap(fn($s) => $s->billings);
+                        @endphp
+                        @if($allServiceBillings->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount Paid</th>
+                                            <th>Payment Date</th>
+                                            <th>Status</th>
+                                            <th>Notes</th>
+                                            <th>Invoice</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($services as $service)
-                                            @php
-                                                if($service->hours > 0) {
-                                                    $rateType = 'Hourly';
-                                                    $duration = $service->hours . ' hrs';
-                                                    $amount = $service->hours * $service->hourly_rate;
-                                                } elseif($service->days > 0) {
-                                                    $rateType = 'Daily';
-                                                    $duration = $service->days . ' days';
-                                                    $amount = $service->days * $service->daily_rate;
-                                                } else {
-                                                    $rateType = 'Monthly';
-                                                    $duration = $service->months . ' months';
-                                                    $amount = $service->months * $service->monthly_rate;
-                                                }
-                                            @endphp
+                                        @foreach($allServiceBillings as $index => $billing)
                                             <tr>
-                                                <td><strong>{{ $service->service->name ?? '-' }}</strong></td>
-                                                <td><span class="badge bg-secondary">{{ $rateType }}</span></td>
-                                                <td>{{ $duration }}</td>
-                                                <td class="text-end fw-bold text-primary">{{ number_format($amount, 2) }}</td>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td class="fw-bold text-success">{{ number_format($billing->amount_paid, 2) }}</td>
+                                                <td>{{ $billing->payment_date ?? '-' }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ $billing->status == 'paid' ? 'success' : 'warning' }}">
+                                                        {{ ucfirst($billing->status) }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $billing->notes ?? '-' }}</td>
+                                                <td>
+                                                    @if($billing->invoice)
+                                                        <a href="{{ asset('storage/'.$billing->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye"></i> View
+                                                        </a>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
-                                    <tfoot>
-                                        <tr class="table-light">
-                                            <td colspan="3" class="text-end fw-bold">Total Service Amount:</td>
-                                            <td class="text-end fw-bold text-success">{{ number_format($totalServiceAmount, 2) }}</td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         @else
-                            <div class="p-4 text-center text-muted">
-                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                <p>No services assigned yet</p>
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-receipt fa-2x mb-2"></i>
+                                <p class="mb-0">No payment records yet</p>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Projects Section -->
-            <div class="col-lg-6 mb-4">
-                <div class="section-card h-100">
-                    <div class="section-header d-flex justify-content-between align-items-center">
-                        <h5><i class="fas fa-project-diagram me-2 text-success"></i>Assigned Projects</h5>
-                        <span class="badge badge-project">{{ $projects->count() }} Projects</span>
+        <!-- ===== PROJECTS SECTION (Will be updated later) ===== -->
+        <div class="section-card mb-4">
+            <div class="section-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-project-diagram me-2 text-success"></i>My Projects</h5>
+                <span class="badge badge-project">{{ $projects->count() }} Projects</span>
+            </div>
+            <div class="card-body p-0">
+                @if($projects->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Type</th>
+                                    <th class="text-end">Budget</th>
+                                    <th class="text-end">Paid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($projects as $project)
+                                    @php
+                                        $projectBilled = $project->billings->sum('amount_billed');
+                                        $projectPaid = $project->billings->sum('amount_paid');
+                                        $projectTotal = $project->budget + $projectBilled;
+                                    @endphp
+                                    <tr>
+                                        <td><strong>{{ $project->name }}</strong></td>
+                                        <td><span class="badge bg-info">{{ ucfirst($project->type) }}</span></td>
+                                        <td class="text-end">{{ number_format($projectTotal, 2) }}</td>
+                                        <td class="text-end fw-bold text-success">{{ number_format($projectPaid, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light">
+                                    <td colspan="2" class="text-end fw-bold">Total:</td>
+                                    <td class="text-end fw-bold">{{ number_format($totalContractValue, 2) }}</td>
+                                    <td class="text-end fw-bold text-success">{{ number_format($totalProjectPaid, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                    <div class="card-body p-0">
-                        @if($projects->count() > 0)
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Project</th>
-                                            <th>Type</th>
-                                            <th class="text-end">Budget</th>
-                                            <th class="text-end">Paid</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($projects as $project)
-                                            @php
-                                                $projectBilled = $project->billings->sum('amount_billed');
-                                                $projectPaid = $project->billings->sum('amount_paid');
-                                                $projectTotal = $project->budget + $projectBilled;
-                                            @endphp
-                                            <tr>
-                                                <td><strong>{{ $project->name }}</strong></td>
-                                                <td><span class="badge bg-info">{{ ucfirst($project->type) }}</span></td>
-                                                <td class="text-end">{{ number_format($projectTotal, 2) }}</td>
-                                                <td class="text-end fw-bold text-success">{{ number_format($projectPaid, 2) }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="table-light">
-                                            <td colspan="2" class="text-end fw-bold">Total:</td>
-                                            <td class="text-end fw-bold">{{ number_format($totalContractValue, 2) }}</td>
-                                            <td class="text-end fw-bold text-success">{{ number_format($totalProjectPaid, 2) }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        @else
-                            <div class="p-4 text-center text-muted">
-                                <i class="fas fa-folder-open fa-3x mb-3"></i>
-                                <p>No projects assigned yet</p>
-                            </div>
-                        @endif
+                @else
+                    <div class="p-4 text-center text-muted">
+                        <i class="fas fa-folder-open fa-3x mb-3"></i>
+                        <p>No projects assigned yet</p>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 
