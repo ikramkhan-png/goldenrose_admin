@@ -260,7 +260,6 @@
                 <span class="badge badge-service">{{ $services->count() }} Services</span>
             </div>
             
-            <!-- Service Tabs -->
             <ul class="nav nav-tabs px-3 pt-3" id="servicesTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="services-list-tab" data-bs-toggle="tab" data-bs-target="#services-list" type="button" role="tab">
@@ -274,8 +273,7 @@
                 </li>
             </ul>
             
-            <div class="tab-content p-0" id="servicesTabContent">
-                <!-- Services List Tab -->
+            <div class="tab-content" id="servicesTabContent">
                 <div class="tab-pane fade show active" id="services-list" role="tabpanel">
                     @if($services->count() > 0)
                         <div class="table-responsive">
@@ -339,9 +337,7 @@
                     @endif
                 </div>
                 
-                <!-- Services Finance Tab -->
                 <div class="tab-pane fade" id="services-finance" role="tabpanel">
-                    <!-- Finance Summary Cards -->
                     <div class="row g-3 p-3">
                         <div class="col-md-4">
                             <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -363,12 +359,9 @@
                         </div>
                     </div>
                     
-                    <!-- Billing Records -->
                     <div class="px-3 pb-3">
                         <h6 class="fw-bold mb-3"><i class="fas fa-file-invoice me-2"></i>Payment History</h6>
-                        @php
-                            $allServiceBillings = $services->flatMap(fn($s) => $s->billings);
-                        @endphp
+                        @php $allServiceBillings = $services->flatMap(fn($s) => $s->billings); @endphp
                         @if($allServiceBillings->count() > 0)
                             <div class="table-responsive">
                                 <table class="table table-sm table-bordered mb-0">
@@ -397,7 +390,7 @@
                                                 <td>
                                                     @if($billing->invoice)
                                                         <a href="{{ asset('storage/'.$billing->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-eye"></i> View
+                                                            <i class="fas fa-eye"></i>
                                                         </a>
                                                     @else
                                                         -
@@ -419,90 +412,200 @@
             </div>
         </div>
 
-        <!-- ===== PROJECTS SECTION (Will be updated later) ===== -->
+        <!-- ===== PROJECTS SECTION WITH TABS ===== -->
         <div class="section-card mb-4">
             <div class="section-header d-flex justify-content-between align-items-center">
                 <h5><i class="fas fa-project-diagram me-2 text-success"></i>My Projects</h5>
                 <span class="badge badge-project">{{ $projects->count() }} Projects</span>
             </div>
-            <div class="card-body p-0">
-                @if($projects->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Project</th>
-                                    <th>Type</th>
-                                    <th class="text-end">Budget</th>
-                                    <th class="text-end">Paid</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($projects as $project)
-                                    @php
-                                        $projectBilled = $project->billings->sum('amount_billed');
-                                        $projectPaid = $project->billings->sum('amount_paid');
-                                        $projectTotal = $project->budget + $projectBilled;
-                                    @endphp
+            
+            <ul class="nav nav-tabs px-3 pt-3" id="projectsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="projects-list-tab" data-bs-toggle="tab" data-bs-target="#projects-list" type="button" role="tab">
+                        <i class="fas fa-list me-1"></i> Projects List
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="projects-finance-tab" data-bs-toggle="tab" data-bs-target="#projects-finance" type="button" role="tab">
+                        <i class="fas fa-calculator me-1"></i> Finance
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="projects-documents-tab" data-bs-toggle="tab" data-bs-target="#projects-documents" type="button" role="tab">
+                        <i class="fas fa-file-alt me-1"></i> Documents
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="projectsTabContent">
+                <div class="tab-pane fade show active" id="projects-list" role="tabpanel">
+                    @if($projects->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
                                     <tr>
-                                        <td><strong>{{ $project->name }}</strong></td>
-                                        <td><span class="badge bg-info">{{ ucfirst($project->type) }}</span></td>
-                                        <td class="text-end">{{ number_format($projectTotal, 2) }}</td>
-                                        <td class="text-end fw-bold text-success">{{ number_format($projectPaid, 2) }}</td>
+                                        <th>#</th>
+                                        <th>Project Name</th>
+                                        <th>Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th class="text-end">Budget</th>
+                                        <th class="text-end">Paid</th>
+                                        <th class="text-end">Remaining</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-light">
-                                    <td colspan="2" class="text-end fw-bold">Total:</td>
-                                    <td class="text-end fw-bold">{{ number_format($totalContractValue, 2) }}</td>
-                                    <td class="text-end fw-bold text-success">{{ number_format($totalProjectPaid, 2) }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                @else
-                    <div class="p-4 text-center text-muted">
-                        <i class="fas fa-folder-open fa-3x mb-3"></i>
-                        <p>No projects assigned yet</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Project Updates (Documents) Section -->
-        @if($projectUpdates->count() > 0)
-        <div class="section-card">
-            <div class="section-header">
-                <h5><i class="fas fa-file-alt me-2 text-info"></i>Project Updates & Documents</h5>
-            </div>
-            <div class="card-body p-0">
-                @foreach($projectUpdates as $update)
-                    <div class="update-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">
-                                    <span class="badge bg-info me-2">{{ $update->project->name ?? 'Project' }}</span>
-                                    {{ $update->title }}
-                                </h6>
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar me-1"></i>{{ $update->created_at->format('M d, Y') }}
-                                    @if($update->status)
-                                        <span class="badge bg-{{ $update->status == 'completed' ? 'success' : 'warning' }} ms-2">{{ ucfirst($update->status) }}</span>
-                                    @endif
-                                </small>
+                                </thead>
+                                <tbody>
+                                    @foreach($projects as $index => $project)
+                                        @php
+                                            $projectBilled = $project->billings->sum('amount_billed');
+                                            $projectPaid = $project->billings->sum('amount_paid');
+                                            $projectTotal = $project->budget + $projectBilled;
+                                            $projectRemaining = $projectTotal - $projectPaid;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td><strong>{{ $project->name }}</strong></td>
+                                            <td><span class="badge bg-info">{{ ucfirst($project->type) }}</span></td>
+                                            <td>{{ $project->start_date ?? '-' }}</td>
+                                            <td>{{ $project->end_date ?? '-' }}</td>
+                                            <td class="text-end">{{ number_format($projectTotal, 2) }}</td>
+                                            <td class="text-end fw-bold text-success">{{ number_format($projectPaid, 2) }}</td>
+                                            <td class="text-end fw-bold {{ $projectRemaining > 0 ? 'text-warning' : 'text-success' }}">{{ number_format($projectRemaining, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light">
+                                        <td colspan="5" class="text-end fw-bold">Total:</td>
+                                        <td class="text-end fw-bold">{{ number_format($totalContractValue, 2) }}</td>
+                                        <td class="text-end fw-bold text-success">{{ number_format($totalProjectPaid, 2) }}</td>
+                                        <td class="text-end fw-bold text-warning">{{ number_format($totalRemaining, 2) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    @else
+                        <div class="p-4 text-center text-muted">
+                            <i class="fas fa-folder-open fa-3x mb-3"></i>
+                            <p>No projects assigned yet</p>
+                        </div>
+                    @endif
+                </div>
+                
+                <div class="tab-pane fade" id="projects-finance" role="tabpanel">
+                    <div class="row g-3 p-3">
+                        <div class="col-md-3">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <small class="opacity-75">Total Budget</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalProjectBudget, 2) }}</h4>
                             </div>
-                            @if($update->file)
-                                <a href="{{ asset('storage/'.$update->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-download me-1"></i>Download
-                                </a>
-                            @endif
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                <small class="opacity-75">Additional Billings</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalProjectBilled, 2) }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                <small class="opacity-75">Total Paid</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalProjectPaid, 2) }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 text-white p-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <small class="opacity-75">Remaining Balance</small>
+                                <h4 class="mb-0 fw-bold">{{ number_format($totalRemaining, 2) }}</h4>
+                            </div>
                         </div>
                     </div>
-                @endforeach
+                    
+                    <div class="px-3 pb-3">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-file-invoice me-2"></i>Payment History</h6>
+                        @php $allProjectBillings = $projects->flatMap(fn($p) => $p->billings->map(fn($b) => $b->setAttribute('project_name', $p->name))); @endphp
+                        @if($allProjectBillings->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Project</th>
+                                            <th>Amount Billed</th>
+                                            <th>Amount Paid</th>
+                                            <th>Payment Date</th>
+                                            <th>Status</th>
+                                            <th>Invoice</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($allProjectBillings as $index => $billing)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $billing->project_name }}</td>
+                                                <td>{{ number_format($billing->amount_billed, 2) }}</td>
+                                                <td class="fw-bold text-success">{{ number_format($billing->amount_paid, 2) }}</td>
+                                                <td>{{ $billing->payment_date ?? '-' }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ $billing->status == 'paid' ? 'success' : 'warning' }}">
+                                                        {{ ucfirst($billing->status) }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @if($billing->invoice)
+                                                        <a href="{{ asset('storage/'.$billing->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-receipt fa-2x mb-2"></i>
+                                <p class="mb-0">No payment records yet</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="projects-documents" role="tabpanel">
+                    <div class="p-3">
+                        @if($projectUpdates->count() > 0)
+                            @foreach($projectUpdates as $update)
+                                <div class="update-item border rounded p-3 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <span class="badge bg-info me-2">{{ $update->project->name ?? 'Project' }}</span>
+                                                {{ $update->title }}
+                                            </h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>{{ $update->created_at->format('M d, Y') }}
+                                            </small>
+                                        </div>
+                                        @if($update->file)
+                                            <a href="{{ asset('storage/'.$update->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-download me-1"></i>Download
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                <p class="mb-0">No documents uploaded yet</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
-        @endif
 
         <!-- My Queries Section -->
         @if($myQueries->count() > 0)
