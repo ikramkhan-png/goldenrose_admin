@@ -204,7 +204,16 @@ class ClientServiceController extends Controller
     {
         $client = User::with(['services', 'services.billings'])->findOrFail($clientId);
 
-        $totalServiceAmount = $client->services->sum('rate');
+        // Calculate total service amount (rate × duration for each service)
+        $totalServiceAmount = $client->services->sum(function ($svc) {
+            if ($svc->hours > 0) {
+                return $svc->hours * $svc->hourly_rate;
+            } elseif ($svc->days > 0) {
+                return $svc->days * $svc->daily_rate;
+            } else {
+                return $svc->months * $svc->monthly_rate;
+            }
+        });
         $totalPaid = $client->services
             ->flatMap(fn ($s) => $s->billings)
             ->sum('amount_paid');
