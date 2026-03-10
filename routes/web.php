@@ -226,6 +226,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 // --------- CLIENT ROUTES (Service & Project Clients) ---------
 Route::prefix('client')->name('client.')->middleware(['auth', 'client'])->group(function () {
     Route::get('dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+    Route::get('project/{id}', [ClientDashboardController::class, 'showProject'])->name('project.show');
     Route::post('query', [ClientDashboardController::class, 'storeQuery'])->name('query.store');
     Route::post('note/{id}/read', [ClientDashboardController::class, 'markNoteRead'])->name('note.read');
 });

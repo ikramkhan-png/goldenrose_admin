@@ -132,4 +132,19 @@ class ClientDashboardController extends Controller
         
         return back();
     }
+
+    /**
+     * Show project details for client
+     */
+    public function showProject($id)
+    {
+        $user = auth()->user();
+        
+        // Get project only if it belongs to this client
+        $project = Project::where('client_id', $user->id)
+            ->with(['billings', 'documents'])
+            ->findOrFail($id);
+
+        return view('client.dashboard.project-show', compact('project'));
+    }
 }
