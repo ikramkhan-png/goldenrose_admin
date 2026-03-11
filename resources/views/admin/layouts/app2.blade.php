@@ -10,6 +10,10 @@
 
 <style>
 
+.mobile-topbar{
+display:none;
+}
+
 body{
 background: linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);
 margin:0;
@@ -96,6 +100,15 @@ padding:18px 16px !important;
 }
 
 @media (max-width:767.98px){
+.mobile-topbar{
+display:flex;
+}
+.sidebar{
+display:none;
+}
+.sidebar.sidebar-visible{
+display:block;
+}
 .table{
 display:block;
 width:100%;
@@ -177,6 +190,13 @@ transform:scale(1.3);
 
 <body>
  
+<div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
+    <span class="fw-semibold">Golden Rose Client</span>
+    <button class="btn btn-outline-light btn-sm" id="clientSidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
 <div class="d-flex flex-column flex-md-row min-vh-100">
 
 <!-- SIDEBAR -->
@@ -255,7 +275,7 @@ Sharah Salam, Riyadh
 All Rights Reserved
 </div>
 
-</div>
+ </div>
 
 </aside>
 
@@ -266,6 +286,18 @@ All Rights Reserved
 </main>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('clientSidebarToggle');
+    var sidebar = document.querySelector('.sidebar');
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', function () {
+            sidebar.classList.toggle('sidebar-visible');
+        });
+    }
+});
+</script>
 
 </body>
 </html>

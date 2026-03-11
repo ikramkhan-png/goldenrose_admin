@@ -7,6 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        .mobile-topbar {
+            display: none;
+        }
         .admin-layout-wrapper {
             min-height: 100vh;
         }
@@ -34,6 +37,15 @@
             padding: 18px 16px !important;
         }
         @media (max-width: 767.98px) {
+            .mobile-topbar {
+                display: flex;
+            }
+            .admin-sidebar {
+                display: none;
+            }
+            .admin-sidebar.sidebar-visible {
+                display: block;
+            }
             .table {
                 display: block;
                 width: 100%;
@@ -51,6 +63,12 @@
     </style>
 </head>
 <body>
+    <div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
+        <span class="fw-semibold">Golden Rose Admin</span>
+        <button class="btn btn-outline-light btn-sm" id="globalSidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
     <div class="d-flex flex-column admin-layout-wrapper">
         <!-- Sidebar -->
         <div class="admin-sidebar bg-dark text-white p-3">
@@ -310,5 +328,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('globalSidebarToggle');
+        var sidebar = document.querySelector('.admin-sidebar');
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', function () {
+                sidebar.classList.toggle('sidebar-visible');
+            });
+        }
+    });
+    </script>
 </body>
 </html>
