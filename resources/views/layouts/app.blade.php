@@ -2,14 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Golden Rose Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-layout-wrapper {
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .admin-layout-wrapper {
+                flex-direction: row;
+            }
+            .admin-sidebar {
+                width: 250px;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fc !important;
+        }
+        .table th,
+        .table td {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 18px 16px !important;
+        }
+        @media (max-width: 767.98px) {
+            .table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table thead,
+            .table tbody,
+            .table tr,
+            .table th,
+            .table td {
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="d-flex">
+    <div class="d-flex flex-column admin-layout-wrapper">
         <!-- Sidebar -->
-        <div class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh; overflow-y: auto;">
+        <div class="admin-sidebar bg-dark text-white p-3">
             <h4 class="mb-4">
                 <span style="color: #FFD700;">👑</span> Golden Rose
             </h4>

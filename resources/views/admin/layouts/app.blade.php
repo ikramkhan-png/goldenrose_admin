@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Golden Rose Admin Panel</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -9,8 +10,14 @@
 
     <style>
         .sidebar {
-            width: 260px;
-            min-height: 100vh;
+            width: 100%;
+            min-height: auto;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 260px;
+                min-height: 100vh;
+            }
         }
         .sidebar .nav-link.active {
             background-color: #0d6efd;
@@ -84,16 +91,31 @@
         .table td .btn-sm:hover {
             transform: scale(1.3);
         }
+        @media (max-width: 767.98px) {
+            .table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table thead,
+            .table tbody,
+            .table tr,
+            .table th,
+            .table td {
+                white-space: nowrap;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="d-flex">
+<div class="d-flex flex-column flex-md-row min-vh-100">
 
     <!-- =========================
          SIDEBAR
     ========================== -->
-    <aside class="sidebar bg-dark text-white p-3">
+    <aside class="sidebar bg-dark text-white p-3 flex-shrink-0">
 
         <h4 class="text-center mb-4">Golden Rose</h4>
 
