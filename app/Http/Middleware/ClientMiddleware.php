@@ -25,8 +25,9 @@ class ClientMiddleware
             abort(403, 'Unauthorized access. This dashboard is for clients only.');
         }
 
-        // Check if user has a client_type (service or project)
-        if (!$user->client_type || !in_array($user->client_type, ['service', 'project'])) {
+        // Allow access even if client_type is not set (for backward compatibility)
+        // If client_type is set, verify it's valid
+        if ($user->client_type && !in_array($user->client_type, ['service', 'project'])) {
             abort(403, 'Invalid client type.');
         }
 

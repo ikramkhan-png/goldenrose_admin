@@ -2,6 +2,7 @@
 
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -20,7 +21,16 @@ new #[Layout('admin.layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirect(route('admin.dashboard'), navigate: false);
+        // Redirect based on user type
+        $user = Auth::user();
+        
+        if ($user->type === 'client') {
+            // Redirect clients to client dashboard
+            $this->redirect(route('client.dashboard'), navigate: false);
+        } else {
+            // Redirect admins/super_admins to admin dashboard
+            $this->redirect(route('admin.dashboard'), navigate: false);
+        }
     }
 }; ?>
 

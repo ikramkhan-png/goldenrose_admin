@@ -93,7 +93,7 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <h6 class="fw-bold mb-2">💰 Total Cost</h6>
+                <h6 class="fw-bold mb-2">Total Cost</h6>
                 <h3 class="fw-bold mb-0">
                     @php
                         $totalCost = 0;

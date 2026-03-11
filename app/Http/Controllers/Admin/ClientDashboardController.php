@@ -7,121 +7,144 @@ use App\Models\User;
 use App\Models\ClientService;
 use App\Models\Project;
 use App\Models\ProjectBilling;
-use App\Models\ClientServiceBilling;
 use App\Models\ProjectDocument;
+use App\Models\ClientNote;
+use App\Models\ClientQuery;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class ClientDashboardController extends Controller
 {
     /**
-     * Show the client dashboard
+     * Show the unified client dashboard
      */
-    public function index(Request $request)
+    public function index()
     {
         $user = auth()->user();
-        $month = $request->get('month', Carbon::now()->format('Y-m'));
 
-        if ($user->client_type === 'service') {
-            return $this->serviceClientDashboard($user, $month);
-        } elseif ($user->client_type === 'project') {
-            return $this->projectClientDashboard($user, $month);
-        }
-
-        return redirect('/');
-    }
-
-    /**
-     * Service Client Dashboard
-     */
-    private function serviceClientDashboard($user, $month)
-    {
-        [$startDate, $endDate] = $this->getMonthDateRange($month);
-
-        // Get all services for this client
+        // Get assigned services with service details and billings
         $services = ClientService::where('client_id', $user->id)
-            ->with('service')
+            ->with(['service', 'billings'])
             ->get();
 
-        // Calculate total finance info
-        $totalBilling = ClientServiceBilling::whereIn('client_service_id', $services->pluck('id'))
-            ->whereBetween('billing_date', [$startDate, $endDate])
-            ->sum('amount');
-
-        $servicesBillings = [];
-        foreach ($services as $service) {
-            $billings = ClientServiceBilling::where('client_service_id', $service->id)
-                ->whereBetween('billing_date', [$startDate, $endDate])
-                ->get();
-
-            $servicesBillings[$service->id] = [
-                'service' => $service,
-                'billings' => $billings,
-                'total' => $billings->sum('amount'),
-                'count' => $billings->count(),
-            ];
-        }
-
-        return view('client.dashboard.service-dashboard', [
-            'services' => $services,
-            'servicesBillings' => $servicesBillings,
-            'totalBilling' => $totalBilling,
-            'month' => $month,
-        ]);
-    }
-
-    /**
-     * Project Client Dashboard
-     */
-    private function projectClientDashboard($user, $month)
-    {
-        [$startDate, $endDate] = $this->getMonthDateRange($month);
-
-        // Get all projects for this client
+        // Get assigned projects with billings and documents
         $projects = Project::where('client_id', $user->id)
+            ->with(['billings', 'documents'])
             ->get();
 
-        $projectsData = [];
-        foreach ($projects as $project) {
-            $billings = ProjectBilling::where('project_id', $project->id)
-                ->whereBetween('billing_date', [$startDate, $endDate])
-                ->get();
-
-            $projectsData[$project->id] = [
-                'project' => $project,
-                'billings' => $billings,
-                'totalBilled' => $billings->sum('amount'),
-                'budget' => $project->budget ?? 0,
-                'paid' => $project->paid ?? 0,
-                'remaining' => ($project->budget ?? 0) - ($project->paid ?? 0),
-                'documents' => ProjectDocument::where('project_id', $project->id)->get(),
-            ];
+        // Calculate finance totals for services
+        $totalServiceAmount = 0;
+        $totalServicePaid = 0;
+        foreach ($services as $service) {
+            if ($service->hours > 0) {
+                $totalServiceAmount += $service->hours * $service->hourly_rate;
+            } elseif ($service->days > 0) {
+                $totalServiceAmount += $service->days * $service->daily_rate;
+            } else {
+                $totalServiceAmount += $service->months * $service->monthly_rate;
+            }
+            // Sum all payments for this service
+            $totalServicePaid += $service->billings->sum('amount_paid');
         }
+        $totalServiceRemaining = $totalServiceAmount - $totalServicePaid;
 
-        // Calculate overall finance totals
-        $totalBudget = $projects->sum('budget');
-        $totalPaid = $projects->sum('paid');
-        $totalRemaining = $totalBudget - $totalPaid;
+        // Calculate finance totals for projects (Budget + Billings)
+        $totalProjectBudget = $projects->sum('budget');
+        $totalProjectBilled = 0;
+        $totalProjectPaid = 0;
+        
+        foreach ($projects as $project) {
+            $totalProjectBilled += $project->billings->sum('amount_billed');
+            $totalProjectPaid += $project->billings->sum('amount_paid');
+        }
+        
+        $totalContractValue = $totalProjectBudget + $totalProjectBilled;
+        $totalRemaining = $totalContractValue - $totalProjectPaid;
 
-        return view('client.dashboard.project-dashboard', [
-            'projects' => $projects,
-            'projectsData' => $projectsData,
-            'totalBudget' => $totalBudget,
-            'totalPaid' => $totalPaid,
-            'totalRemaining' => $totalRemaining,
-            'month' => $month,
-        ]);
+        // Get all project documents (as project updates)
+        $projectUpdates = ProjectDocument::whereIn('project_id', $projects->pluck('id'))
+            ->with('project')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get important notes from admin
+        $importantNotes = ClientNote::where('client_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get client's queries
+        $myQueries = ClientQuery::where('client_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('client.dashboard.index', compact(
+            'user',
+            'services',
+            'projects',
+            'totalServiceAmount',
+            'totalServicePaid',
+            'totalServiceRemaining',
+            'totalProjectBudget',
+            'totalProjectBilled',
+            'totalProjectPaid',
+            'totalContractValue',
+            'totalRemaining',
+            'projectUpdates',
+            'importantNotes',
+            'myQueries'
+        ));
     }
 
     /**
-     * Get start and end date for a given month
+     * Store a new query from client
      */
-    private function getMonthDateRange($month)
+    public function storeQuery(Request $request)
     {
-        $date = Carbon::createFromFormat('Y-m', $month);
-        $startDate = $date->copy()->startOfMonth();
-        $endDate = $date->copy()->endOfMonth();
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
+        ]);
 
-        return [$startDate, $endDate];
+        $documentPath = null;
+        if ($request->hasFile('document')) {
+            $documentPath = $request->file('document')->store('client_queries', 'public');
+        }
+
+        ClientQuery::create([
+            'client_id' => auth()->id(),
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'document' => $documentPath,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Your query has been submitted successfully. We will get back to you soon.');
+    }
+
+    /**
+     * Mark a note as read
+     */
+    public function markNoteRead($id)
+    {
+        $note = ClientNote::where('client_id', auth()->id())->findOrFail($id);
+        $note->update(['is_read' => true]);
+        
+        return back();
+    }
+
+    /**
+     * Show project details for client
+     */
+    public function showProject($id)
+    {
+        $user = auth()->user();
+        
+        // Get project only if it belongs to this client
+        $project = Project::where('client_id', $user->id)
+            ->with(['billings', 'documents'])
+            ->findOrFail($id);
+
+        return view('client.dashboard.project-show', compact('project'));
     }
 }

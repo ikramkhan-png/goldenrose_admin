@@ -4,6 +4,19 @@
 <div class="container mt-4">
     <h4>Add Billing for Client: {{ $client->name }}</h4>
 
+    {{-- Show validation errors --}}
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> Please fix the following issues:
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <form action="{{ route('admin.client-services.storeClientBilling', $client->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
 

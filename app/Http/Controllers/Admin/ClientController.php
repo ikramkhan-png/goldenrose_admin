@@ -51,6 +51,12 @@ class ClientController extends Controller
             'services.service',
             'projects' => function($query){
                 $query->orderBy('start_date', 'desc');
+            },
+            'clientNotes' => function($query){
+                $query->orderBy('created_at', 'desc');
+            },
+            'clientQueries' => function($query){
+                $query->orderBy('created_at', 'desc');
             }
         ]);
 
@@ -91,8 +97,19 @@ class ClientController extends Controller
 
         $projects = $client->projects;
 
-        $totalBilled = $projects->flatMap->billings->sum('amount_billed');
-        $totalPaid   = $projects->flatMap->billings->sum('amount_paid') ?? 0;
+        // Budget is the base contract value for all projects
+        $totalBudget = $projects->sum('budget');
+        
+        // Additional billings on top of budget
+        $additionalBilled = $projects->flatMap->billings->sum('amount_billed');
+        
+        // Total Contract Value = Budget + Additional Billings
+        $totalBilled = $totalBudget + $additionalBilled;
+        
+        // Total paid from all billing records
+        $totalPaid = $projects->flatMap->billings->sum('amount_paid') ?? 0;
+        
+        // Remaining = Total Contract Value - Total Paid
         $totalRemaining = $totalBilled - $totalPaid;
 
         // Flatten billings for table display
