@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        .mobile-topbar {
+            display: none;
+        }
         .sidebar {
             width: 100%;
             min-height: auto;
@@ -92,6 +95,15 @@
             transform: scale(1.3);
         }
         @media (max-width: 767.98px) {
+            .mobile-topbar {
+                display: flex;
+            }
+            .sidebar {
+                display: none;
+            }
+            .sidebar.sidebar-visible {
+                display: block;
+            }
             .table {
                 display: block;
                 width: 100%;
@@ -109,6 +121,13 @@
     </style>
 </head>
 <body>
+
+<div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
+    <span class="fw-semibold">Golden Rose Admin</span>
+    <button class="btn btn-outline-light btn-sm" id="adminSidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
 
 <div class="d-flex flex-column flex-md-row min-vh-100">
 
@@ -311,6 +330,18 @@
     </main>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('adminSidebarToggle');
+    var sidebar = document.querySelector('.sidebar');
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', function () {
+            sidebar.classList.toggle('sidebar-visible');
+        });
+    }
+});
+</script>
 
 </body>
 </html>
