@@ -1,7 +1,9 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container-xl mt-4">
+    <x-page-header title="Add Billing" description="if no new billing amount is generated for this project write zero(0) in amount billed field" />
+ <div class="card border-0 shadow-sm p-4">
     <h4>Add Billing for Project: {{ $project->name }}</h4>
 
     <form action="{{ route('admin.project-billings.store') }}" method="POST" enctype="multipart/form-data">
@@ -44,5 +46,6 @@
         <button class="btn btn-success">Add Billing</button>
         <a href="{{ route('admin.projects.view', $project->id.'?tab=finance') }}" class="btn btn-secondary">Cancel</a>
     </form>
+ </div>
 </div>
 @endsection
