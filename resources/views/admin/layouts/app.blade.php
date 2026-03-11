@@ -92,10 +92,18 @@
             transform: scale(1.3);
         }
         @media (max-width: 767.98px) {
-            .table-responsive-sm {
+            .table {
                 display: block;
                 width: 100%;
                 overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table thead,
+            .table tbody,
+            .table tr,
+            .table th,
+            .table td {
+                white-space: nowrap;
             }
         }
     </style>

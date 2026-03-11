@@ -95,6 +95,22 @@ font-weight:600;
 padding:18px 16px !important;
 }
 
+@media (max-width:767.98px){
+.table{
+display:block;
+width:100%;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
+.table thead,
+.table tbody,
+.table tr,
+.table th,
+.table td{
+white-space:nowrap;
+}
+}
+
 /* FORM */
 
 .form-control,
