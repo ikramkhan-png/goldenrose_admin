@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Welcome TO Golden Rose Client's Dashboard</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,13 +17,19 @@ padding:0;
 }
 
 /* SIDEBAR */
-
+ 
 .sidebar{
-width:260px;
-min-height:100vh;
+width:100%;
+min-height:auto;
 background:#1f2937;
 display:flex;
 flex-direction:column;
+}
+@media (min-width:768px){
+.sidebar{
+width:260px;
+min-height:100vh;
+}
 }
 
 .sidebar h4{
@@ -153,8 +160,8 @@ transform:scale(1.3);
 </head>
 
 <body>
-
-<div class="d-flex">
+ 
+<div class="d-flex flex-column flex-md-row min-vh-100">
 
 <!-- SIDEBAR -->
 
