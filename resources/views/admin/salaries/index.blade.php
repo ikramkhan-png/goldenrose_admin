@@ -74,7 +74,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link fw-semibold" href="{{ route('admin.expenses.index') }}"
+                <a class="nav-link fw-semibold" href="{{ route('admin.employee-expenses.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
                     <i class="bi bi-receipt"></i> Expenses
                 </a>

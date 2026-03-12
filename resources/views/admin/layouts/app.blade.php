@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Golden Rose Admin Panel</title>
 
+    @if(app()->getLocale() == 'ar')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -136,7 +140,18 @@
     ========================== -->
     <aside class="sidebar bg-dark text-white p-3 flex-shrink-0">
 
-        <h4 class="text-center mb-4">Golden Rose</h4>
+        <h4 class="text-center mb-4">{{ __('admin.golden_rose') }}</h4>
+
+        <!-- Language Switcher -->
+        <div class="dropdown mb-3">
+            <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}: {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
+                <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
+                <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}" href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
+            </ul>
+        </div>
 
         <ul class="nav flex-column">
 
@@ -144,20 +159,20 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                    href="{{ route('admin.dashboard') }}">
-                    Dashboard
+                    📊 {{ __('admin.dashboard') }}
                 </a>
             </li>
 
             <!-- ===============================
                  EXTERNAL OPERATIONS
             ================================ -->
-            <div class="sidebar-section">EXTERNAL OPERATIONS</div>
+            <div class="sidebar-section">{{ __('admin.clients') }}</div>
 
             <!-- Clients -->
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"
                    href="{{ route('admin.clients.index') }}">
-                    Clients
+                    💼 {{ __('admin.all_clients') }}
                 </a>
             </li>
 
@@ -165,7 +180,7 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
                    href="{{ route('admin.users.index') }}">
-                    Users Management
+                    👥 {{ __('admin.all_users') }}
                 </a>
             </li>
 
@@ -206,13 +221,13 @@
             <!-- ===============================
                  INTERNAL OPERATIONS
             ================================ -->
-            <div class="sidebar-section">INTERNAL OPERATIONS</div>
+            <div class="sidebar-section">{{ __('admin.hr_management') }}</div>
 
             <!-- Employees -->
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}"
                    href="{{ route('admin.employees.index') }}">
-                    Employees
+                    👥 {{ __('admin.employees') }}
                 </a>
             </li>
 
@@ -220,7 +235,7 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}"
                    href="{{ route('admin.departments.index') }}">
-                    Departments
+                    🏢 {{ __('admin.departments') }}
                 </a>
             </li>
 
@@ -236,13 +251,13 @@
             <!-- ===============================
                  SERVICES & RESOURCES
             ================================ -->
-            <div class="sidebar-section">SERVICES & RESOURCES</div>
+            <div class="sidebar-section">{{ __('admin.facilities') }}</div>
 
             <!-- Machinery -->
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}"
                    href="{{ route('admin.machinery.index') }}">
-                    Machinery
+                    🔧 {{ __('admin.machinery') }}
                 </a>
             </li>
 
@@ -250,14 +265,14 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}"
                    href="{{ route('admin.manpower.index') }}">
-                    Manpower
+                    👷 {{ __('admin.manpower') }}
                 </a>
             </li>
 
             <!-- ===============================
                  PAYROLL & FINANCE
             ================================ -->
-            <div class="sidebar-section">PAYROLL & FINANCE</div>
+            <div class="sidebar-section">PAYROLL</div>
             <!--  
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.advances.*') ? 'active' : '' }}"
@@ -284,7 +299,7 @@
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.salaries.*') ? 'active' : '' }}"
                    href="{{ route('admin.salaries.index') }}">
-                    Salaries
+                    💼 Salaries
                 </a>
             </li>
             
@@ -292,19 +307,19 @@
             <!-- ===============================
                  SYSTEM
             ================================ -->
-            <div class="sidebar-section">SYSTEM</div>
+            <div class="sidebar-section">{{ __('admin.system') }}</div>
 
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
                    href="{{ route('admin.roles.index') }}">
-                    Roles & Permissions
+                    🔐 {{ __('admin.roles_permissions') }}
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
                    href="{{ route('admin.settings.index') }}">
-                    Settings
+                    ⚙️ {{ __('admin.settings') }}
                 </a>
             </li>
 
@@ -314,7 +329,7 @@
                     @csrf
                     <button type="submit"
                             class="btn btn-outline-light w-100">
-                        Logout
+                        🚪 {{ __('admin.logout') }}
                     </button>
                 </form>
             </li>
@@ -331,6 +346,7 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var toggle = document.getElementById('adminSidebarToggle');
