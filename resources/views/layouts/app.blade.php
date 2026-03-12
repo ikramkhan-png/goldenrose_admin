@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Golden Rose Admin Panel</title>
+    @if(app()->getLocale() == 'ar')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+@else
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .mobile-topbar {
@@ -73,8 +77,19 @@
         <!-- Sidebar -->
         <div class="admin-sidebar bg-dark text-white p-3">
             <h4 class="mb-4">
-                <span style="color: #FFD700;">👑</span> Golden Rose
+                <span style="color: #FFD700;">👑</span> {{ __('admin.golden_rose') }}
             </h4>
+
+            <!-- Language Switcher -->
+            <div class="dropdown mb-3">
+                <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}: {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}" href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
+                </ul>
+            </div>
 
             <!-- User Info -->
             <div class="bg-secondary p-2 rounded mb-4 small">
@@ -82,11 +97,11 @@
                 <br>
                 <span class="badge bg-info">
                     @if(auth()->user()->hasRole('super_admin'))
-                        Super Admin
+                        {{ __('admin.super_admin') }}
                     @elseif(auth()->user()->hasRole('admin'))
-                        Admin
+                        {{ __('admin.admin') }}
                     @elseif(auth()->user()->hasRole('data_entry'))
-                        Data Entry
+                        {{ __('admin.data_entry') }}
                     @else
                         {{ auth()->user()->type }}
                     @endif
@@ -98,33 +113,33 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
                        href="{{ route('admin.dashboard') }}">
-                        📊 Dashboard
+                        📊 {{ __('admin.dashboard') }}
                     </a>
                 </li>
 
                 <!-- CLIENTS MANAGEMENT SECTION -->
                 @can('manage_clients')
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">Clients</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.clients') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}" 
                            href="{{ route('admin.clients.index') }}">
-                            💼 All Clients
+                            💼 {{ __('admin.all_clients') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.client-services.*') ? 'active' : '' }}" 
                            href="{{ route('admin.client-services.index') }}">
-                            🛎️ Service Clients
+                            🛎️ {{ __('admin.service_clients') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.projects.index') }}">
-                            📁 Project Clients
+                            📁 {{ __('admin.project_clients') }}
                         </a>
                     </li>
                 @endcan
@@ -132,13 +147,13 @@
                 <!-- USERS MANAGEMENT -->
                 @if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin'))
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">User Management</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.user_management') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" 
                            href="{{ route('admin.users.index') }}">
-                            👥 All Users
+                            👥 {{ __('admin.all_users') }}
                         </a>
                     </li>
                 @endif
@@ -146,13 +161,13 @@
                 <!-- PROJECTS & SERVICES -->
                 @can('manage_projects')
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">Projects & Services</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.projects_services') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}" 
                            href="{{ route('admin.projects.index') }}">
-                            📊 Projects
+                            📊 {{ __('admin.projects') }}
                         </a>
                     </li>
                 @endcan
@@ -160,7 +175,7 @@
                 @can('manage_services')
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.client-services.index') }}">
-                            🛎️ Services
+                            🛎️ {{ __('admin.services') }}
                         </a>
                     </li>
                 @endcan
@@ -168,66 +183,66 @@
                 <!-- EMPLOYEES SECTION -->
                 @can('manage_employees')
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">HR Management</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.hr_management') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}" 
                            href="{{ route('admin.employees.index') }}">
-                            👥 Employees
+                            👥 {{ __('admin.employees') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}" 
                            href="{{ route('admin.attendance.index') }}">
-                            ✓ Attendance
+                            ✓ {{ __('admin.attendance') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}" 
                            href="{{ route('admin.departments.index') }}">
-                            🏢 Departments
+                            🏢 {{ __('admin.departments') }}
                         </a>
                     </li>
                 @endcan
 
                 <!-- SERVICES FACILITIES SECTION -->
                 <li class="nav-item mt-3">
-                    <span class="text-uppercase text-muted small px-3">Facilities</span>
+                    <span class="text-uppercase text-muted small px-3">{{ __('admin.facilities') }}</span>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}" 
                        href="{{ route('admin.machinery.index') }}">
-                        🔧 Machinery
+                        🔧 {{ __('admin.machinery') }}
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}" 
                        href="{{ route('admin.manpower.index') }}">
-                        👷 Manpower
+                        👷 {{ __('admin.manpower') }}
                     </a>
                 </li>
 
                 <!-- SYSTEM MANAGEMENT SECTION -->
                 @if(auth()->user()->hasRole('super_admin'))
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">System</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.system') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" 
                            href="{{ route('admin.roles.index') }}">
-                            🔐 Roles & Permissions
+                            🔐 {{ __('admin.roles_permissions') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.settings.index') }}">
-                            ⚙️ Settings
+                            ⚙️ {{ __('admin.settings') }}
                         </a>
                     </li>
                 @endif
@@ -235,18 +250,18 @@
                 <!-- REPORTS SECTION -->
                 @can('view_reports')
                     <li class="nav-item mt-3">
-                        <span class="text-uppercase text-muted small px-3">Reports</span>
+                        <span class="text-uppercase text-muted small px-3">{{ __('admin.reports') }}</span>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">
-                            📈 Financial Reports
+                            📈 {{ __('admin.financial_reports') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">
-                            📋 Client Reports
+                            📋 {{ __('admin.client_reports') }}
                         </a>
                     </li>
                 @endcan
@@ -258,7 +273,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('profile') }}">
-                        👤 My Profile
+                        👤 {{ __('admin.my_profile') }}
                     </a>
                 </li>
 
@@ -266,7 +281,7 @@
                     <form action="{{ route('logout') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="nav-link text-white btn btn-link">
-                            🚪 Logout
+                            🚪 {{ __('admin.logout') }}
                         </button>
                     </form>
                 </li>
@@ -279,19 +294,19 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                 <div class="container-fluid">
                     <span class="navbar-text ms-3">
-                        <strong>Welcome, {{ auth()->user()->name }}!</strong>
+                        <strong>{{ __('admin.welcome') }}, {{ auth()->user()->name }}!</strong>
                     </span>
                     <div class="ms-auto d-flex gap-3 me-3">
                         <span class="text-muted small">
                             {{ now()->format('M d, Y H:i') }}
                         </span>
                         <a href="{{ route('profile') }}" class="text-decoration-none">
-                            👤 Profile
+                            👤 {{ __('admin.profile') }}
                         </a>
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Logout
+                                {{ __('admin.logout') }}
                             </button>
                         </form>
                     </div>
@@ -329,6 +344,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('globalSidebarToggle');
