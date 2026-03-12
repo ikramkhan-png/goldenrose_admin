@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SalaryController;
 use App\Http\Controllers\Admin\ClientDashboardController;
 use App\Http\Controllers\Admin\ClientNoteController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\LanguageController;
 
 // ========== INCLUDE AUTH ROUTES ==========
 require __DIR__.'/auth.php';
@@ -94,6 +95,9 @@ Route::middleware('web')->group(function () {
         Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile');
     });
 });
+
+// ========== LANGUAGE SWITCH ROUTE ==========
+Route::get('language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
 // ========== ADMIN ROUTES ==========
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
