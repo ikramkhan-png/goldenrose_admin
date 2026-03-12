@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SalaryController;
 use App\Http\Controllers\Admin\ClientDashboardController;
 use App\Http\Controllers\Admin\ClientNoteController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\EmployeeExpenseController;
 use App\Http\Controllers\LanguageController;
 
 // ========== INCLUDE AUTH ROUTES ==========
@@ -191,8 +192,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Departments
     Route::resource('departments', DepartmentController::class);
 
-    // Expenses
+    // Project Expenses (for project internal costs)
     Route::resource('expenses', ExpenseController::class);
+
+    // Employee Expenses (for salary calculations)
+    Route::resource('employee-expenses', EmployeeExpenseController::class);
 
     // Machinery
     Route::resource('machinery', MachineryController::class);

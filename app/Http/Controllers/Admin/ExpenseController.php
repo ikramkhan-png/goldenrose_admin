@@ -11,8 +11,12 @@ class ExpenseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Expense::with('employee', 'project')->latest();
-        if ($request->has('project_id')) {
+        // Show only project expenses (expenses with project_id set)
+        $query = Expense::with('employee', 'project')
+            ->whereNotNull('project_id')
+            ->latest();
+            
+        if ($request->has('project_id') && $request->project_id) {
             $query->where('project_id', $request->project_id);
         }
         $expenses = $query->paginate(15);

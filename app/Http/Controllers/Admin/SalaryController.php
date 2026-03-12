@@ -47,8 +47,9 @@ class SalaryController extends Controller
                 ->whereMonth('date', $monthNum)
                 ->sum('amount');
 
-            // Filter expenses by month
+            // Filter expenses by month (only employee expenses, not project expenses)
             $expenses_total = Expense::where('employee_id', $emp->id)
+                ->whereNull('project_id')
                 ->whereYear('date', $year)
                 ->whereMonth('date', $monthNum)
                 ->sum('amount');
