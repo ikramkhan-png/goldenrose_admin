@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Welcome TO Golden Rose Client's Dashboard</title>
 
+@if(app()->getLocale() == 'ar')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+@else
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@endif
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -203,44 +207,55 @@ transform:scale(1.3);
 
 <aside class="sidebar text-white p-3">
 
-<h4 class="text-center mb-4">Golden Rose Client</h4>
+<h4 class="text-center mb-4">{{ __('admin.golden_rose') }}</h4>
+
+<!-- Language Switcher -->
+<div class="dropdown mb-3">
+    <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}: {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
+    </button>
+    <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
+        <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
+        <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}" href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
+    </ul>
+</div>
 
 <ul class="nav flex-column mt-3">
 
 <li class="nav-item">
 <a class="nav-link {{ request()->routeIs('client.dashboard') ? 'active' : '' }}"
 href="{{ route('client.dashboard') }}">
-Dashboard
+📊 {{ __('admin.dashboard') }}
 </a>
 </li>
 
-<div class="sidebar-section">View Data</div>
+<div class="sidebar-section">{{ app()->getLocale() == 'ar' ? 'عرض البيانات' : 'View Data' }}</div>
 
 <li class="nav-item">
 <a class="nav-link {{ request()->routeIs('client.projects.*') ? 'active' : '' }}"
 href="{{ route('client.dashboard') }}?tab=projects">
-My Projects
+📁 {{ __('admin.projects') }}
 </a>
 </li>
 
 <li class="nav-item">
 <a class="nav-link {{ request()->routeIs('client.services.*') ? 'active' : '' }}"
 href="{{ route('client.dashboard') }}?tab=services">
-My Services
+🛎️ {{ __('admin.services') }}
 </a>
 </li>
 
 <li class="nav-item">
 <a class="nav-link {{ request()->routeIs('client.services.*') ? 'active' : '' }}"
 href="{{ route('client.dashboard') }}?tab=finance">
-My services Financial Summary
+💰 {{ app()->getLocale() == 'ar' ? 'الملخص المالي' : 'Financial Summary' }}
 </a>
 </li>
 
 <li class="nav-item">
 <a class="nav-link {{ request()->routeIs('client.messages.*') ? 'active' : '' }}"
 href="{{ route('client.dashboard') }}?tab=messages">
-My Messages
+✉️ {{ app()->getLocale() == 'ar' ? 'رسائلي' : 'Messages' }}
 </a>
 </li>
 
@@ -248,7 +263,7 @@ My Messages
 <form method="POST" action="{{ route('logout') }}">
 @csrf
 <button type="submit" class="btn btn-outline-light w-100">
-Logout
+🚪 {{ __('admin.logout') }}
 </button>
 </form>
 </li>
@@ -287,6 +302,7 @@ All Rights Reserved
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var toggle = document.getElementById('clientSidebarToggle');
