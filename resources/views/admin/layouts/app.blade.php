@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Golden Rose Admin Panel</title>
 
-    @if(app()->getLocale() == 'ar')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @if (app()->getLocale() == 'ar')
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @else
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -16,21 +17,25 @@
         .mobile-topbar {
             display: none;
         }
+
         .sidebar {
             width: 100%;
             min-height: auto;
         }
+
         @media (min-width: 768px) {
             .sidebar {
                 width: 260px;
                 min-height: 100vh;
             }
         }
+
         .sidebar .nav-link.active {
             background-color: #0d6efd;
             color: #fff !important;
             border-radius: 4px;
         }
+
         .sidebar-section {
             font-size: 12px;
             letter-spacing: 1px;
@@ -39,15 +44,18 @@
             margin-bottom: 6px;
             padding-left: 10px;
         }
+
         /* global theme overrides used across project */
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             margin: 0;
             padding: 0;
         }
+
         .table tbody tr:hover {
             background-color: #f8f9fc !important;
         }
+
         .table th,
         .table td {
             font-size: 15px;
@@ -55,6 +63,7 @@
             font-weight: 600;
             padding: 18px 16px !important;
         }
+
         .form-control,
         .form-select {
             border-color: #e8ecf1 !important;
@@ -62,58 +71,74 @@
             font-size: 14px;
             font-weight: 500;
         }
+
         .form-control:focus,
         .form-select:focus {
             border-color: #667eea !important;
             background: white;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1) !important;
         }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
-        h1, h2, h4 {
+
+        h1,
+        h2,
+        h4 {
             color: #2c3e50;
         }
+
         .card {
             transition: all 0.3s ease;
         }
+
         .card:hover {
             transform: translateY(-2px);
         }
+
         /* ensure action buttons fit in one line */
         .actions-cell {
             white-space: nowrap;
         }
+
         .actions-cell .btn {
             font-size: 10px;
             padding: 2px 4px;
         }
+
         /* additionally target any small buttons inside table cells */
         .table td .btn-sm {
             font-size: 10px !important;
             padding: 2px 4px !important;
             transition: transform 0.15s ease;
         }
+
         .table td .btn-sm:hover {
             transform: scale(1.3);
         }
+
         @media (max-width: 767.98px) {
             .mobile-topbar {
                 display: flex;
             }
+
             .sidebar {
                 display: none;
             }
+
             .sidebar.sidebar-visible {
                 display: block;
             }
+
             .table {
                 display: block;
                 width: 100%;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
+
             .table thead,
             .table tbody,
             .table tr,
@@ -124,68 +149,73 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
-    <span class="fw-semibold">Golden Rose Admin</span>
-    <button class="btn btn-outline-light btn-sm" id="adminSidebarToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-</div>
+    <div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
+        <span class="fw-semibold">Golden Rose Admin</span>
+        <button class="btn btn-outline-light btn-sm" id="adminSidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 
-<div class="d-flex flex-column flex-md-row min-vh-100">
+    <div class="d-flex flex-column flex-md-row min-vh-100">
 
-    <!-- =========================
+        <!-- =========================
          SIDEBAR
     ========================== -->
-    <aside class="sidebar bg-dark text-white p-3 flex-shrink-0">
+        <aside class="sidebar bg-dark text-white p-3 flex-shrink-0">
 
-        <h4 class="text-center mb-4">{{ __('admin.golden_rose') }}</h4>
+            <h4 class="text-center mb-4">{{ __('admin.golden_rose') }}</h4>
 
-        <!-- Language Switcher -->
-        <div class="dropdown mb-3">
-            <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}: {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
-            </button>
-            <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
-                <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
-                <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}" href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
-            </ul>
-        </div>
+            <!-- Language Switcher -->
+            <div class="dropdown mb-3">
+                <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}:
+                    {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}"
+                            href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}"
+                            href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
+                </ul>
+            </div>
 
-        <ul class="nav flex-column">
+            <ul class="nav flex-column">
 
-            <!-- Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                   href="{{ route('admin.dashboard') }}">
-                    📊 {{ __('admin.dashboard') }}
-                </a>
-            </li>
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        href="{{ route('admin.dashboard') }}">
+                        📊 {{ __('admin.dashboard') }}
+                    </a>
+                </li>
 
-            <!-- ===============================
+                <!-- ===============================
                  EXTERNAL OPERATIONS
             ================================ -->
-            <div class="sidebar-section">{{ __('admin.clients') }}</div>
+                <div class="sidebar-section">{{ __('admin.clients') }}</div>
 
-            <!-- Clients -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"
-                   href="{{ route('admin.clients.index') }}">
-                    💼 {{ __('admin.all_clients') }}
-                </a>
-            </li>
+                <!-- Clients -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"
+                        href="{{ route('admin.clients.index') }}">
+                        💼 {{ __('admin.all_clients') }}
+                    </a>
+                </li>
 
-            <!-- Users Management -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                   href="{{ route('admin.users.index') }}">
-                    👥 {{ __('admin.all_users') }}
-                </a>
-            </li>
+                <!-- Users Management -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                        href="{{ route('admin.users.index') }}">
+                        👥 {{ __('admin.all_users') }}
+                    </a>
+                </li>
 
-            <!-- Client Services -->
-             <!--
+                <!-- Client Services -->
+                <!--
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.client-services.*') ? 'active' : '' }}"
                    href="{{ route('admin.client-services.index') }}">
@@ -193,7 +223,7 @@
                 </a>
             </li>
 
-            // Projects 
+            // Projects
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}"
                    href="{{ route('admin.projects.index') }}">
@@ -201,7 +231,7 @@
                 </a>
             </li>
 
-           // Project Services 
+           // Project Services
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.project-services.*') ? 'active' : '' }}"
                    href="{{ route('admin.project-services.index') }}">
@@ -209,7 +239,7 @@
                 </a>
             </li>
 
-             //Project Documents 
+             //Project Documents
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.project-documents.*') ? 'active' : '' }}"
                    href="{{ route('admin.project-documents.index') }}">
@@ -218,29 +248,29 @@
             </li>
             -->
 
-            <!-- ===============================
+                <!-- ===============================
                  INTERNAL OPERATIONS
             ================================ -->
-            <div class="sidebar-section">{{ __('admin.hr_management') }}</div>
+                <div class="sidebar-section">{{ __('admin.hr_management') }}</div>
 
-            <!-- Employees -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}"
-                   href="{{ route('admin.employees.index') }}">
-                    👥 {{ __('admin.employees') }}
-                </a>
-            </li>
+                <!-- Employees -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}"
+                        href="{{ route('admin.employees.index') }}">
+                        👥 {{ __('admin.employees') }}
+                    </a>
+                </li>
 
-            <!-- Departments -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}"
-                   href="{{ route('admin.departments.index') }}">
-                    🏢 {{ __('admin.departments') }}
-                </a>
-            </li>
+                <!-- Departments -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}"
+                        href="{{ route('admin.departments.index') }}">
+                        🏢 {{ __('admin.departments') }}
+                    </a>
+                </li>
 
-            <!-- Attendance -->
-             <!--
+                <!-- Attendance -->
+                <!--
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}"
                    href="{{ route('admin.attendance.index') }}">
@@ -248,32 +278,32 @@
                 </a>
             </li>
             -->
-            <!-- ===============================
+                <!-- ===============================
                  SERVICES & RESOURCES
             ================================ -->
-            <div class="sidebar-section">{{ __('admin.facilities') }}</div>
+                <div class="sidebar-section">{{ __('admin.facilities') }}</div>
 
-            <!-- Machinery -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}"
-                   href="{{ route('admin.machinery.index') }}">
-                    🔧 {{ __('admin.machinery') }}
-                </a>
-            </li>
+                <!-- Machinery -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}"
+                        href="{{ route('admin.machinery.index') }}">
+                        🔧 {{ __('admin.machinery') }}
+                    </a>
+                </li>
 
-            <!-- Manpower -->
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}"
-                   href="{{ route('admin.manpower.index') }}">
-                    👷 {{ __('admin.manpower') }}
-                </a>
-            </li>
+                <!-- Manpower -->
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}"
+                        href="{{ route('admin.manpower.index') }}">
+                        👷 {{ __('admin.manpower') }}
+                    </a>
+                </li>
 
-            <!-- ===============================
+                <!-- ===============================
                  PAYROLL & FINANCE
             ================================ -->
-            <div class="sidebar-section">PAYROLL</div>
-            <!--  
+                <div class="sidebar-section">PAYROLL</div>
+                <!--
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.advances.*') ? 'active' : '' }}"
                    href="{{ route('admin.advances.index') }}">
@@ -296,68 +326,68 @@
             </li>
             -->
 
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.salaries.*') ? 'active' : '' }}"
-                   href="{{ route('admin.salaries.index') }}">
-                    💼 Salaries
-                </a>
-            </li>
-            
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.salaries.*') ? 'active' : '' }}"
+                        href="{{ route('admin.salaries.index') }}">
+                        💼 Salaries
+                    </a>
+                </li>
 
-            <!-- ===============================
+
+                <!-- ===============================
                  SYSTEM
             ================================ -->
-            <div class="sidebar-section">{{ __('admin.system') }}</div>
+                <div class="sidebar-section">{{ __('admin.system') }}</div>
 
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
-                   href="{{ route('admin.roles.index') }}">
-                    🔐 {{ __('admin.roles_permissions') }}
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
+                        href="{{ route('admin.roles.index') }}">
+                        🔐 {{ __('admin.roles_permissions') }}
+                    </a>
+                </li>
 
-            <li class="nav-item">
-                <a class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
-                   href="{{ route('admin.settings.index') }}">
-                    ⚙️ {{ __('admin.settings') }}
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
+                        href="{{ route('admin.settings.index') }}">
+                        ⚙️ {{ __('admin.settings') }}
+                    </a>
+                </li>
 
-            <!-- Logout -->
-            <li class="nav-item mt-4">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                            class="btn btn-outline-light w-100">
-                        🚪 {{ __('admin.logout') }}
-                    </button>
-                </form>
-            </li>
+                <!-- Logout -->
+                <li class="nav-item mt-4">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-light w-100">
+                            🚪 {{ __('admin.logout') }}
+                        </button>
+                    </form>
+                </li>
 
-        </ul>
-    </aside>
+            </ul>
+        </aside>
 
-    <!-- =========================
+        <!-- =========================
          MAIN CONTENT
     ========================== -->
-    <main class="flex-fill" style="overflow-x: hidden;">
-        @yield('content')
-    </main>
+        <main class="flex-fill" style="overflow-x: hidden;">
+            @yield('content')
+        </main>
 
-</div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var toggle = document.getElementById('adminSidebarToggle');
-    var sidebar = document.querySelector('.sidebar');
-    if (toggle && sidebar) {
-        toggle.addEventListener('click', function () {
-            sidebar.classList.toggle('sidebar-visible');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggle = document.getElementById('adminSidebarToggle');
+            var sidebar = document.querySelector('.sidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('sidebar-visible');
+                });
+            }
         });
-    }
-});
-</script>
+    </script>
 
 </body>
+
 </html>

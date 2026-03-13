@@ -10,11 +10,16 @@ class LanguageController extends Controller
 {
     public function switch($locale)
     {
-        if (in_array($locale, ['en', 'ar'])) {
-            Session::put('locale', $locale);
-            App::setLocale($locale);
+        // Validate the locale is supported
+        $supported = ['en', 'ar'];
+        if (!in_array($locale, $supported)) {
+            abort(400, 'Unsupported locale');
         }
-        
+
+        // Store in session
+        session(['locale' => $locale]);
+        App::setLocale($locale);
+
         return redirect()->back();
     }
 }

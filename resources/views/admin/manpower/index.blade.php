@@ -1,50 +1,63 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Manpower List</h1>
-    <a href="{{ route('admin.manpower.create') }}" class="btn btn-primary mb-3">Add New Manpower</a>
+    @php $isAr = app()->getLocale() === 'ar'; @endphp
+    <div class="container" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+        <h1 class="mb-4">{{ __('manpower.manpower_list') }}</h1>
+        <a href="{{ route('admin.manpower.create') }}" class="btn btn-primary mb-3">
+            {{ __('manpower.add_manpower') }}
+        </a>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Hourly Rate</th>
-                <th>Daily Rate</th>
-                <th>Monthly Rate</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($manpowers as $manpower)
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>{{ $manpower->id }}</td>
-                    <td>{{ $manpower->name }}</td>
-                    <td>{{ $manpower->hourly_rate }}</td>
-                    <td>{{ $manpower->daily_rate }}</td>
-                    <td>{{ $manpower->monthly_rate }}</td>
-                    <td>{{ ucfirst($manpower->status) }}</td>
-                    <td>
-                        <a href="{{ route('admin.manpower.edit', $manpower->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('admin.manpower.destroy', $manpower->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </td>
+                    <th>{{ __('manpower.id') }}</th>
+                    <th>{{ __('manpower.name') }}</th>
+                    <th>{{ __('manpower.hourly_rate') }}</th>
+                    <th>{{ __('manpower.daily_rate') }}</th>
+                    <th>{{ __('manpower.monthly_rate') }}</th>
+                    <th>{{ __('manpower.status') }}</th>
+                    <th>{{ __('manpower.actions') }}</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="text-center">No manpower found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @forelse($manpowers as $manpower)
+                    <tr>
+                        <td>{{ $manpower->id }}</td>
+                        <td>{{ $manpower->name }}</td>
+                        <td>{{ $manpower->hourly_rate }}</td>
+                        <td>{{ $manpower->daily_rate }}</td>
+                        <td>{{ $manpower->monthly_rate }}</td>
+                        <td>
+                            @if ($manpower->status === 'active')
+                                {{ __('manpower.status_active') }}
+                            @else
+                                {{ __('manpower.status_inactive') }}
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.manpower.edit', $manpower->id) }}"
+                                class="btn btn-sm btn-warning">{{ __('manpower.edit') }}</a>
+                            <form action="{{ route('admin.manpower.destroy', $manpower->id) }}" method="POST"
+                                class="d-inline" onsubmit="return confirm('{{ __('manpower.confirm_delete') }}');">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger">{{ __('manpower.delete') }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center">{{ __('manpower.no_manpower') }}</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+    </div>
 @endsection
