@@ -10,10 +10,24 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with('employee')->orderBy('date', 'desc')->get();
-        return view('admin.attendance.index', compact('attendances'));
+        $query = Attendance::with('employee');
+
+        if ($request->filled('employee_id')) {
+            $query->where('employee_id', $request->employee_id);
+        }
+
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('date', $month->year)
+                  ->whereMonth('date', $month->month);
+        }
+
+        $attendances = $query->orderBy('date', 'desc')->paginate(20);
+        $employees   = Employee::orderBy('name')->get();
+
+        return view('admin.attendance.index', compact('attendances', 'employees'));
     }
 
     public function create()

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Salaries Report</title>
+    <title>{{ __('admin.salaries_report') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,23 +53,23 @@
     </style>
 </head>
 <body>
-    <h2>Salary Report</h2>
+    <h2>{{ __('admin.salaries_report') }}</h2>
     <div class="report-date">
-        <strong>Period:</strong> {{ $monthDisplay }}<br>
-        <strong>Generated:</strong> {{ now()->format('d/m/Y H:i') }}
+        <strong>{{ __('admin.period') }}:</strong> {{ $monthDisplay }}<br>
+        <strong>{{ __('admin.generated_at') }}:</strong> {{ now()->format('d/m/Y H:i') }}
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>Employee</th>
-                <th class="text-right">Working Days</th>
-                <th class="text-right">Basic Salary</th>
-                <th class="text-right">Daily Rate</th>
-                <th class="text-right">Overtime</th>
-                <th class="text-right">Advances</th>
-                <th class="text-right">Expenses</th>
-                <th class="text-right">Final Salary</th>
+                <th>{{ __('admin.employee') }}</th>
+                <th class="text-right">{{ __('admin.working_days') }}</th>
+                <th class="text-right">{{ __('admin.basic_salary') }}</th>
+                <th class="text-right">{{ __('admin.daily_rate') }}</th>
+                <th class="text-right">{{ __('admin.overtime') }}</th>
+                <th class="text-right">{{ __('admin.advances') }}</th>
+                <th class="text-right">{{ __('admin.expenses') }}</th>
+                <th class="text-right">{{ __('admin.final_salary') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +88,7 @@
             @php $totalFinal += $sal['final_salary']; @endphp
             @endforeach
             <tr class="total-row">
-                <td colspan="7" class="text-right"><strong>TOTAL SALARIES:</strong></td>
+                <td colspan="7" class="text-right"><strong>{{ __('admin.total_salaries') }}:</strong></td>
                 <td class="text-right"><strong>{{ number_format($totalFinal, 2) }}</strong></td>
             </tr>
         </tbody>

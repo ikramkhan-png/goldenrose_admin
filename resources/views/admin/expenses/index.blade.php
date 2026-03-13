@@ -4,16 +4,34 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h2>📦 Project Expenses</h2>
-            <small class="text-muted">Track project-related costs (labor, materials, equipment)</small>
+            <h2>📦 {{ __('admin.project_expenses') }}</h2>
+            <small class="text-muted">{{ __('admin.project_expenses_subtitle') }}</small>
         </div>
-        <a href="{{ route('admin.expenses.create') }}" class="btn btn-success">Add Project Expense</a>
+        <a href="{{ route('admin.expenses.create') }}" class="btn btn-success">{{ __('admin.add_project_expense') }}</a>
     </div>
 
     <div class="alert alert-info mb-3">
-        <i class="fas fa-info-circle"></i> <strong>Note:</strong> These are project expenses. For employee expenses (salary-related), go to 
-        <a href="{{ route('admin.employee-expenses.index') }}" class="alert-link">Employee Expenses</a>.
+        <i class="fas fa-info-circle"></i>
+        <strong>{{ __('admin.note') }}:</strong>
+        {{ __('admin.project_expenses_note') }}
+        <a href="{{ route('admin.employee-expenses.index') }}" class="alert-link">{{ __('admin.employee_expenses') }}</a>.
     </div>
+
+    {{-- FILTERS --}}
+    <form method="GET" action="{{ route('admin.expenses.index') }}" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <label class="form-label">{{ __('admin.project') }}</label>
+            <input type="text" name="project_id" value="{{ request('project_id') }}" class="form-control" placeholder="{{ __('admin.project_id_or_empty') }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ __('admin.month') }}</label>
+            <input type="month" name="month" value="{{ request('month') }}" class="form-control">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">{{ __('admin.filter') }}</button>
+            <a href="{{ route('admin.expenses.index') }}" class="btn btn-secondary">{{ __('admin.reset') }}</a>
+        </div>
+    </form>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -23,13 +41,13 @@
     <table class="table table-bordered table-hover">
         <thead class="table-light">
             <tr>
-                <th>Project</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Invoice</th>
-                <th>Actions</th>
+                <th>{{ __('admin.project') }}</th>
+                <th>{{ __('admin.category') }}</th>
+                <th>{{ __('admin.amount') }}</th>
+                <th>{{ __('admin.date') }}</th>
+                <th>{{ __('admin.description') }}</th>
+                <th>{{ __('admin.invoice') }}</th>
+                <th>{{ __('admin.actions') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -43,19 +61,19 @@
                 <td>
                     @if($exp->invoice)
                         <a href="{{ asset('storage/'.$exp->invoice) }}" target="_blank" class="btn btn-sm btn-outline-info">
-                            <i class="fas fa-eye"></i> View
+                            <i class="fas fa-eye"></i> {{ __('admin.view') }}
                         </a>
                     @else
                         -
                     @endif
                 </td>
                 <td class="d-flex gap-2">
-                    <a href="{{ route('admin.expenses.edit', $exp->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{{ route('admin.expenses.edit', $exp->id) }}" class="btn btn-primary btn-sm">{{ __('admin.edit') }}</a>
 
-                    <form action="{{ route('admin.expenses.destroy', $exp->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                    <form action="{{ route('admin.expenses.destroy', $exp->id) }}" method="POST" onsubmit="return confirm('{{ __('admin.confirm_delete_record') }}');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" class="btn btn-danger btn-sm">{{ __('admin.delete') }}</button>
                     </form>
                 </td>
             </tr>
@@ -67,7 +85,7 @@
         {{ $expenses->links() }}
     </div>
     @else
-        <p class="text-muted">No project expenses found.</p>
+        <p class="text-muted">{{ __('admin.no_project_expenses_found') }}</p>
     @endif
 </div>
 @endsection

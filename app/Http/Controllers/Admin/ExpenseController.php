@@ -19,6 +19,11 @@ class ExpenseController extends Controller
         if ($request->has('project_id') && $request->project_id) {
             $query->where('project_id', $request->project_id);
         }
+        if ($request->filled('month')) {
+            $month = \Carbon\Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('date', $month->year)
+                  ->whereMonth('date', $month->month);
+        }
         $expenses = $query->paginate(15);
 
         return view('admin.expenses.index', compact('expenses'));

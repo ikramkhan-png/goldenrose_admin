@@ -62,13 +62,17 @@
             <div class="card-body p-4">
                 <form action="{{ route('admin.employee-expenses.index') }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
                     <div style="flex: 1; min-width: 250px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">👤 Filter by Employee</label>
+                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">👤 {{ __('admin.filter_by_employee') }}</label>
                         <select name="employee_id" class="form-select" onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                            <option value="">All Employees</option>
+                            <option value="">{{ __('admin.all_employees') }}</option>
                             @foreach($employees as $emp)
                                 <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('admin.month') }}</label>
+                        <input type="month" name="month" class="form-control" value="{{ request('month') }}" onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
                     </div>
                 </form>
             </div>
@@ -91,12 +95,12 @@
                         <thead>
                             <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                                 <th style="padding: 18px 16px; font-weight: 600; border: none;">#</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">EMPLOYEE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">AMOUNT</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">DATE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">DESCRIPTION</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">INVOICE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">ACTIONS</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.employee') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">{{ __('admin.amount') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.date') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.description') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.invoice') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,7 +114,7 @@
                                 <td style="padding: 16px; text-align: center;">
                                     @if($expense->invoice)
                                         <a href="{{ asset('storage/'.$expense->invoice) }}" target="_blank" class="btn btn-sm" style="background: #e8f4fd; color: #2196f3; border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px;">
-                                            <i class="bi bi-eye"></i> View
+                                            <i class="bi bi-eye"></i> {{ __('admin.view') }}
                                         </a>
                                     @else
                                         <span class="text-muted">-</span>
@@ -120,7 +124,7 @@
                                     <a href="{{ route('admin.employee-expenses.edit', $expense) }}" class="btn btn-sm fw-semibold" style="background: #2196f3; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('admin.employee-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this expense?')">
+                                    <form action="{{ route('admin.employee-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('admin.confirm_delete_record') }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm fw-semibold" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3); margin-left: 4px;" type="submit">
@@ -132,7 +136,7 @@
                             @empty
                             <tr>
                                 <td colspan="7" class="text-center py-5" style="color: #999; font-size: 13px;">
-                                    <i class="bi bi-inbox" style="font-size: 24px; opacity: 0.3;"></i><br><br>No employee expenses found
+                                    <i class="bi bi-inbox" style="font-size: 24px; opacity: 0.3;"></i><br><br>{{ __('admin.no_employee_expenses_found') }}
                                 </td>
                             </tr>
                             @endforelse
@@ -141,7 +145,7 @@
                 </div>
             </div>
             <div style="padding: 12px 16px; background: #f8f9fc; border-top: 1px solid #e8ecf1; font-size: 12px; color: #999;">
-                💰 Total Records: <strong>{{ $expenses->total() }}</strong>
+                💰 {{ __('admin.total_records') }}: <strong>{{ $expenses->total() }}</strong>
             </div>
         </div>
 
