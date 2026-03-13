@@ -1,38 +1,45 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Golden Rose Admin Panel</title>
-    @if(app()->getLocale() == 'ar')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-@else
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-@endif
+    <title>Golden Rose Admin Panel - 1 {{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}</title>
+    @if (app()->getLocale() == 'ar')
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .mobile-topbar {
             display: none;
         }
+
         .admin-layout-wrapper {
             min-height: 100vh;
         }
+
         .admin-sidebar {
             width: 100%;
         }
+
         @media (min-width: 768px) {
             .admin-layout-wrapper {
                 flex-direction: row;
             }
+
             .admin-sidebar {
                 width: 250px;
                 min-height: 100vh;
                 overflow-y: auto;
             }
         }
+
         .table tbody tr:hover {
             background-color: #f8f9fc !important;
         }
+
         .table th,
         .table td {
             font-size: 15px;
@@ -40,22 +47,27 @@
             font-weight: 600;
             padding: 18px 16px !important;
         }
+
         @media (max-width: 767.98px) {
             .mobile-topbar {
                 display: flex;
             }
+
             .admin-sidebar {
                 display: none;
             }
+
             .admin-sidebar.sidebar-visible {
                 display: block;
             }
+
             .table {
                 display: block;
                 width: 100%;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
+
             .table thead,
             .table tbody,
             .table tr,
@@ -66,6 +78,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="mobile-topbar d-md-none bg-dark text-white d-flex align-items-center justify-content-between px-3 py-2">
         <span class="fw-semibold">Golden Rose Admin</span>
@@ -82,12 +95,16 @@
 
             <!-- Language Switcher -->
             <div class="dropdown mb-3">
-                <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}: {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
+                <button class="btn btn-outline-light btn-sm dropdown-toggle w-100" type="button" id="languageDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe me-1"></i> {{ __('admin.language') }}:
+                    {{ app()->getLocale() == 'ar' ? __('admin.arabic') : __('admin.english') }}
                 </button>
                 <ul class="dropdown-menu w-100" aria-labelledby="languageDropdown">
-                    <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
-                    <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}" href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'en' ? 'active' : '' }}"
+                            href="{{ route('language.switch', 'en') }}">🇺🇸 {{ __('admin.english') }}</a></li>
+                    <li><a class="dropdown-item {{ app()->getLocale() == 'ar' ? 'active' : '' }}"
+                            href="{{ route('language.switch', 'ar') }}">🇸🇦 {{ __('admin.arabic') }}</a></li>
                 </ul>
             </div>
 
@@ -96,7 +113,7 @@
                 <strong>{{ auth()->user()->name }}</strong>
                 <br>
                 <span class="badge bg-info">
-                    @if(auth()->user()->hasRole('super_admin'))
+                    @if (auth()->user()->hasRole('super_admin'))
                         {{ __('admin.super_admin') }}
                     @elseif(auth()->user()->hasRole('admin'))
                         {{ __('admin.admin') }}
@@ -111,8 +128,8 @@
             <ul class="nav flex-column">
                 <!-- DASHBOARD -->
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
-                       href="{{ route('admin.dashboard') }}">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        href="{{ route('admin.dashboard') }}">
                         📊 {{ __('admin.dashboard') }}
                     </a>
                 </li>
@@ -124,15 +141,15 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.clients.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"
+                            href="{{ route('admin.clients.index') }}">
                             💼 {{ __('admin.all_clients') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.client-services.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.client-services.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.client-services.*') ? 'active' : '' }}"
+                            href="{{ route('admin.client-services.index') }}">
                             🛎️ {{ __('admin.service_clients') }}
                         </a>
                     </li>
@@ -145,14 +162,14 @@
                 @endcan
 
                 <!-- USERS MANAGEMENT -->
-                @if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin'))
+                @if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin'))
                     <li class="nav-item mt-3">
                         <span class="text-uppercase text-muted small px-3">{{ __('admin.user_management') }}</span>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.users.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                            href="{{ route('admin.users.index') }}">
                             👥 {{ __('admin.all_users') }}
                         </a>
                     </li>
@@ -165,8 +182,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.projects.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}"
+                            href="{{ route('admin.projects.index') }}">
                             📊 {{ __('admin.projects') }}
                         </a>
                     </li>
@@ -187,22 +204,22 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.employees.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}"
+                            href="{{ route('admin.employees.index') }}">
                             👥 {{ __('admin.employees') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.attendance.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}"
+                            href="{{ route('admin.attendance.index') }}">
                             ✓ {{ __('admin.attendance') }}
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.departments.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.departments.*') ? 'active' : '' }}"
+                            href="{{ route('admin.departments.index') }}">
                             🏢 {{ __('admin.departments') }}
                         </a>
                     </li>
@@ -214,28 +231,28 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}" 
-                       href="{{ route('admin.machinery.index') }}">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.machinery.*') ? 'active' : '' }}"
+                        href="{{ route('admin.machinery.index') }}">
                         🔧 {{ __('admin.machinery') }}
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}" 
-                       href="{{ route('admin.manpower.index') }}">
+                    <a class="nav-link text-white {{ request()->routeIs('admin.manpower.*') ? 'active' : '' }}"
+                        href="{{ route('admin.manpower.index') }}">
                         👷 {{ __('admin.manpower') }}
                     </a>
                 </li>
 
                 <!-- SYSTEM MANAGEMENT SECTION -->
-                @if(auth()->user()->hasRole('super_admin'))
+                @if (auth()->user()->hasRole('super_admin'))
                     <li class="nav-item mt-3">
                         <span class="text-uppercase text-muted small px-3">{{ __('admin.system') }}</span>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" 
-                           href="{{ route('admin.roles.index') }}">
+                        <a class="nav-link text-white {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
+                            href="{{ route('admin.roles.index') }}">
                             🔐 {{ __('admin.roles_permissions') }}
                         </a>
                     </li>
@@ -346,15 +363,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var toggle = document.getElementById('globalSidebarToggle');
-        var sidebar = document.querySelector('.admin-sidebar');
-        if (toggle && sidebar) {
-            toggle.addEventListener('click', function () {
-                sidebar.classList.toggle('sidebar-visible');
-            });
-        }
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggle = document.getElementById('globalSidebarToggle');
+            var sidebar = document.querySelector('.admin-sidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('sidebar-visible');
+                });
+            }
+        });
     </script>
 </body>
+
 </html>
