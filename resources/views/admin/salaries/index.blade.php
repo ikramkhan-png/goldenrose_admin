@@ -9,14 +9,14 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💼 Salary Management</h1>
-                        <p class="text-muted mb-0" style="font-size: 14px;">Monitor payroll, attendance, and financial records</p>
+                        <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💼 {{ __('admin.salary_management') }}</h1>
+                        <p class="text-muted mb-0" style="font-size: 14px;">{{ __('admin.salary_management_subtitle') }}</p>
                     </div>
                     <form action="{{ route('admin.salaries.export-pdf') }}" method="POST">
                         @csrf
                         <input type="hidden" name="month" value="{{ request('month', now()->format('Y-m')) }}">
                         <button type="submit" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                            <i class="bi bi-download"></i> Export PDF
+                            <i class="bi bi-download"></i> {{ __('admin.export_pdf') }}
                         </button>
                     </form>
                 </div>
@@ -30,12 +30,12 @@
             <div class="card-body p-4">
                 <form action="{{ route('admin.salaries.index') }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
                     <div style="flex: 1; min-width: 250px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 Select Month</label>
+                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('admin.select_month') }}</label>
                         <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
                                onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
                     </div>
                     <div style="flex: 1; min-width: 200px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 Period</label>
+                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('admin.period') }}</label>
                         <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
                             {{ $selectedMonth->format('F Y') }}
                         </div>
@@ -52,31 +52,31 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}?tab=salaries" role="tab"
                    style="border-radius: 8px; transition: all 0.2s; {{ $tab === 'salaries' ? 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;' : 'color: #666;' }}">
-                    <i class="bi bi-wallet2"></i> Salaries
+                    <i class="bi bi-wallet2"></i> {{ __('admin.salaries') }}
                 </a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}?tab=attendance" role="tab"
                    style="border-radius: 8px; transition: all 0.2s; {{ $tab === 'attendance' ? 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;' : 'color: #666;' }}">
-                    <i class="bi bi-calendar-check"></i> Attendance
+                    <i class="bi bi-calendar-check"></i> {{ __('admin.attendance') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.advances.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-cash-coin"></i> Advances
+                    <i class="bi bi-cash-coin"></i> {{ __('admin.advances') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.overtimes.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-clock-history"></i> Overtime
+                    <i class="bi bi-clock-history"></i> {{ __('admin.overtime') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.employee-expenses.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-receipt"></i> Expenses
+                    <i class="bi bi-receipt"></i> {{ __('admin.employee_expenses') }}
                 </a>
             </li>
         </ul>
@@ -92,14 +92,14 @@
                     <table class="table mb-0" style="font-size: 13px;">
                         <thead>
                             <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">EMPLOYEE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">DAYS</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">BASIC</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">DAILY RATE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">+ OT</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">- ADV</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">+ EXP</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">TOTAL</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.employee') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.days') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">{{ __('admin.basic_salary_short') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">{{ __('admin.daily_rate') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">+ {{ __('admin.overtime_short') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">- {{ __('admin.advance_short') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">+ {{ __('admin.expense_short') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: right;">{{ __('admin.total') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,7 +118,7 @@
                             @php $totalFinal += $sal['final_salary']; @endphp
                             @endforeach
                             <tr style="background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%); font-weight: 700;">
-                                <td colspan="7" style="padding: 18px 16px; text-align: right; color: #2c3e50;">TOTAL PAYROLL:</td>
+                                <td colspan="7" style="padding: 18px 16px; text-align: right; color: #2c3e50;">{{ __('admin.total_payroll') }}:</td>
                                 <td style="padding: 18px 16px; text-align: right; color: #667eea; font-size: 15px;">{{ number_format($totalFinal, 0) }}</td>
                             </tr>
                         </tbody>
@@ -126,14 +126,14 @@
                 </div>
             </div>
             <div style="padding: 12px 16px; background: #f8f9fc; border-top: 1px solid #e8ecf1; font-size: 12px; color: #999;">
-                📊 Total Employees: <strong>{{ count($salaries) }}</strong> | 📅 Generated: <strong>{{ now()->format('M d, Y') }}</strong>
+                📊 {{ __('admin.total_employees') }}: <strong>{{ count($salaries) }}</strong> | 📅 {{ __('admin.generated_at') }}: <strong>{{ now()->format('M d, Y') }}</strong>
             </div>
         </div>
     </div>
     @else
         <div class="container-xl px-4">
             <div class="alert border-0" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 12px; padding: 20px; color: #667eea; border-left: 4px solid #667eea;">
-                <i class="bi bi-info-circle"></i> <strong>No data available</strong> for {{ $selectedMonth->format('F Y') }}
+                <i class="bi bi-info-circle"></i> <strong>{{ __('admin.no_data_available') }}</strong> {{ __('admin.for_period', ['period' => $selectedMonth->format('F Y')]) }}
             </div>
         </div>
     @endif
@@ -143,13 +143,13 @@
     @if($tab === 'attendance')
     <div class="container-xl px-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-dark mb-0">📋 Attendance Records</h4>
+            <h4 class="fw-bold text-dark mb-0">📋 {{ __('admin.attendance_records') }}</h4>
             <div class="d-flex gap-2">
                 <a href="{{ route('admin.attendance.create') }}" class="btn fw-semibold" style="background: white; color: #667eea; border: 2px solid #667eea; padding: 8px 16px; border-radius: 8px; font-size: 13px;">
-                    <i class="bi bi-plus-lg"></i> Add Single
+                    <i class="bi bi-plus-lg"></i> {{ __('admin.add_single') }}
                 </a>
                 <button type="button" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);" onclick="document.getElementById('bulkForm').style.display = document.getElementById('bulkForm').style.display === 'none' ? 'block' : 'none'">
-                    <i class="bi bi-plus-lg"></i> Add Bulk
+                    <i class="bi bi-plus-lg"></i> {{ __('admin.add_bulk') }}
                 </button>
             </div>
         </div>
@@ -158,38 +158,38 @@
         <div id="bulkForm" style="display: none;" class="mb-4">
             <div class="card border-0" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 15px; border-left: 4px solid #667eea;">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold text-dark mb-3" style="font-size: 14px;">⚡ Quick Bulk Entry</h6>
+                    <h6 class="fw-bold text-dark mb-3" style="font-size: 14px;">⚡ {{ __('admin.quick_bulk_entry') }}</h6>
                     <form action="{{ route('admin.attendance.bulk-store') }}" method="POST">
                         @csrf
                         <div class="row g-3">
                             <div class="col-md-2">
-                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">Employee</label>
+                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">{{ __('admin.employee') }}</label>
                                 <select name="employee_id" class="form-select" style="padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-size: 13px;" required>
-                                    <option value="">Select</option>
+                                    <option value="">{{ __('admin.select_option') }}</option>
                                     @foreach($employees ?? [] as $emp)
                                         <option value="{{ $emp->id }}">{{ $emp->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">Month</label>
+                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">{{ __('admin.month') }}</label>
                                 <input type="month" name="month" class="form-control" style="padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-size: 13px;" value="{{ request('month', now()->format('Y-m')) }}" required>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">Days</label>
+                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">{{ __('admin.days') }}</label>
                                 <input type="number" name="num_days" class="form-control" style="padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-size: 13px;" min="1" max="31" placeholder="20" required>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">Check In</label>
+                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">{{ __('admin.check_in') }}</label>
                                 <input type="time" name="check_in" class="form-control" style="padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-size: 13px;" value="09:00" required>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">Check Out</label>
+                                <label class="form-label fw-bold" style="font-size: 12px; color: #666;">{{ __('admin.check_out') }}</label>
                                 <input type="time" name="check_out" class="form-control" style="padding: 10px; border: 2px solid #667eea; border-radius: 8px; font-size: 13px;" value="18:00" required>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="submit" class="btn w-100 fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; padding: 10px; font-size: 13px;">
-                                    <i class="bi bi-check"></i> Save
+                                    <i class="bi bi-check"></i> {{ __('admin.save') }}
                                 </button>
                             </div>
                         </div>
@@ -206,11 +206,11 @@
                         <thead>
                             <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                                 <th style="padding: 18px 16px; font-weight: 600; border: none;">#</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">EMPLOYEE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">DATE</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">CHECK IN</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">CHECK OUT</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">ACTION</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.employee') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.date') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.check_in') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.check_out') }}</th>
+                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -222,14 +222,14 @@
                                 <td style="padding: 16px; text-align: center; color: #27ae60; font-weight: 600;">{{ $attendance->check_in ?? '-' }}</td>
                                 <td style="padding: 16px; text-align: center; color: #e74c3c; font-weight: 600;">{{ $attendance->check_out ?? '-' }}</td>
                                 <td style="padding: 16px; text-align: center;">
-                                    <a href="{{ route('admin.attendance.edit', $attendance) }}" class="btn btn-sm fw-semibold" style="background: #2196f3; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3); transition: all 0.2s;" title="Edit" onmouseover="this.style.boxShadow='0 4px 12px rgba(33, 150, 243, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(33, 150, 243, 0.3)'; this.style.transform='translateY(0)'">
-                                        <i class="bi bi-pencil"></i> Edit
+                                    <a href="{{ route('admin.attendance.edit', $attendance) }}" class="btn btn-sm fw-semibold" style="background: #2196f3; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3); transition: all 0.2s;" title="{{ __('admin.edit') }}" onmouseover="this.style.boxShadow='0 4px 12px rgba(33, 150, 243, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(33, 150, 243, 0.3)'; this.style.transform='translateY(0)'">
+                                        <i class="bi bi-pencil"></i> {{ __('admin.edit') }}
                                     </a>
-                                    <form action="{{ route('admin.attendance.destroy', $attendance) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this record?')">
+                                    <form action="{{ route('admin.attendance.destroy', $attendance) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('admin.confirm_delete_record') }}')">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm fw-semibold" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3); transition: all 0.2s; margin-left: 4px;" type="submit" title="Delete" onmouseover="this.style.boxShadow='0 4px 12px rgba(231, 76, 60, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(231, 76, 60, 0.3)'; this.style.transform='translateY(0)'">
-                                            <i class="bi bi-trash"></i> Delete
+                                        <button class="btn btn-sm fw-semibold" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3); transition: all 0.2s; margin-left: 4px;" type="submit" title="{{ __('admin.delete') }}" onmouseover="this.style.boxShadow='0 4px 12px rgba(231, 76, 60, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(231, 76, 60, 0.3)'; this.style.transform='translateY(0)'">
+                                            <i class="bi bi-trash"></i> {{ __('admin.delete') }}
                                         </button>
                                     </form>
                                 </td>
@@ -237,7 +237,7 @@
                             @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5" style="color: #999; font-size: 13px;">
-                                    <i class="bi bi-inbox" style="font-size: 24px; opacity: 0.3;"></i><br><br>No attendance records
+                                    <i class="bi bi-inbox" style="font-size: 24px; opacity: 0.3;"></i><br><br>{{ __('admin.no_attendance_records') }}
                                 </td>
                             </tr>
                             @endforelse
@@ -246,7 +246,7 @@
                 </div>
             </div>
             <div style="padding: 12px 16px; background: #f8f9fc; border-top: 1px solid #e8ecf1; font-size: 12px; color: #999;">
-                📝 Total Records: <strong>{{ count($attendances ?? []) }}</strong>
+                📝 {{ __('admin.total_records') }}: <strong>{{ count($attendances ?? []) }}</strong>
             </div>
         </div>
     </div>
