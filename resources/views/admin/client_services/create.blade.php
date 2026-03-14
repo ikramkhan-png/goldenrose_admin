@@ -60,6 +60,13 @@
             <input type="number" name="rate" step="0.01" class="form-control" min="0" required>
         </div>
 
+        {{-- Assigned Date --}}
+        <div class="mb-3">
+            <label class="form-label">Assigned Date <span class="text-danger">*</span></label>
+            <input type="date" name="assigned_date" class="form-control" required value="{{ now()->format('Y-m-d') }}">
+            <small class="text-muted">This date will be used for monthly filtering</small>
+        </div>
+
         <button class="btn btn-success">Assign Service</button>
         <a href="{{ route('admin.client-services.index') }}" class="btn btn-secondary">Cancel</a>
     </form>

@@ -23,6 +23,12 @@ class EmployeeExpenseController extends Controller
             $query->where('employee_id', $request->employee_id);
         }
 
+        if ($request->filled('month')) {
+            $month = \Carbon\Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('date', $month->year)
+                  ->whereMonth('date', $month->month);
+        }
+
         $expenses = $query->paginate(15);
         $employees = Employee::orderBy('name')->get();
 

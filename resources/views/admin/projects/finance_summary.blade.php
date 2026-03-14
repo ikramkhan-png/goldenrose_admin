@@ -68,6 +68,25 @@
         </div>
     </div>
 
+    {{-- ===== MONTH FILTER FOR BILLINGS ===== --}}
+    <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
+        <div class="card-body p-4">
+            <form action="{{ request()->url() }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
+                <div style="flex: 1; min-width: 250px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 Filter Billings by Month</label>
+                    <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
+                           onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 Filter</label>
+                    <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : now()->format('F Y') }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- ===== BILLINGS TABLE ===== --}}
     <div class="mb-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-semibold mb-3">Billing Details</h5>
@@ -102,31 +121,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($projectsBillings as $index => $b)
+                    @foreach($billings as $index => $b)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             @if(isset($client))
-                                <td>{{ $b['project_name'] ?? '-' }}</td>
+                                <td>{{ $b->project->name }}</td>
                             @endif
-                            <td>{{ number_format($b['amount_billed'], 2) }}</td>
-                            <td>{{ number_format($b['amount_paid'] ?? 0, 2) }}</td>
+                            <td style="text-align: right; font-weight: 600;">{{ number_format($b->amount_billed, 2) }}</td>
+                            <td style="text-align: right; color: #28a745;">{{ number_format($b->amount_paid, 2) }}</td>
+                            <td style="text-align: right; color: #dc3545;">{{ number_format($b->amount_billed - $b->amount_paid, 2) }}</td>
                             <td>
-                                <span class="{{ ($b['remaining'] ?? 0) > 0 ? 'text-warning' : 'text-success' }}">
-                                    {{ number_format($b['remaining'] ?? 0, 2) }}
-                                </span>
-                            </td>
-                            <td>
-                                @if(($b['status'] ?? '') === 'pending')
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                @else
+                                @if($b->status == 'paid')
                                     <span class="badge bg-success">Paid</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
                                 @endif
                             </td>
-                            <td>{{ $b['payment_date'] ?? '-' }}</td>
-                            <td>{{ $b['notes'] ?? '-' }}</td>
+                            <td>{{ $b->payment_date ? \Carbon\Carbon::parse($b->payment_date)->format('M d, Y') : '-' }}</td>
+                            <td>{{ $b->notes ?? '-' }}</td>
                             <td>
-                                @if(!empty($b['invoice']))
-                                    <a href="{{ asset('storage/'.$b['invoice']) }}" target="_blank" class="btn btn-sm btn-outline-secondary">View</a>
+                                @if(!empty($b->invoice))
+                                    <a href="{{ asset('storage/' . $b->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-pdf"></i> View
+                                    </a>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
@@ -138,7 +155,7 @@
             </div>
         </div>
     @else
-        <p class="text-muted text-center">No billing records found.</p>
+        <p class="text-muted text-center">No billing records found for {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : 'the selected period' }}.</p>
     @endif
 
     

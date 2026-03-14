@@ -52,6 +52,11 @@
                 </select>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">{{ __('admin.hiring_date') }}</label>
+                <input type="date" name="hiring_date" class="form-control" value="{{ now()->format('Y-m-d') }}">
+            </div>
+
             <button type="submit" class="btn btn-success">
                 {{ __('employees.add_employee') }}
             </button>

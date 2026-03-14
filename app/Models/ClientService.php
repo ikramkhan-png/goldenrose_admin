@@ -21,6 +21,7 @@ class ClientService extends Model
         'hourly_rate',
         'daily_rate',
         'monthly_rate',
+        'assigned_date', // new field for monthly filtering
     ];
 
     // Client relationship

@@ -5,12 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::latest()->get();
+        $query = Department::query();
+
+        // Filter by creation date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('created_at', $month->year)
+                  ->whereMonth('created_at', $month->month);
+        }
+
+        $departments = $query->latest()->get();
         return view('admin.departments.index', compact('departments'));
     }
 

@@ -1,18 +1,19 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-4">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div class="container-fluid px-4 py-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
     <!-- Header -->
     <div class="mb-4">
-        <h2 class="mb-2">⚙️ System Settings</h2>
-        <p class="text-muted">Configure system-wide settings and preferences</p>
+        <h2 class="mb-2">⚙️ {{ __('admin.system_settings') }}</h2>
+        <p class="text-muted">{{ __('admin.system_settings_subtitle') }}</p>
     </div>
 
     <!-- Alerts -->
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Error!</strong>
-            <ul class="mb-0 ms-3">
+            <strong>{{ __('admin.error') }}</strong>
+            <ul class="mb-0 {{ $isAr ? 'me-3' : 'ms-3' }}">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -41,43 +42,43 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" 
                     type="button" role="tab" aria-controls="general" aria-selected="true">
-                    🏢 General
+                    🏢 {{ __('admin.general') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" 
                     type="button" role="tab" aria-controls="system" aria-selected="false">
-                    ⚙️ System
+                    ⚙️ {{ __('admin.system') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="email-tab" data-bs-toggle="tab" data-bs-target="#email" 
                     type="button" role="tab" aria-controls="email" aria-selected="false">
-                    📧 Email
+                    📧 {{ __('admin.email') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" 
                     type="button" role="tab" aria-controls="notifications" aria-selected="false">
-                    🔔 Notifications
+                    🔔 {{ __('admin.notifications') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" 
                     type="button" role="tab" aria-controls="security" aria-selected="false">
-                    🔐 Security
+                    🔐 {{ __('admin.security') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" 
                     type="button" role="tab" aria-controls="backup" aria-selected="false">
-                    💾 Backup
+                    💾 {{ __('admin.backup') }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" 
                     type="button" role="tab" aria-controls="maintenance" aria-selected="false">
-                    🛠️ Maintenance
+                    🛠️ {{ __('admin.maintenance') }}
                 </button>
             </li>
         </ul>
@@ -96,35 +97,35 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Company Name</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.company_name') }}</strong></label>
                                 <input type="text" class="form-control" name="company_name" 
                                     value="{{ $settings['company_name'] ?? '' }}" required>
-                                <small class="text-muted">Your company or organization name</small>
+                                <small class="text-muted">{{ __('admin.your_company_or_organization_name') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Company Email</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.company_email') }}</strong></label>
                                 <input type="email" class="form-control" name="company_email" 
                                     value="{{ $settings['company_email'] ?? '' }}" required>
-                                <small class="text-muted">Main contact email address</small>
+                                <small class="text-muted">{{ __('admin.main_contact_email_address') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Company Phone</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.company_phone') }}</strong></label>
                                 <input type="text" class="form-control" name="company_phone" 
                                     value="{{ $settings['company_phone'] ?? '' }}" required>
-                                <small class="text-muted">Main phone number</small>
+                                <small class="text-muted">{{ __('admin.main_phone_number') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Company Address</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.company_address') }}</strong></label>
                                 <input type="text" class="form-control" name="company_address" 
                                     value="{{ $settings['company_address'] ?? '' }}" required>
-                                <small class="text-muted">Physical address</small>
+                                <small class="text-muted">{{ __('admin.physical_address') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Currency</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.currency') }}</strong></label>
                                 <select class="form-select" name="currency" required>
                                     <option value="USD" {{ isset($settings['currency']) && $settings['currency'] === 'USD' ? 'selected' : '' }}>USD - US Dollar</option>
                                     <option value="EUR" {{ isset($settings['currency']) && $settings['currency'] === 'EUR' ? 'selected' : '' }}>EUR - Euro</option>
@@ -132,13 +133,13 @@
                                     <option value="AED" {{ isset($settings['currency']) && $settings['currency'] === 'AED' ? 'selected' : '' }}>AED - UAE Dirham</option>
                                     <option value="SAR" {{ isset($settings['currency']) && $settings['currency'] === 'SAR' ? 'selected' : '' }}>SAR - Saudi Riyal</option>
                                 </select>
-                                <small class="text-muted">Default currency for transactions</small>
+                                <small class="text-muted">{{ __('admin.default_currency_for_transactions') }}</small>
                             </div>
                         </div>
 
                         <div class="border-top pt-3 mt-3">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save General Settings
+                                <i class="fas fa-save"></i> {{ __('admin.save_general_settings') }}
                             </button>
                         </div>
                     </form>
@@ -156,34 +157,33 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Timezone</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.timezone') }}</strong></label>
                                 <select class="form-select" name="app_timezone" required>
-                                    <option value="UTC" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'UTC' ? 'selected' : '' }}>UTC</option>
-                                    <option value="America/New_York" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/New_York' ? 'selected' : '' }}>Eastern Time</option>
-                                    <option value="America/Chicago" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/Chicago' ? 'selected' : '' }}>Central Time</option>
-                                    <option value="America/Los_Angeles" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/Los_Angeles' ? 'selected' : '' }}>Pacific Time</option>
-                                    <option value="Europe/London" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'Europe/London' ? 'selected' : '' }}>London</option>
-                                    <option value="Asia/Dubai" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'Asia/Dubai' ? 'selected' : '' }}>Dubai (GST)</option>
+                                    <option value="America/New_York" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/New_York' ? 'selected' : '' }}>{{ __('admin.eastern_time') }}</option>
+                                    <option value="America/Chicago" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/Chicago' ? 'selected' : '' }}>{{ __('admin.central_time') }}</option>
+                                    <option value="America/Los_Angeles" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'America/Los_Angeles' ? 'selected' : '' }}>{{ __('admin.pacific_time') }}</option>
+                                    <option value="Europe/London" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'Europe/London' ? 'selected' : '' }}>{{ __('admin.london') }}</option>
+                                    <option value="Asia/Dubai" {{ isset($settings['app_timezone']) && $settings['app_timezone'] === 'Asia/Dubai' ? 'selected' : '' }}>{{ __('admin.dubai_gst') }}</option>
                                 </select>
-                                <small class="text-muted">System timezone for all timestamps</small>
+                                <small class="text-muted">{{ __('admin.system_timezone_for_all_timestamps') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Language</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.language') }}</strong></label>
                                 <select class="form-select" name="app_locale" required>
-                                    <option value="en" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'en' ? 'selected' : '' }}>English</option>
-                                    <option value="es" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'es' ? 'selected' : '' }}>Spanish</option>
-                                    <option value="fr" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'fr' ? 'selected' : '' }}>French</option>
-                                    <option value="de" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'de' ? 'selected' : '' }}>German</option>
+                                    <option value="en" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'en' ? 'selected' : '' }}>{{ __('admin.english') }}</option>
+                                    <option value="es" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'es' ? 'selected' : '' }}>{{ __('admin.spanish') }}</option>
+                                    <option value="fr" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'fr' ? 'selected' : '' }}>{{ __('admin.french') }}</option>
+                                    <option value="de" {{ isset($settings['app_locale']) && $settings['app_locale'] === 'de' ? 'selected' : '' }}>{{ __('admin.german') }}</option>
                                 </select>
-                                <small class="text-muted">Default system language</small>
+                                <small class="text-muted">{{ __('admin.default_system_language') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Items Per Page</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.items_per_page') }}</strong></label>
                                 <input type="number" class="form-control" name="items_per_page" 
                                     value="{{ $settings['items_per_page'] ?? 15 }}" min="5" max="100" required>
-                                <small class="text-muted">Default pagination size</small>
+                                <small class="text-muted">{{ __('admin.default_pagination_size') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -196,7 +196,7 @@
 
                         <div class="border-top pt-3 mt-3">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save System Settings
+                                <i class="fas fa-save"></i> {{ __('admin.save_system_settings') }}
                             </button>
                         </div>
                     </form>
@@ -221,19 +221,19 @@
                             <div class="form-control-plaintext">
                                 <span class="badge bg-info">{{ $settings['mail_driver'] }}</span>
                             </div>
-                            <small class="text-muted">Current mail driver (SMTP, Mailgun, etc.)</small>
+                            <small class="text-muted">{{ __('admin.mail_driver_current') }}</small>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>From Email</strong></label>
+                            <label class="form-label"><strong>{{ __('admin.from_address') }}</strong></label>
                             <div class="form-control-plaintext">{{ $settings['mail_from_address'] }}</div>
-                            <small class="text-muted">Default sender email address</small>
+                            <small class="text-muted">{{ __('admin.default_sender_email') }}</small>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>From Name</strong></label>
+                            <label class="form-label"><strong>{{ __('admin.from_name') }}</strong></label>
                             <div class="form-control-plaintext">{{ $settings['mail_from_name'] }}</div>
-                            <small class="text-muted">Default sender name</small>
+                            <small class="text-muted">{{ __('admin.default_sender_name') }}</small>
                         </div>
                     </div>
 
@@ -241,7 +241,7 @@
                         <form action="{{ route('admin.settings.testEmail') }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-info">
-                                <i class="fas fa-envelope"></i> Send Test Email
+                                <i class="fas fa-envelope"></i> {{ __('admin.send_test_email') }}
                             </button>
                         </form>
                     </div>
@@ -268,7 +268,7 @@
                                     <label class="form-check-label" for="email_notif">
                                         <strong>Email Notifications</strong>
                                         <br>
-                                        <small class="text-muted">Send important updates via email</small>
+                                        <small class="text-muted">{{ __('admin.send_email_notifications') }}</small>
                                     </label>
                                 </div>
                             </div>
@@ -281,22 +281,22 @@
                                     <label class="form-check-label" for="dashboard_alerts">
                                         <strong>Dashboard Alerts</strong>
                                         <br>
-                                        <small class="text-muted">Show notifications on dashboard</small>
+                                        <small class="text-muted">{{ __('admin.show_dashboard_alerts') }}</small>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Notification Email</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.notification_email') }}</strong></label>
                                 <input type="email" class="form-control" name="notification_email" 
                                     value="{{ $settings['notification_email'] ?? '' }}" required>
-                                <small class="text-muted">Email to receive important notifications</small>
+                                <small class="text-muted">{{ __('admin.email_for_notifications') }}</small>
                             </div>
                         </div>
 
                         <div class="border-top pt-3 mt-3">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Notification Settings
+                                <i class="fas fa-save"></i> {{ __('admin.save_notification_settings') }}
                             </button>
                         </div>
                     </form>
@@ -323,23 +323,23 @@
                                     <label class="form-check-label" for="two_factor">
                                         <strong>Two-Factor Authentication</strong>
                                         <br>
-                                        <small class="text-muted">Require 2FA for admin users</small>
+                                        <small class="text-muted">{{ __('admin.require_two_factor') }}</small>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Session Timeout (minutes)</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.session_timeout') }}</strong></label>
                                 <input type="number" class="form-control" name="session_timeout" 
                                     value="{{ $settings['session_timeout'] ?? 120 }}" min="15" max="480" required>
-                                <small class="text-muted">Auto-logout after inactivity</small>
+                                <small class="text-muted">{{ __('admin.auto_logout_after_inactivity') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Password Expiry (days)</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.password_expiry') }}</strong></label>
                                 <input type="number" class="form-control" name="password_expiry_days" 
                                     value="{{ $settings['password_expiry_days'] ?? 90 }}" min="7" max="365" required>
-                                <small class="text-muted">Force password change after X days</small>
+                                <small class="text-muted">{{ __('admin.force_password_change_after') }}</small>
                             </div>
                         </div>
 
@@ -350,7 +350,7 @@
 
                         <div class="border-top pt-3 mt-3">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Security Settings
+                                <i class="fas fa-save"></i> {{ __('admin.save_security_settings') }}
                             </button>
                         </div>
                     </form>
@@ -377,26 +377,26 @@
                                     <label class="form-check-label" for="auto_backup">
                                         <strong>Automatic Backups</strong>
                                         <br>
-                                        <small class="text-muted">Automatically backup database</small>
+                                        <small class="text-muted">{{ __('admin.backup_database_automatically') }}</small>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Backup Frequency</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.backup_frequency') }}</strong></label>
                                 <select class="form-select" name="backup_frequency" required>
                                     <option value="daily" {{ isset($settings['backup_frequency']) && $settings['backup_frequency'] === 'daily' ? 'selected' : '' }}>Daily</option>
                                     <option value="weekly" {{ isset($settings['backup_frequency']) && $settings['backup_frequency'] === 'weekly' ? 'selected' : '' }}>Weekly</option>
                                     <option value="monthly" {{ isset($settings['backup_frequency']) && $settings['backup_frequency'] === 'monthly' ? 'selected' : '' }}>Monthly</option>
                                 </select>
-                                <small class="text-muted">Schedule for automatic backups</small>
+                                <small class="text-muted">{{ __('admin.schedule_for_backups') }}</small>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><strong>Retention (days)</strong></label>
+                                <label class="form-label"><strong>{{ __('admin.backup_retention') }}</strong></label>
                                 <input type="number" class="form-control" name="backup_retention_days" 
                                     value="{{ $settings['backup_retention_days'] ?? 30 }}" min="7" max="365" required>
-                                <small class="text-muted">Keep backups for X days</small>
+                                <small class="text-muted">{{ __('admin.keep_backups_for') }}</small>
                             </div>
                         </div>
 

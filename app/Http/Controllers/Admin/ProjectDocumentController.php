@@ -8,14 +8,24 @@ use App\Models\ProjectDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ProjectDocumentController extends Controller
 {
     // List all project documents
-    public function index()
+    public function index(Request $request)
     {
-        $projectDocuments = ProjectDocument::with('project')->latest()->get();
-        return view('admin.Project_Documents.index', compact('projectDocuments'));
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+        
+        // Filter project documents by month based on update_date
+        $projectDocuments = ProjectDocument::with('project')
+            ->whereYear('update_date', $selectedMonth->year)
+            ->whereMonth('update_date', $selectedMonth->month)
+            ->latest('update_date')
+            ->get();
+            
+        return view('admin.Project_Documents.index', compact('projectDocuments', 'selectedMonth'));
     }
 
     // Show create form

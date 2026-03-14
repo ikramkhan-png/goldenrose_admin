@@ -8,12 +8,22 @@ use App\Models\ProjectService;
 use App\Models\Project;
 use App\Models\Machinery;
 use App\Models\Manpower;
+use Carbon\Carbon;
 
 class ProjectServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projectServices = ProjectService::with('project', 'service')->latest()->get();
+        $query = ProjectService::with('project', 'service');
+
+        // Filter by creation date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('created_at', $month->year)
+                  ->whereMonth('created_at', $month->month);
+        }
+
+        $projectServices = $query->latest()->get();
         return view('admin.project_services.index', compact('projectServices'));
     }
 

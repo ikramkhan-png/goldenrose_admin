@@ -56,6 +56,14 @@
                    class="form-control" min="0" required>
         </div>
 
+        {{-- Assigned Date --}}
+        <div class="mb-3">
+            <label class="form-label">Assigned Date <span class="text-danger">*</span></label>
+            <input type="date" name="assigned_date" class="form-control" required 
+                   value="{{ $clientService->assigned_date ? $clientService->assigned_date->format('Y-m-d') : now()->format('Y-m-d') }}">
+            <small class="text-muted">This date will be used for monthly filtering</small>
+        </div>
+
         {{-- Buttons --}}
         <button class="btn btn-primary">Update</button>
         <a href="{{ route('admin.client-services.index') }}" class="btn btn-secondary">Cancel</a>

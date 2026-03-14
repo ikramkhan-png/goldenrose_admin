@@ -215,7 +215,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Salaries
     Route::get('salaries', [SalaryController::class, 'index'])->name('salaries.index');
-    Route::post('salaries/export-pdf', [SalaryController::class, 'exportPdf'])->name('salaries.export-pdf');
+    Route::get('salaries/export-pdf', [SalaryController::class, 'exportPdf'])->name('salaries.export-pdf');
 
     // Settings
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');

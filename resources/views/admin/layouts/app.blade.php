@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Golden Rose Admin Panel</title>
+    <title>{{ __('admin.golden_rose_admin_panel') }}</title>
 
     @if (app()->getLocale() == 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -302,7 +302,7 @@
                 <!-- ===============================
                  PAYROLL & FINANCE
             ================================ -->
-                <div class="sidebar-section">PAYROLL</div>
+                <div class="sidebar-section">{{ __('admin.payroll_section') }}</div>
                 <!--
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->routeIs('admin.advances.*') ? 'active' : '' }}"
@@ -329,7 +329,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->routeIs('admin.salaries.*') ? 'active' : '' }}"
                         href="{{ route('admin.salaries.index') }}">
-                        💼 Salaries
+                        💼 {{ __('admin.salaries') }}
                     </a>
                 </li>
 

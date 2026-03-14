@@ -5,12 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::all();
+        $query = Employee::with('department');
+
+        // Filter by hiring date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('hiring_date', $month->year)
+                  ->whereMonth('hiring_date', $month->month);
+        }
+
+        $employees = $query->orderBy('hiring_date', 'desc')->get();
         return view('admin.employees.index', compact('employees'));
     }
 

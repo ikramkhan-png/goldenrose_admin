@@ -6,13 +6,23 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\User;
+use Carbon\Carbon;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with('client')->latest()->get();
-        return view('admin.projects.index', compact('projects'));
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+        
+        // Filter projects by month based on start_date
+        $projects = Project::with('client')
+            ->whereYear('start_date', $selectedMonth->year)
+            ->whereMonth('start_date', $selectedMonth->month)
+            ->latest('start_date')
+            ->get();
+            
+        return view('admin.projects.index', compact('projects', 'selectedMonth'));
     }
 
     public function create(Request $request)
@@ -134,16 +144,92 @@ class ProjectController extends Controller
     }
 
     // Project internal details from client page
-    public function internalShowFromClient($projectId)
+    public function internalShowFromClient($projectId, Request $request)
     {
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+
         $project = Project::with(['client', 'assignedServices', 'documents', 'billings', 'expenses'])->findOrFail($projectId);
-        return view('admin.Internal_Details.project_show', compact('project'));
+
+        // Filter related data by month if requested
+        if ($selectedMonth) {
+            // Filter assigned services by assigned_date
+            $project->setRelation('assignedServices', $project->assignedServices->filter(function($service) use ($selectedMonth) {
+                $assignedDate = Carbon::parse($service->assigned_date);
+                return $assignedDate->year == $selectedMonth->year && 
+                       $assignedDate->month == $selectedMonth->month;
+            }));
+
+            // Filter documents by update_date
+            $project->setRelation('documents', $project->documents->filter(function($document) use ($selectedMonth) {
+                $updateDate = Carbon::parse($document->update_date);
+                return $updateDate->year == $selectedMonth->year && 
+                       $updateDate->month == $selectedMonth->month;
+            }));
+
+            // Filter billings by payment_date
+            $project->setRelation('billings', $project->billings->filter(function($billing) use ($selectedMonth) {
+                if ($billing->payment_date) {
+                    $paymentDate = Carbon::parse($billing->payment_date);
+                    return $paymentDate->year == $selectedMonth->year && 
+                           $paymentDate->month == $selectedMonth->month;
+                }
+                return false;
+            }));
+
+            // Filter expenses by date
+            $project->setRelation('expenses', $project->expenses->filter(function($expense) use ($selectedMonth) {
+                $expenseDate = Carbon::parse($expense->date);
+                return $expenseDate->year == $selectedMonth->year && 
+                       $expenseDate->month == $selectedMonth->month;
+            }));
+        }
+
+        return view('admin.Internal_Details.project_show', compact('project', 'selectedMonth'));
     }
 
     // ✅ NEW: Internal show for billing redirect
-    public function internalShow($projectId)
+    public function internalShow($projectId, Request $request)
     {
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+
         $project = Project::with(['client', 'assignedServices', 'documents', 'billings', 'expenses'])->findOrFail($projectId);
-        return view('admin.Internal_Details.project_show', compact('project'));
+
+        // Filter related data by month if requested
+        if ($selectedMonth) {
+            // Filter assigned services by assigned_date
+            $project->setRelation('assignedServices', $project->assignedServices->filter(function($service) use ($selectedMonth) {
+                $assignedDate = Carbon::parse($service->assigned_date);
+                return $assignedDate->year == $selectedMonth->year && 
+                       $assignedDate->month == $selectedMonth->month;
+            }));
+
+            // Filter documents by update_date
+            $project->setRelation('documents', $project->documents->filter(function($document) use ($selectedMonth) {
+                $updateDate = Carbon::parse($document->update_date);
+                return $updateDate->year == $selectedMonth->year && 
+                       $updateDate->month == $selectedMonth->month;
+            }));
+
+            // Filter billings by payment_date
+            $project->setRelation('billings', $project->billings->filter(function($billing) use ($selectedMonth) {
+                if ($billing->payment_date) {
+                    $paymentDate = Carbon::parse($billing->payment_date);
+                    return $paymentDate->year == $selectedMonth->year && 
+                           $paymentDate->month == $selectedMonth->month;
+                }
+                return false;
+            }));
+
+            // Filter expenses by date
+            $project->setRelation('expenses', $project->expenses->filter(function($expense) use ($selectedMonth) {
+                $expenseDate = Carbon::parse($expense->date);
+                return $expenseDate->year == $selectedMonth->year && 
+                       $expenseDate->month == $selectedMonth->month;
+            }));
+        }
+
+        return view('admin.Internal_Details.project_show', compact('project', 'selectedMonth'));
     }
 }

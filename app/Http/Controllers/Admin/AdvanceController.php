@@ -9,13 +9,24 @@ use Illuminate\Http\Request;
 
 class AdvanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $advances = Advance::with('employee')
-            ->latest()
-            ->paginate(15);
+        $query = Advance::with('employee')->latest();
 
-        return view('admin.advances.index', compact('advances'));
+        if ($request->filled('employee_id')) {
+            $query->where('employee_id', $request->employee_id);
+        }
+
+        if ($request->filled('month')) {
+            $month = \Carbon\Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('date', $month->year)
+                  ->whereMonth('date', $month->month);
+        }
+
+        $advances  = $query->paginate(15);
+        $employees = Employee::orderBy('name')->get();
+
+        return view('admin.advances.index', compact('advances', 'employees'));
     }
 
     public function create()

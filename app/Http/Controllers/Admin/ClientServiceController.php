@@ -8,6 +8,7 @@ use App\Models\ClientService;
 use App\Models\User;
 use App\Models\ClientServiceBilling;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ClientServiceController extends Controller
 {
@@ -48,28 +49,35 @@ class ClientServiceController extends Controller
         $firstServiceId = $client->services->first()->id;
 
         ClientServiceBilling::create([
+            'amount_paid'  => $validated['amount_paid'],
+            'payment_date' => $validated['payment_date'],
+            'status'       => $validated['status'],
+            'invoice'      => $invoicePath,
+            'notes'        => $validated['notes'],
             'client_service_id' => $firstServiceId,
-            'amount_billed'     => 0,
-            'amount_paid'       => $validated['amount_paid'],
-            'payment_date'      => $validated['payment_date'],
-            'status'            => $validated['status'],
-            'invoice'           => $invoicePath,
-            'notes'             => $validated['notes'],
         ]);
 
         return redirect()
-            ->route('admin.client-services.financeSummary', $clientId)
-            ->with('success', 'Billing added successfully!');
+            ->route('admin.clients.show', $clientId)
+            ->with('success', 'Client billing created successfully');
     }
 
     // ========================
     // ASSIGN SERVICE TO CLIENT
     // ========================
-    public function index()
+    public function index(Request $request)
     {
-        // Added this to match blade expecting $clientServices
-        $clientServices = ClientService::with(['client','service'])->get();
-        return view('admin.client_services.index', compact('clientServices'));
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+        
+        // Filter client services by month based on assigned_date
+        $clientServices = ClientService::with(['client','service'])
+            ->whereYear('assigned_date', $selectedMonth->year)
+            ->whereMonth('assigned_date', $selectedMonth->month)
+            ->latest('assigned_date')
+            ->get();
+            
+        return view('admin.client_services.index', compact('clientServices', 'selectedMonth'));
     }
 
     public function create()
@@ -96,6 +104,7 @@ class ClientServiceController extends Controller
             'rate_type'    => 'required|in:hourly,daily,monthly',
             'duration'     => 'required|numeric|min:1',
             'rate'         => 'required|numeric|min:0',
+            'assigned_date' => 'required|date',
         ]);
 
         $data = [
@@ -108,6 +117,7 @@ class ClientServiceController extends Controller
             'daily_rate'   => 0,
             'months'       => 0,
             'monthly_rate' => 0,
+            'assigned_date' => $request->assigned_date,
         ];
 
         // Map rate_type and duration to specific columns
@@ -148,6 +158,7 @@ class ClientServiceController extends Controller
             'rate_type'    => 'required|in:hourly,daily,monthly',
             'duration'     => 'required|numeric|min:1',
             'rate'         => 'required|numeric|min:0',
+            'assigned_date' => 'required|date',
         ]);
 
         // Map rate_type and duration to specific columns
@@ -161,6 +172,7 @@ class ClientServiceController extends Controller
             'daily_rate'   => 0,
             'months'       => 0,
             'monthly_rate' => 0,
+            'assigned_date' => $request->assigned_date,
         ];
 
         // Map rate_type and duration to specific columns
@@ -200,7 +212,7 @@ class ClientServiceController extends Controller
     // ========================
     // FINANCE SUMMARY
     // ========================
-    public function financeSummary($clientId)
+    public function financeSummary($clientId, Request $request)
     {
         $client = User::with(['services', 'services.billings'])->findOrFail($clientId);
 
@@ -214,22 +226,33 @@ class ClientServiceController extends Controller
                 return $svc->months * $svc->monthly_rate;
             }
         });
-        $totalPaid = $client->services
-            ->flatMap(fn ($s) => $s->billings)
-            ->sum('amount_paid');
 
+        // Get all billings with month filtering
+        $allBillingsQuery = $client->services->flatMap(fn ($s) => $s->billings);
+
+        // Filter by payment date month if provided
+        if ($request->filled('month')) {
+            $month = \Carbon\Carbon::createFromFormat('Y-m', $request->month);
+            $allBillingsQuery = $allBillingsQuery->filter(function ($billing) use ($month) {
+                if ($billing->payment_date) {
+                    $paymentDate = \Carbon\Carbon::parse($billing->payment_date);
+                    return $paymentDate->year == $month->year && $paymentDate->month == $month->month;
+                }
+                return false;
+            });
+        }
+
+        $allBillings = $allBillingsQuery->map(fn ($b) => [
+            'id'           => $b->id,
+            'amount_paid'  => $b->amount_paid,
+            'payment_date' => $b->payment_date,
+            'status'       => $b->status,
+            'notes'        => $b->notes,
+            'invoice'      => $b->invoice ? Storage::url($b->invoice) : null,
+        ]);
+
+        $totalPaid = $allBillings->sum('amount_paid');
         $totalRemaining = $totalServiceAmount - $totalPaid;
-
-        $allBillings = $client->services->flatMap(
-            fn ($s) => $s->billings->map(fn ($b) => [
-                'id'           => $b->id,
-                'amount_paid'  => $b->amount_paid,
-                'payment_date' => $b->payment_date,
-                'status'       => $b->status,
-                'notes'        => $b->notes,
-                'invoice'      => $b->invoice ? Storage::url($b->invoice) : null,
-            ])
-        );
 
         return view(
             'admin.client_services.finance_summary',

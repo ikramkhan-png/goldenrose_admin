@@ -56,6 +56,12 @@
                 </select>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">{{ __('admin.hiring_date') }}</label>
+                <input type="date" name="hiring_date" class="form-control" 
+                       value="{{ old('hiring_date', $employee->hiring_date ? \Carbon\Carbon::parse($employee->hiring_date)->format('Y-m-d') : now()->format('Y-m-d')) }}">
+            </div>
+
             <button type="submit" class="btn btn-primary">
                 {{ __('employees.update_employee') }}
             </button>
