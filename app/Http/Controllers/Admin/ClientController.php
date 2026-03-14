@@ -5,13 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Carbon\Carbon;
 
 class ClientController extends Controller
 {
     // ===================== INDEX =====================
-    public function index()
+    public function index(Request $request)
     {
-        $clients = User::where('type', 'client')->latest()->get();
+        $query = User::where('type', 'client');
+
+        // Filter by creation date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('created_at', $month->year)
+                  ->whereMonth('created_at', $month->month);
+        }
+
+        $clients = $query->latest()->get();
         return view('admin.clients.index', compact('clients'));
     }
 
@@ -45,12 +55,20 @@ class ClientController extends Controller
     }
 
     // ===================== SHOW =====================
-    public function show(User $client)
+    public function show(User $client, Request $request)
     {
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+
         $client->load([
             'services.service',
-            'projects' => function($query){
+            'projects' => function($query) use ($selectedMonth){
                 $query->orderBy('start_date', 'desc');
+                // Filter projects by month if requested
+                if ($selectedMonth) {
+                    $query->whereYear('start_date', $selectedMonth->year)
+                          ->whereMonth('start_date', $selectedMonth->month);
+                }
             },
             'clientNotes' => function($query){
                 $query->orderBy('created_at', 'desc');
@@ -60,7 +78,16 @@ class ClientController extends Controller
             }
         ]);
 
-        return view('admin.clients.show', compact('client'));
+        // Filter services by assigned_date month if requested
+        if ($selectedMonth) {
+            $client->setRelation('services', $client->services->filter(function($service) use ($selectedMonth) {
+                $assignedDate = Carbon::parse($service->assigned_date);
+                return $assignedDate->year == $selectedMonth->year && 
+                       $assignedDate->month == $selectedMonth->month;
+            }));
+        }
+
+        return view('admin.clients.show', compact('client', 'selectedMonth'));
     }
 
     // ===================== EDIT =====================

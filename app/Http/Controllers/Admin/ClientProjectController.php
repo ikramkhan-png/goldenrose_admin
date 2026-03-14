@@ -6,14 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ClientProject;
 use App\Models\User;
-
-
+use Carbon\Carbon;
 
 class ClientProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = ClientProject::with('client')->latest()->get();
+        $query = ClientProject::with('client');
+
+        // Filter by start date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('start_date', $month->year)
+                  ->whereMonth('start_date', $month->month);
+        }
+
+        $projects = $query->latest()->get();
         return view('admin.client_projects.index', compact('projects'));
     }
 

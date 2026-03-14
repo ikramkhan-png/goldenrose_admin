@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
     
     {{-- PAGE HEADER --}}
     <div class="container-xl px-4 mb-5">
@@ -12,8 +13,7 @@
                         <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💼 {{ __('admin.salary_management') }}</h1>
                         <p class="text-muted mb-0" style="font-size: 14px;">{{ __('admin.salary_management_subtitle') }}</p>
                     </div>
-                    <form action="{{ route('admin.salaries.export-pdf') }}" method="POST">
-                        @csrf
+                    <form action="{{ route('admin.salaries.export-pdf') }}" method="GET">
                         <input type="hidden" name="month" value="{{ request('month', now()->format('Y-m')) }}">
                         <button type="submit" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
                             <i class="bi bi-download"></i> {{ __('admin.export_pdf') }}

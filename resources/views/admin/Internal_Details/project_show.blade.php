@@ -3,6 +3,8 @@
 @section('content')
 <div class="container-xl mt-4">
 
+    @php $tab = request('tab', 'overview'); @endphp
+    
     {{-- PAGE HEADER --}}
     <x-page-header title="Project Dashboard" description="Comprehensive project management for internal operations including services, documents, billing, and expenses." />
 
@@ -31,38 +33,57 @@
         </div>
     </div>
 
+    {{-- ===== MONTH FILTER ===== --}}
+    <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
+        <div class="card-body p-4">
+            <form action="{{ request()->url() }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
+                <input type="hidden" name="tab" value="{{ $tab }}">
+                <div style="flex: 1; min-width: 250px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 Filter by Month</label>
+                    <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
+                           onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 Filter</label>
+                    <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : now()->format('F Y') }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- TAB NAVIGATION --}}
-    @php $tab = request('tab', 'overview'); @endphp
     <div class="card mb-4 border-0 shadow-sm" style="background: white;">
         <div class="card-body p-3">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'overview' ? 'active' : '' }}" href="?tab=overview" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'overview' ? 'active' : '' }}" href="?tab=overview{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-eye"></i> Overview
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'services' ? 'active' : '' }}" href="?tab=services" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'services' ? 'active' : '' }}" href="?tab=services{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-briefcase"></i> Services
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'documents' ? 'active' : '' }}" href="?tab=documents" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'documents' ? 'active' : '' }}" href="?tab=documents{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-file-text"></i> Documents
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'billing' ? 'active' : '' }}" href="?tab=billing" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'billing' ? 'active' : '' }}" href="?tab=billing{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-receipt"></i> Billing
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'expenses' ? 'active' : '' }}" href="?tab=expenses" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'expenses' ? 'active' : '' }}" href="?tab=expenses{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-cash-coin"></i> Expenses
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fw-bold {{ $tab === 'calculations' ? 'active' : '' }}" href="?tab=calculations" style="font-size: 14px;">
+                    <a class="nav-link fw-bold {{ $tab === 'calculations' ? 'active' : '' }}" href="?tab=calculations{{ request('month') ? '&month=' . request('month') : '' }}" style="font-size: 14px;">
                         <i class="bi bi-calculator"></i> Calculations
                     </a>
                 </li>
@@ -118,6 +139,7 @@
                         <th style="text-align: right;">Duration</th>
                         <th style="text-align: right;">Rate</th>
                         <th style="text-align: right;">Total</th>
+                        <th>Assigned Date</th>
                         <th class="actions-cell">Actions</th>
                     </tr>
                 </thead>
@@ -131,6 +153,7 @@
                             <td style="text-align: right;">{{ $service->duration }}</td>
                             <td style="text-align: right; font-weight: 600; color: #667eea;">{{ number_format($service->rate, 2) }}</td>
                             <td style="text-align: right; font-weight: 600; color: #28a745;">{{ number_format($service->total_cost, 2) }}</td>
+                            <td>{{ $service->assigned_date ?? '-' }}</td>
                             <td class="actions-cell">
                                 <a href="{{ route('admin.project-services.edit', $service->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                 <a href="{{ route('admin.project-services.destroy', $service->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this service?')">Delete</a>

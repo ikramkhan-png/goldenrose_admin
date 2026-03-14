@@ -5,12 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Manpower;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ManpowerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $manpowers = Manpower::all();
+        $query = Manpower::query();
+
+        // Filter by creation date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('created_at', $month->year)
+                  ->whereMonth('created_at', $month->month);
+        }
+
+        $manpowers = $query->latest()->get();
         return view('admin.manpower.index', compact('manpowers'));
     }
 

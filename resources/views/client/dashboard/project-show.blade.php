@@ -1,63 +1,84 @@
 @extends('admin.layouts.app2')
 
 @section('content')
-<div class="container-fluid px-4 py-3">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+@php $tab = request('tab', 'details'); @endphp
+<div class="container-fluid px-4 py-3" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
     {{-- ===== PROJECT HEADER ===== --}}
     <div class="client-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h3 class="mb-1 fw-semibold text-white">{{ $project->name }}</h3>
-                <small class="text-white-50">Project Details</small>
+                <small class="text-white-50">{{ __('client.project_details') }}</small>
             </div>
             <a href="{{ route('client.dashboard') }}?tab=projects" class="btn btn-light btn-sm">
-                <i class="fas fa-arrow-left me-1"></i> Back to Projects
+                <i class="fas fa-arrow-left me-1"></i> {{ __('client.back_to_projects') }}
             </a>
         </div>
 
         <div class="row mt-3 g-3">
             <div class="col-md-3">
                 <div class="info-box text-center">
-                    <small>Type</small>
-                    <div class="text-capitalize">{{ $project->type }}</div>
+                    <small>{{ __('client.type') }}</small>
+                    <div class="text-capitalize">{{ __('client.' . $project->type . '_type') }}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="info-box text-center">
-                    <small>Budget</small>
+                    <small>{{ __('client.budget') }}</small>
                     <div>{{ number_format($project->budget ?? 0, 2) }}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="info-box text-center">
-                    <small>Start Date</small>
+                    <small>{{ __('client.start_date') }}</small>
                     <div>{{ $project->start_date ?? '-' }}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="info-box text-center">
-                    <small>End Date</small>
+                    <small>{{ __('client.end_date') }}</small>
                     <div>{{ $project->end_date ?? '-' }}</div>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- ===== MONTH FILTER ===== --}}
+    <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
+        <div class="card-body p-4">
+            <form action="{{ route('client.project.show', $project->id) }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
+                <input type="hidden" name="tab" value="{{ $tab }}">
+                <div style="flex: 1; min-width: 250px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('admin.filter_by_month') }}</label>
+                    <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
+                           onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('admin.filter') }}</label>
+                    <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : now()->format('F Y') }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {{-- ===== TABS ===== --}}
-    @php $tab = request('tab', 'details'); @endphp
     <div class="mb-4">
         <div class="btn-group">
-            <a href="{{ route('client.project.show', $project->id) }}?tab=details"
+            <a href="{{ route('client.project.show', $project->id) }}?tab=details{{ request('month') ? '&month=' . request('month') : '' }}"
                class="btn {{ $tab === 'details' ? 'btn-dark' : 'btn-outline-dark' }}">
-                <i class="fas fa-info-circle me-1"></i> Details
+                <i class="fas fa-info-circle me-1"></i> {{ __('client.details') }}
             </a>
-            <a href="{{ route('client.project.show', $project->id) }}?tab=updates"
+            <a href="{{ route('client.project.show', $project->id) }}?tab=updates{{ request('month') ? '&month=' . request('month') : '' }}"
                class="btn {{ $tab === 'updates' ? 'btn-dark' : 'btn-outline-dark' }}">
-                <i class="fas fa-bullhorn me-1"></i> Project Updates
+                <i class="fas fa-bullhorn me-1"></i> {{ __('client.project_updates') }}
             </a>
-            <a href="{{ route('client.project.show', $project->id) }}?tab=finance"
+            <a href="{{ route('client.project.show', $project->id) }}?tab=finance{{ request('month') ? '&month=' . request('month') : '' }}"
                class="btn {{ $tab === 'finance' ? 'btn-dark' : 'btn-outline-dark' }}">
-                <i class="fas fa-calculator me-1"></i> Finance
+                <i class="fas fa-calculator me-1"></i> {{ __('client.finance') }}
             </a>
         </div>
     </div>
@@ -66,22 +87,22 @@
     @if($tab === 'details')
         <div class="card shadow-sm border-0">
             <div class="card-header bg-light">
-                <strong>Project Information</strong>
+                <strong>{{ __('client.project_information') }}</strong>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
-                                <th style="width: 40%;">Project Name:</th>
+                                <th style="width: 40%;">{{ __('client.project_name_label') }}</th>
                                 <td>{{ $project->name }}</td>
                             </tr>
                             <tr>
-                                <th>Type:</th>
-                                <td><span class="badge bg-info">{{ ucfirst($project->type) }}</span></td>
+                                <th>{{ __('client.type') }}:</th>
+                                <td><span class="badge bg-info">{{ __('client.' . $project->type . '_type') }}</span></td>
                             </tr>
                             <tr>
-                                <th>Budget:</th>
+                                <th>{{ __('client.budget') }}:</th>
                                 <td class="fw-bold text-primary">{{ number_format($project->budget ?? 0, 2) }}</td>
                             </tr>
                         </table>
@@ -89,20 +110,20 @@
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
-                                <th style="width: 40%;">Start Date:</th>
+                                <th style="width: 40%;">{{ __('client.start_date') }}:</th>
                                 <td>{{ $project->start_date ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th>End Date:</th>
+                                <th>{{ __('client.end_date') }}:</th>
                                 <td>{{ $project->end_date ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th>Status:</th>
+                                <th>{{ __('client.status') }}:</th>
                                 <td>
                                     @if($project->end_date && $project->end_date < now())
-                                        <span class="badge bg-success">Completed</span>
+                                        <span class="badge bg-success">{{ __('client.completed') }}</span>
                                     @else
-                                        <span class="badge bg-warning">In Progress</span>
+                                        <span class="badge bg-warning">{{ __('client.in_progress') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -112,7 +133,7 @@
                 
                 @if($project->notes)
                     <hr>
-                    <h6 class="fw-bold">Project Notes</h6>
+                    <h6 class="fw-bold">{{ __('client.project_notes') }}</h6>
                     <p class="text-muted">{{ $project->notes }}</p>
                 @endif
             </div>
@@ -122,8 +143,8 @@
     {{-- ================= PROJECT UPDATES TAB ================= --}}
     @if($tab === 'updates')
         <div class="mb-3">
-            <h5 class="fw-bold"><i class="fas fa-bullhorn me-2 text-primary"></i>Project Updates</h5>
-            <p class="text-muted">Stay updated with the latest progress on your project</p>
+            <h5 class="fw-bold"><i class="fas fa-bullhorn me-2 text-primary"></i>{{ __('client.project_updates') }}</h5>
+            <p class="text-muted">{{ __('client.stay_updated_progress') }}</p>
         </div>
 
         @forelse($project->documents->sortByDesc('created_at') as $update)
@@ -184,10 +205,10 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <strong>{{ basename($update->file) }}</strong>
-                                        <p class="text-muted mb-0 small">{{ strtoupper($fileExtension) }} File</p>
+                                        <p class="text-muted mb-0 small">{{ strtoupper($fileExtension) }} {{ __('client.file') }}</p>
                                     </div>
                                     <a href="{{ asset('storage/'.$update->file) }}" target="_blank" class="btn btn-outline-primary">
-                                        <i class="fas fa-download me-1"></i> Download
+                                        <i class="fas fa-download me-1"></i> {{ __('client.download') }}
                                     </a>
                                 </div>
                             @endif
@@ -196,7 +217,7 @@
                         {{-- View/Download Button for Images/Videos --}}
                         @if($isImage || $isVideo)
                             <a href="{{ asset('storage/'.$update->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-external-link-alt me-1"></i> View Full Size
+                                <i class="fas fa-external-link-alt me-1"></i> {{ __('client.view_full_size') }}
                             </a>
                         @endif
                     @endif
@@ -206,8 +227,8 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body text-center py-5">
                     <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">No Updates Yet</h5>
-                    <p class="text-muted">Project updates will appear here once they are posted.</p>
+                    <h5 class="text-muted">{{ __('client.no_updates_yet') }}</h5>
+                    <p class="text-muted">{{ __('client.no_updates_message') }}</p>
                 </div>
             </div>
         @endforelse
@@ -226,25 +247,25 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <small class="opacity-75">Project Budget</small>
+                    <small class="opacity-75">{{ __('client.project_budget') }}</small>
                     <h4 class="mb-0 fw-bold">{{ number_format($budget, 2) }}</h4>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                    <small class="opacity-75">Additional Billings</small>
+                    <small class="opacity-75">{{ __('client.additional_billings') }}</small>
                     <h4 class="mb-0 fw-bold">{{ number_format($additionalBilled, 2) }}</h4>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
-                    <small class="opacity-75">Total Paid</small>
+                    <small class="opacity-75">{{ __('client.total_paid') }}</small>
                     <h4 class="mb-0 fw-bold">{{ number_format($totalPaid, 2) }}</h4>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                    <small class="opacity-75">Remaining Balance</small>
+                    <small class="opacity-75">{{ __('client.remaining_balance') }}</small>
                     <h4 class="mb-0 fw-bold">{{ number_format($totalRemaining, 2) }}</h4>
                 </div>
             </div>
@@ -252,19 +273,19 @@
 
         <div class="card shadow-sm border-0">
             <div class="card-header bg-light">
-                <strong>Payment History</strong>
+                <strong>{{ __('client.payment_history') }}</strong>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Amount Billed</th>
-                            <th>Amount Paid</th>
-                            <th>Payment Date</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                            <th>Invoice</th>
+                            <th>{{ __('client.amount_billed') }}</th>
+                            <th>{{ __('client.amount_paid') }}</th>
+                            <th>{{ __('client.payment_date') }}</th>
+                            <th>{{ __('client.status') }}</th>
+                            <th>{{ __('client.notes') }}</th>
+                            <th>{{ __('client.invoice') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -276,14 +297,14 @@
                             <td>{{ $billing->payment_date ?? '-' }}</td>
                             <td>
                                 <span class="badge bg-{{ $billing->status == 'paid' ? 'success' : 'warning' }}">
-                                    {{ ucfirst($billing->status) }}
+                                    {{ __('admin.' . $billing->status) }}
                                 </span>
                             </td>
                             <td>{{ $billing->notes ?? '-' }}</td>
                             <td>
                                 @if($billing->invoice)
                                     <a href="{{ asset('storage/'.$billing->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View
+                                        <i class="fas fa-eye"></i> {{ __('client.view') }}
                                     </a>
                                 @else
                                     -
@@ -292,7 +313,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-3">No payment records yet</td>
+                            <td colspan="7" class="text-center text-muted py-3">{{ __('client.no_payment_records') }}</td>
                         </tr>
                     @endforelse
                     </tbody>

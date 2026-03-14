@@ -12,25 +12,42 @@ use App\Models\ClientNote;
 use App\Models\ClientQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ClientDashboardController extends Controller
 {
     /**
      * Show the unified client dashboard
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
 
-        // Get assigned services with service details and billings
-        $services = ClientService::where('client_id', $user->id)
-            ->with(['service', 'billings'])
-            ->get();
+        // Get assigned services with service details and billings - filtered by month
+        $servicesQuery = ClientService::where('client_id', $user->id)
+            ->with(['service', 'billings']);
+            
+        // Filter services by month if assigned_date exists
+        if ($request->has('month')) {
+            $servicesQuery->whereYear('assigned_date', $selectedMonth->year)
+                          ->whereMonth('assigned_date', $selectedMonth->month);
+        }
+        
+        $services = $servicesQuery->get();
 
-        // Get assigned projects with billings and documents
-        $projects = Project::where('client_id', $user->id)
-            ->with(['billings', 'documents'])
-            ->get();
+        // Get assigned projects with billings and documents - filtered by month
+        $projectsQuery = Project::where('client_id', $user->id)
+            ->with(['billings', 'documents']);
+            
+        // Filter projects by month if start_date exists
+        if ($request->has('month')) {
+            $projectsQuery->whereYear('start_date', $selectedMonth->year)
+                           ->whereMonth('start_date', $selectedMonth->month);
+        }
+        
+        $projects = $projectsQuery->get();
 
         // Calculate finance totals for services
         $totalServiceAmount = 0;
@@ -91,7 +108,8 @@ class ClientDashboardController extends Controller
             'totalRemaining',
             'projectUpdates',
             'importantNotes',
-            'myQueries'
+            'myQueries',
+            'selectedMonth'
         ));
     }
 
@@ -136,14 +154,26 @@ class ClientDashboardController extends Controller
     /**
      * Show project details for client
      */
-    public function showProject($id)
+    public function showProject($id, Request $request)
     {
         $user = auth()->user();
+        $month = $request->input('month', now()->format('Y-m'));
+        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
         
         // Get project only if it belongs to this client
-        $project = Project::where('client_id', $user->id)
-            ->with(['billings', 'documents'])
-            ->findOrFail($id);
+        $projectQuery = Project::where('client_id', $user->id)
+            ->with(['billings', 'documents']);
+            
+        // Filter project updates and billings by month if provided
+        if ($request->has('month')) {
+            // Filter documents by update_date
+            $projectQuery->whereHas('documents', function ($query) use ($selectedMonth) {
+                $query->whereYear('update_date', $selectedMonth->year)
+                      ->whereMonth('update_date', $selectedMonth->month);
+            });
+        }
+
+        $project = $projectQuery->findOrFail($id);
 
         return view('client.dashboard.project-show', compact('project'));
     }

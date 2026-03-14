@@ -100,18 +100,48 @@ class SalaryController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
-        $salaries = $this->calculateSalaries($month);
+        try {
+            $month = $request->input('month', now()->format('Y-m'));
+            $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+            $salaries = $this->calculateSalaries($month);
 
-        $monthDisplay = $selectedMonth->format('F Y');
+            $monthDisplay = $selectedMonth->format('F Y');
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('admin.salaries.pdf', compact('salaries', 'monthDisplay'));
-        $pdf->setPaper('A4', 'landscape');
+            // Debug: Check if we have data
+            if (empty($salaries)) {
+                return back()->with('error', 'No salary data found for the selected month.');
+            }
 
-        $fileName = 'salaries_' . $month . '.pdf';
-        return $pdf->download($fileName);
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('admin.salaries.pdf', compact('salaries', 'monthDisplay'));
+            $pdf->setPaper('A4', 'landscape');
+
+            $fileName = 'salaries_' . $month . '.pdf';
+            
+            // Generate PDF content
+            $pdfContent = $pdf->output();
+            
+            // Check if PDF was generated
+            if (empty($pdfContent)) {
+                return back()->with('error', 'Failed to generate PDF content.');
+            }
+            
+            // Set proper headers for download
+            return response($pdfContent, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                'Content-Length' => strlen($pdfContent),
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
+            
+        } catch (\Exception $e) {
+            // Log the error and return with error message
+            \Log::error('PDF Export Error: ' . $e->getMessage());
+            \Log::error('PDF Export Trace: ' . $e->getTraceAsString());
+            return back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
     }
 }
 

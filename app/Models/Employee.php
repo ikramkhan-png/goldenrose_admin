@@ -19,6 +19,7 @@ class Employee extends Model
         'basic_salary',
         'daily_wage',
         'department_id',
+        'hiring_date', // new field for monthly filtering
     ];
 
     /**

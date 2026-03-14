@@ -20,6 +20,7 @@
                 <th>Rate Type</th>
                 <th>Duration</th>
                 <th>Rate</th>
+                <th>Assigned Date</th>
                 <th>total amount</th>
                 <th width="160">Actions</th>
             </tr>
@@ -49,6 +50,7 @@
                     <td>{{ $rateType }}</td>
                     <td>{{ $duration }}</td>
                     <td>{{ $rate }}</td>
+                    <td>{{ $service->assigned_date ?? '-' }}</td>
                     <td>
                         @if($service->hours > 0)
                             {{ number_format($service->hours * $service->hourly_rate, 2) }}
@@ -69,7 +71,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center text-muted">No services assigned yet</td>
+                    <td colspan="8" class="text-center text-muted">No services assigned yet</td>
                 </tr>
             @endforelse
         </tbody>

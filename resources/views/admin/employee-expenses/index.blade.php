@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
     
     {{-- PAGE HEADER --}}
     <div class="container-xl px-4 mb-5">
@@ -9,11 +10,11 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💰 Employee Expenses</h1>
-                        <p class="text-muted mb-0" style="font-size: 14px;">Track employee reimbursements and expenses for salary calculations</p>
+                        <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💰 {{ __('admin.employee_expenses_title') }}</h1>
+                        <p class="text-muted mb-0" style="font-size: 14px;">{{ __('admin.employee_expenses_subtitle') }}</p>
                     </div>
                     <a href="{{ route('admin.employee-expenses.create') }}" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                        <i class="bi bi-plus-lg"></i> Add Employee Expense
+                        <i class="bi bi-plus-lg"></i> {{ __('admin.add_employee_expense') }}
                     </a>
                 </div>
             </div>

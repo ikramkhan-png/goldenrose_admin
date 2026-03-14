@@ -1,19 +1,25 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container-fluid mt-4 px-4">
-    <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-            <!-- Page Header -->
-            <div class="mb-4">
-                <h1 class="fw-bold mb-2"><i class="fas fa-user-plus"></i> Create New User</h1>
-                <p class="text-muted">Add a new user to the system with custom role assignment</p>
-            </div>
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div class="container mt-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h1 class="fw-bold mb-2"><i class="fas fa-user-plus"></i> {{ __('admin.create_new_user') }}</h1>
+        <p class="text-muted">{{ __('admin.add_user_system_description') }}</p>
+    </div>
 
-            @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><i class="fas fa-exclamation-circle"></i> Please fix the following errors:</strong>
-                <ul class="mb-0 mt-2">
+    @if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong><i class="fas fa-exclamation-circle"></i> {{ __('admin.please_fix_following_errors') }}</strong>
+        <ul class="mb-0 mt-2">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
                     @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach
@@ -29,11 +35,11 @@
 
                         <!-- Personal Information Section -->
                         <div class="mb-4">
-                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-user-circle"></i> Personal Information</h5>
+                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-user-circle"></i> {{ __('admin.personal_information') }}</h5>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                                    <label for="name" class="form-label fw-bold">{{ __('admin.full_name') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-lg @error('name') is-invalid @enderror" 
                                         id="name" name="name" placeholder="John Doe" 
                                         value="{{ old('name') }}" required>
@@ -43,7 +49,7 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                                    <label for="email" class="form-label fw-bold">{{ __('admin.email_address') }} <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" 
                                         id="email" name="email" placeholder="user@example.com" 
                                         value="{{ old('email') }}" required>
@@ -55,7 +61,7 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label fw-bold">Phone Number</label>
+                                    <label for="phone" class="form-label fw-bold">{{ __('admin.phone_number') }}</label>
                                     <input type="text" class="form-control form-control-lg @error('phone') is-invalid @enderror" 
                                         id="phone" name="phone" placeholder="+1-234-567-8900" 
                                         value="{{ old('phone') }}">
@@ -65,10 +71,10 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="type" class="form-label fw-bold">User Type <span class="text-danger">*</span></label>
+                                    <label for="type" class="form-label fw-bold">{{ __('admin.user_type') }} <span class="text-danger">*</span></label>
                                     <select class="form-select form-select-lg @error('type') is-invalid @enderror" 
                                         id="type" name="type" required onchange="updateClientTypeVisibility()">
-                                        <option value="">-- Select Type --</option>
+                                        <option value="">{{ __('admin.select_type') }}</option>
                                         <option value="admin" {{ old('type') === 'admin' ? 'selected' : '' }}>👑 Admin User</option>
                                         <option value="client" {{ old('type') === 'client' ? 'selected' : '' }}>👤 Client</option>
                                         <option value="employee" {{ old('type') === 'employee' ? 'selected' : '' }}>👷 Employee</option>
@@ -83,7 +89,7 @@
                         <!-- Client Type Section -->
                         <div id="clientTypeContainer" style="display: {{ old('type') === 'client' ? 'block' : 'none' }}; margin-bottom: 2rem;">
                             <div class="mb-4 pb-3 border-bottom">
-                                <label for="client_type" class="form-label fw-bold">Client Type <span class="text-danger">*</span></label>
+                                <label for="client_type" class="form-label fw-bold">{{ __('admin.client_type') }} <span class="text-danger">*</span></label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-check p-3 border rounded" style="cursor: pointer;">
@@ -91,7 +97,7 @@
                                                 value="service" id="client_service"
                                                 {{ old('client_type') === 'service' ? 'checked' : '' }}>
                                             <label class="form-check-label w-100" for="client_service">
-                                                🛎️ Service Client
+                                                🛎️ {{ __('admin.service_client') }}
                                             </label>
                                         </div>
                                     </div>
@@ -101,7 +107,7 @@
                                                 value="project" id="client_project"
                                                 {{ old('client_type') === 'project' ? 'checked' : '' }}>
                                             <label class="form-check-label w-100" for="client_project">
-                                                📊 Project Client
+                                                📊 {{ __('admin.project_client') }}
                                             </label>
                                         </div>
                                     </div>
@@ -114,24 +120,24 @@
 
                         <!-- Password Section -->
                         <div class="mb-4">
-                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-lock"></i> Security</h5>
+                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-lock"></i> {{ __('admin.security_section') }}</h5>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="password" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                                    <label for="password" class="form-label fw-bold">{{ __('admin.password') }} <span class="text-danger">*</span></label>
                                     <input type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" 
                                         id="password" name="password" placeholder="At least 8 characters" required>
                                     @error('password')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
                                     @enderror
-                                    <small class="form-text text-muted">Minimum 8 characters</small>
+                                    <small class="form-text text-muted">{{ __('admin.password_hint') }}</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="password_confirmation" class="form-label fw-bold">Confirm Password <span class="text-danger">*</span></label>
+                                    <label for="password_confirmation" class="form-label fw-bold">{{ __('admin.confirm_password') }} <span class="text-danger">*</span></label>
                                     <input type="password" class="form-control form-control-lg @error('password_confirmation') is-invalid @enderror" 
                                         id="password_confirmation" name="password_confirmation" 
-                                        placeholder="Repeat password" required>
+                                        placeholder="{{ __('admin.confirm_password_placeholder') }}" required>
                                     @error('password_confirmation')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
                                     @enderror
@@ -141,12 +147,12 @@
 
                         <!-- Role Assignment Section -->
                         <div class="mb-4">
-                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-shield-alt"></i> Role Assignment</h5>
+                            <h5 class="fw-bold mb-3 pb-3 border-bottom"><i class="fas fa-shield-alt"></i> {{ __('admin.role_assignment') }}</h5>
 
-                            <label for="role" class="form-label fw-bold">Assign Role <span class="text-danger">*</span></label>
+                            <label for="role" class="form-label fw-bold">{{ __('admin.assign_role') }} <span class="text-danger">*</span></label>
                             <select class="form-select form-select-lg @error('role') is-invalid @enderror" 
                                 id="role" name="role" required>
-                                <option value="">-- Select Role --</option>
+                                <option value="">{{ __('admin.select_role') }}</option>
                                 @foreach($roles as $role)
                                 <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
                                     {{ ucfirst(str_replace('_', ' ', $role->name)) }} ({{ $role->users()->count() }} users)

@@ -7,15 +7,25 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of all users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->latest()->paginate(15);
+        $query = User::with('roles');
+
+        // Filter by creation date month
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('created_at', $month->year)
+                  ->whereMonth('created_at', $month->month);
+        }
+
+        $users = $query->latest()->paginate(15);
         
         return view('admin.users.index', compact('users'));
     }
