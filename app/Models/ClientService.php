@@ -45,9 +45,9 @@ class ClientService extends Model
     // Helper to get rate type
     public function getRateTypeAttribute()
     {
-        if($this->hours !== null) return 'Hourly';
-        if($this->days !== null) return 'Daily';
-        return 'Monthly';
+        if($this->hours !== null) return __('Hourly');
+        if($this->days !== null) return __('Daily');
+        return __('Monthly');
     }
 
     // Helper to get duration

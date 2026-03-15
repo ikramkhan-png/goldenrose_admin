@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h4>Add Billing for Client: {{ $client->name }}</h4>
+    <h4>{{ __('client_services.add_billing_for_client') }}: {{ $client->name }}</h4>
 
     {{-- Show validation errors --}}
     @if ($errors->any())
@@ -21,35 +21,35 @@
         @csrf
 
         <div class="mb-3">
-            <label>Amount Received</label>
+            <label>{{ __('client_services.amount_received') }}</label>
             <input type="number" step="0.01" name="amount_paid" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label>Payment Date</label>
+            <label>{{ __('client_services.payment_date') }}</label>
             <input type="date" name="payment_date" class="form-control">
         </div>
 
         <div class="mb-3">
-            <label>Status</label>
+            <label>{{ __('client_services.status') }}</label>
             <select name="status" class="form-control" required>
-                <option value="pending">Pending</option>
-                <option value="paid">Paid</option>
+                <option value="pending">{{ __('common.pending') }}</option>
+                <option value="paid">{{ __('common.paid') }}</option>
             </select>
         </div>
 
         <div class="mb-3">
-            <label>Invoice (PDF/JPG/PNG)</label>
+            <label>{{ __('client_services.invoice_pdf_jpg_png') }}</label>
             <input type="file" name="invoice" class="form-control">
         </div>
 
         <div class="mb-3">
-            <label>Notes</label>
+            <label>{{ __('client_services.notes') }}</label>
             <textarea name="notes" class="form-control" rows="3"></textarea>
         </div>
 
-        <button class="btn btn-primary">Save Billing</button>
-        <a href="{{ route('admin.client-services.financeSummary', $client->id) }}" class="btn btn-secondary">Cancel</a>
+        <button class="btn btn-primary">{{ __('client_services.save_billing') }}</button>
+        <a href="{{ route('admin.client-services.financeSummary', $client->id) }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
     </form>
 </div>
 @endsection

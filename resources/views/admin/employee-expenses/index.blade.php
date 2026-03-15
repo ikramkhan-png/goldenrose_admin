@@ -27,31 +27,31 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}?tab=salaries" role="tab"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-wallet2"></i> Salaries
+                    <i class="bi bi-wallet2"></i> {{ __('projects.salaries') }}
                 </a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}?tab=attendance" role="tab"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-calendar-check"></i> Attendance
+                    <i class="bi bi-calendar-check"></i> {{ __('projects.attendance') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.advances.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-cash-coin"></i> Advances
+                    <i class="bi bi-cash-coin"></i> {{ __('projects.advances') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.overtimes.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-clock-history"></i> Overtime
+                    <i class="bi bi-clock-history"></i> {{ __('projects.overtime') }}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fw-semibold" href="{{ route('admin.employee-expenses.index') }}"
                    style="border-radius: 8px; transition: all 0.2s; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <i class="bi bi-receipt"></i> Expenses
+                    <i class="bi bi-receipt"></i> {{ __('admin.employee_expenses_title') }}
                 </a>
             </li>
         </ul>
@@ -122,23 +122,34 @@
                                     @endif
                                 </td>
                                 <td style="padding: 16px; text-align: center;">
-                                    <a href="{{ route('admin.employee-expenses.edit', $expense) }}" class="btn btn-sm fw-semibold" style="background: #2196f3; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form action="{{ route('admin.employee-expenses.destroy', $expense) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('admin.confirm_delete_record') }}')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm fw-semibold" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3); margin-left: 4px;" type="submit">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex gap-2 justify-content-center">
+
+                                        <a href="{{ route('admin.employee-expenses.edit', $expense) }}"
+                                        class="btn btn-sm btn-warning"
+                                        style="padding: 6px 12px; border-radius: 6px;">
+                                            <i class="bi bi-pencil"></i> {{ __('admin.edit') }}
+                                        </a>
+
+                                        <form action="{{ route('admin.employee-expenses.destroy', $expense) }}"
+                                            method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger"
+                                                    style="padding: 6px 12px; border-radius: 6px;"
+                                                    onclick="return confirm('{{ __('admin.confirm_delete_record') }}');">
+                                                <i class="bi bi-trash"></i> {{ __('admin.delete') }}
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5" style="color: #999; font-size: 13px;">
-                                    <i class="bi bi-inbox" style="font-size: 24px; opacity: 0.3;"></i><br><br>{{ __('admin.no_employee_expenses_found') }}
-                                </td>
+                                <td colspan="7" class="text-center py-5" style="color: #999; font-size: 13px;">{{ __('admin.no_expenses_recorded') }}</td>
                             </tr>
                             @endforelse
                         </tbody>

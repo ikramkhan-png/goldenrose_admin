@@ -57,17 +57,15 @@ class ClientController extends Controller
     // ===================== SHOW =====================
     public function show(User $client, Request $request)
     {
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
-
         $client->load([
             'services.service',
-            'projects' => function($query) use ($selectedMonth){
+            'projects' => function($query) use ($request){
                 $query->orderBy('start_date', 'desc');
-                // Filter projects by month if requested
-                if ($selectedMonth) {
-                    $query->whereYear('start_date', $selectedMonth->year)
-                          ->whereMonth('start_date', $selectedMonth->month);
+                // Filter projects by month only if provided
+                if ($request->filled('month')) {
+                    $month = Carbon::createFromFormat('Y-m', $request->month);
+                    $query->whereYear('start_date', $month->year)
+                          ->whereMonth('start_date', $month->month);
                 }
             },
             'clientNotes' => function($query){
@@ -78,16 +76,17 @@ class ClientController extends Controller
             }
         ]);
 
-        // Filter services by assigned_date month if requested
-        if ($selectedMonth) {
-            $client->setRelation('services', $client->services->filter(function($service) use ($selectedMonth) {
+        // Filter services by assigned_date month only if provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $client->setRelation('services', $client->services->filter(function($service) use ($month) {
                 $assignedDate = Carbon::parse($service->assigned_date);
-                return $assignedDate->year == $selectedMonth->year && 
-                       $assignedDate->month == $selectedMonth->month;
+                return $assignedDate->year == $month->year && 
+                       $assignedDate->month == $month->month;
             }));
         }
 
-        return view('admin.clients.show', compact('client', 'selectedMonth'));
+        return view('admin.clients.show', compact('client'));
     }
 
     // ===================== EDIT =====================

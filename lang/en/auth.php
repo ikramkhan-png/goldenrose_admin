@@ -16,5 +16,15 @@ return [
     'failed' => 'These credentials do not match our records.',
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    
+    // Login form labels
+    'Golden Rose Construction' => 'Golden Rose Construction',
+    'Administration Portal' => 'Administration Portal',
+    'Email Address' => 'Email Address',
+    'Password' => 'Password',
+    'Remember me' => 'Remember me',
+    'Forgot password?' => 'Forgot password?',
+    'Sign In to Dashboard' => 'Sign In to Dashboard',
+    'Secure admin access only. All activities are monitored.' => 'Secure admin access only. All activities are monitored.',
 
 ];

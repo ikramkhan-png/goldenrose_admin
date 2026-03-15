@@ -12,17 +12,18 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+        $query = Project::with('client');
         
-        // Filter projects by month based on start_date
-        $projects = Project::with('client')
-            ->whereYear('start_date', $selectedMonth->year)
-            ->whereMonth('start_date', $selectedMonth->month)
-            ->latest('start_date')
-            ->get();
-            
-        return view('admin.projects.index', compact('projects', 'selectedMonth'));
+        // Filter projects by month based on start_date only if month is provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('start_date', $month->year)
+                  ->whereMonth('start_date', $month->month);
+        }
+        
+        $projects = $query->latest('start_date')->get();
+        
+        return view('admin.projects.index', compact('projects'));
     }
 
     public function create(Request $request)
@@ -191,45 +192,44 @@ class ProjectController extends Controller
     // ✅ NEW: Internal show for billing redirect
     public function internalShow($projectId, Request $request)
     {
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
-
         $project = Project::with(['client', 'assignedServices', 'documents', 'billings', 'expenses'])->findOrFail($projectId);
 
-        // Filter related data by month if requested
-        if ($selectedMonth) {
+        // Filter related data by month only if provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            
             // Filter assigned services by assigned_date
-            $project->setRelation('assignedServices', $project->assignedServices->filter(function($service) use ($selectedMonth) {
+            $project->setRelation('assignedServices', $project->assignedServices->filter(function($service) use ($month) {
                 $assignedDate = Carbon::parse($service->assigned_date);
-                return $assignedDate->year == $selectedMonth->year && 
-                       $assignedDate->month == $selectedMonth->month;
+                return $assignedDate->year == $month->year && 
+                       $assignedDate->month == $month->month;
             }));
 
             // Filter documents by update_date
-            $project->setRelation('documents', $project->documents->filter(function($document) use ($selectedMonth) {
+            $project->setRelation('documents', $project->documents->filter(function($document) use ($month) {
                 $updateDate = Carbon::parse($document->update_date);
-                return $updateDate->year == $selectedMonth->year && 
-                       $updateDate->month == $selectedMonth->month;
+                return $updateDate->year == $month->year && 
+                       $updateDate->month == $month->month;
             }));
 
             // Filter billings by payment_date
-            $project->setRelation('billings', $project->billings->filter(function($billing) use ($selectedMonth) {
+            $project->setRelation('billings', $project->billings->filter(function($billing) use ($month) {
                 if ($billing->payment_date) {
                     $paymentDate = Carbon::parse($billing->payment_date);
-                    return $paymentDate->year == $selectedMonth->year && 
-                           $paymentDate->month == $selectedMonth->month;
+                    return $paymentDate->year == $month->year && 
+                           $paymentDate->month == $month->month;
                 }
                 return false;
             }));
 
             // Filter expenses by date
-            $project->setRelation('expenses', $project->expenses->filter(function($expense) use ($selectedMonth) {
+            $project->setRelation('expenses', $project->expenses->filter(function($expense) use ($month) {
                 $expenseDate = Carbon::parse($expense->date);
-                return $expenseDate->year == $selectedMonth->year && 
-                       $expenseDate->month == $selectedMonth->month;
+                return $expenseDate->year == $month->year && 
+                       $expenseDate->month == $month->month;
             }));
         }
 
-        return view('admin.Internal_Details.project_show', compact('project', 'selectedMonth'));
+        return view('admin.Internal_Details.project_show', compact('project'));
     }
 }

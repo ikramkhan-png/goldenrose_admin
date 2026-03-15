@@ -93,5 +93,9 @@ return [
     'cancel'                     => 'إلغاء',
     'actions'                    => 'الإجراءات',
     'confirm_delete'             => 'هل أنت متأكد؟',
+    'total_paid'                 => 'الإجمالي المدفوع',
+    'remaining_balance'           => 'الرصيد المتبقي',
+    'client_details'             => 'تفاصيل العميل',
+'client'                   => 'العميل',
 
 ];

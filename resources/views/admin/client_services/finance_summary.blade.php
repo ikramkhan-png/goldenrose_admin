@@ -7,12 +7,12 @@
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card border-primary shadow-sm p-3" style="background-color: #f0f7ff;">
-                <h5 class="text-primary mb-2">Client Details</h5>
+                <h5 class="text-primary mb-2">{{ __('clients.client_details') }}</h5>
                 <div class="row">
-                    <div class="col-md-3"><strong>Name:</strong> {{ $client->name }}</div>
-                    <div class="col-md-3"><strong>Email:</strong> {{ $client->email }}</div>
-                    <div class="col-md-3"><strong>Phone:</strong> {{ $client->phone ?? '-' }}</div>
-                    <div class="col-md-3"><strong>Client Type:</strong> {{ ucfirst($client->client_type ?? '-') }}</div>
+                    <div class="col-md-3"><strong>{{ __('clients.name') }}:</strong> {{ $client->name }}</div>
+                    <div class="col-md-3"><strong>{{ __('clients.email') }}:</strong> {{ $client->email }}</div>
+                    <div class="col-md-3"><strong>{{ __('clients.phone') }}:</strong> {{ $client->phone ?? '-' }}</div>
+                    <div class="col-md-3"><strong>{{ __('clients.client_type') }}:</strong> {{ ucfirst($client->client_type ?? '-') }}</div>
                 </div>
             </div>
         </div>
@@ -20,25 +20,25 @@
 
     {{-- HEADER FINANCE SUMMARY --}}
     <div class="client-header mb-4">
-        <h3 class="text-dark">Finance Summary</h3>
+        <h3 class="text-dark">{{ __('client_services.finance_summary') }}</h3>
         <small class="text-muted">{{ $client->name }}</small>
 
         <div class="row mt-3 g-3">
             <div class="col-md-4">
                 <div class="info-box text-center bg-secondary text-white p-3 rounded">
-                    <small>Total Service Amount</small>
+                    <small>{{ __('clients.total_service_amount') }}</small>
                     <div class="fs-5">{{ number_format($totalServiceAmount, 2) }}</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="info-box text-center bg-success text-white p-3 rounded">
-                    <small>Total Paid</small>
+                    <small>{{ __('clients.total_paid') }}</small>
                     <div class="fs-5">{{ number_format($totalPaid, 2) }}</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="info-box text-center bg-warning text-dark p-3 rounded">
-                    <small>Remaining Balance</small>
+                    <small>{{ __('clients.remaining_balance') }}</small>
                     <div class="fs-5">{{ number_format($totalRemaining, 2) }}</div>
                 </div>
             </div>
@@ -50,16 +50,24 @@
         <div class="card-body p-4">
             <form action="{{ request()->url() }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
                 <div style="flex: 1; min-width: 250px;">
-                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 Filter Billings by Month</label>
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('client_services.filter_billings_by_month') }}</label>
                     <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
                            onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 Filter</label>
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('common.filter') }}</label>
                     <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
-                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : now()->format('F Y') }}
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
                     </div>
                 </div>
+                @if(request('month'))
+                <div style="min-width: 120px;">
+                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">&nbsp;</label>
+                    <a href="{{ request()->url() }}" class="btn btn-outline-secondary w-100" style="padding: 12px 14px; border: 2px solid #6c757d; border-radius: 8px; font-weight: 500; font-size: 14px;">
+                        <i class="fas fa-times"></i> {{ __('Show All') }}
+                    </a>
+                </div>
+                @endif
             </form>
         </div>
     </div>
@@ -77,19 +85,19 @@
     {{-- BILLINGS TABLE --}}
     <div class="card">
         <div class="card-header bg-dark text-white">
-            All Billings
+            {{ __('client_services.all_billings') }}
         </div>
         <div class="card-body p-0">
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Amount Received</th>
-                        <th>Payment Date</th>
-                        <th>Status</th>
-                        <th>Invoice</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
+                        <th>{{ __('client_services.amount_received') }}</th>
+                        <th>{{ __('client_services.payment_date') }}</th>
+                        <th>{{ __('client_services.status') }}</th>
+                        <th>{{ __('client_services.invoice') }}</th>
+                        <th>{{ __('client_services.notes') }}</th>
+                        <th>{{ __('client_services.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>

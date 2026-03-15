@@ -22,29 +22,29 @@ class ClientDashboardController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
-
-        // Get assigned services with service details and billings - filtered by month
+        
+        // Get assigned services with service details and billings
         $servicesQuery = ClientService::where('client_id', $user->id)
             ->with(['service', 'billings']);
             
-        // Filter services by month if assigned_date exists
-        if ($request->has('month')) {
-            $servicesQuery->whereYear('assigned_date', $selectedMonth->year)
-                          ->whereMonth('assigned_date', $selectedMonth->month);
+        // Filter services by month only if month is provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $servicesQuery->whereYear('assigned_date', $month->year)
+                          ->whereMonth('assigned_date', $month->month);
         }
         
         $services = $servicesQuery->get();
 
-        // Get assigned projects with billings and documents - filtered by month
+        // Get assigned projects with billings and documents
         $projectsQuery = Project::where('client_id', $user->id)
             ->with(['billings', 'documents']);
             
-        // Filter projects by month if start_date exists
-        if ($request->has('month')) {
-            $projectsQuery->whereYear('start_date', $selectedMonth->year)
-                           ->whereMonth('start_date', $selectedMonth->month);
+        // Filter projects by month only if month is provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $projectsQuery->whereYear('start_date', $month->year)
+                           ->whereMonth('start_date', $month->month);
         }
         
         $projects = $projectsQuery->get();
@@ -108,8 +108,7 @@ class ClientDashboardController extends Controller
             'totalRemaining',
             'projectUpdates',
             'importantNotes',
-            'myQueries',
-            'selectedMonth'
+            'myQueries'
         ));
     }
 
@@ -157,19 +156,18 @@ class ClientDashboardController extends Controller
     public function showProject($id, Request $request)
     {
         $user = auth()->user();
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
         
         // Get project only if it belongs to this client
         $projectQuery = Project::where('client_id', $user->id)
             ->with(['billings', 'documents']);
             
-        // Filter project updates and billings by month if provided
-        if ($request->has('month')) {
+        // Filter project updates and billings by month only if provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
             // Filter documents by update_date
-            $projectQuery->whereHas('documents', function ($query) use ($selectedMonth) {
-                $query->whereYear('update_date', $selectedMonth->year)
-                      ->whereMonth('update_date', $selectedMonth->month);
+            $projectQuery->whereHas('documents', function ($query) use ($month) {
+                $query->whereYear('update_date', $month->year)
+                      ->whereMonth('update_date', $month->month);
             });
         }
 
