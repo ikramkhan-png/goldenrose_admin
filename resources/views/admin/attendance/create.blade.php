@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>Add Attendance</h2>
+    <h2>{{ __('projects.add_attendance') }}</h2>
 
     @if($errors->any())
         <div class="alert alert-danger">
@@ -17,9 +17,9 @@
     <form action="{{ route('admin.attendance.store') }}" method="POST">
         @csrf
         <div class="mb-3">
-            <label>Employee</label>
+            <label>{{ __('projects.employee') }}</label>
             <select name="employee_id" class="form-control" required>
-                <option value="">-- Select Employee --</option>
+                <option value="">{{ __('projects.select_employee') }}</option>
                 @foreach($employees as $employee)
                     <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                 @endforeach
@@ -27,21 +27,21 @@
         </div>
 
         <div class="mb-3">
-            <label>Date</label>
+            <label>{{ __('projects.date') }}</label>
             <input type="date" name="date" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label>Status</label>
+            <label>{{ __('projects.status') }}</label>
             <select name="status" class="form-control" required>
-                <option value="">-- Select Status --</option>
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-                <option value="leave">Leave</option>
+                <option value="">{{ __('projects.select_status') }}</option>
+                <option value="present">{{ __('projects.present') }}</option>
+                <option value="absent">{{ __('projects.absent') }}</option>
+                <option value="leave">{{ __('projects.leave') }}</option>
             </select>
         </div>
 
-        <button type="submit" class="btn btn-success">Add Attendance</button>
+        <button type="submit" class="btn btn-success">{{ __('projects.add_attendance') }}</button>
     </form>
 </div>
 @endsection

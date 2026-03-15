@@ -114,7 +114,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     )->name('clients.projectsFinanceSummary');
 
     // Client Services
-    Route::resource('client-services', ClientServiceController::class);
     Route::get(
         'client-services/{client_service}/view',
         [ClientServiceController::class, 'view']
@@ -158,6 +157,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         'client-services/billing/{id}',
         [ClientServiceController::class, 'deleteBilling']
     )->name('client-services.deleteBilling');
+
+    // Resource routes (must come after specific routes to avoid conflicts)
+    Route::get('client-services', [ClientServiceController::class, 'index'])->name('client-services.index');
+    Route::get('client-services/create', [ClientServiceController::class, 'create'])->name('client-services.create');
+    Route::post('client-services', [ClientServiceController::class, 'store'])->name('client-services.store');
+    Route::get('client-services/{client_service}', [ClientServiceController::class, 'show'])->name('client-services.show');
+    Route::get('client-services/{client_service}/edit', [ClientServiceController::class, 'edit'])->name('client-services.edit');
+    Route::put('client-services/{client_service}', [ClientServiceController::class, 'update'])->name('client-services.update');
+    Route::delete('client-services/{client_service}', [ClientServiceController::class, 'destroy'])->name('client-services.destroy');
 
     // Projects
     Route::resource('projects', ProjectController::class);

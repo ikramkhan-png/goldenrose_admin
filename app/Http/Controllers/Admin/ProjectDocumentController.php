@@ -15,17 +15,18 @@ class ProjectDocumentController extends Controller
     // List all project documents
     public function index(Request $request)
     {
-        $month = $request->input('month', now()->format('Y-m'));
-        $selectedMonth = Carbon::createFromFormat('Y-m', $month);
+        $query = ProjectDocument::with('project');
         
-        // Filter project documents by month based on update_date
-        $projectDocuments = ProjectDocument::with('project')
-            ->whereYear('update_date', $selectedMonth->year)
-            ->whereMonth('update_date', $selectedMonth->month)
-            ->latest('update_date')
-            ->get();
+        // Filter project documents by month based on update_date only if month is provided
+        if ($request->filled('month')) {
+            $month = Carbon::createFromFormat('Y-m', $request->month);
+            $query->whereYear('update_date', $month->year)
+                  ->whereMonth('update_date', $month->month);
+        }
+        
+        $projectDocuments = $query->latest('update_date')->get();
             
-        return view('admin.Project_Documents.index', compact('projectDocuments', 'selectedMonth'));
+        return view('admin.Project_Documents.index', compact('projectDocuments'));
     }
 
     // Show create form

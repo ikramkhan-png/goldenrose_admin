@@ -2,31 +2,31 @@
     <ul class="menu">
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
+            <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">{{ __('Admin Dashboard') }}</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.employees.index') }}">Employees</a>
+            <a class="nav-link text-white" href="{{ route('admin.employees.index') }}">{{ __('Employees') }}</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.attendance.index') }}">Attendance</a>
+            <a class="nav-link text-white" href="{{ route('admin.attendance.index') }}">{{ __('Attendance') }}</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.departments.index') }}">Departments</a>
+            <a class="nav-link text-white" href="{{ route('admin.departments.index') }}">{{ __('Departments') }}</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.roles.index') }}">Roles & Permissions</a>
+            <a class="nav-link text-white" href="{{ route('admin.roles.index') }}">{{ __('Roles & Permissions') }}</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="#">Reports</a> <!-- You can create this route later -->
+            <a class="nav-link text-white" href="#">{{ __('Reports') }}</a> <!-- You can create this route later -->
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.settings.index') }}">Settings</a>
+            <a class="nav-link text-white" href="{{ route('admin.settings.index') }}">{{ __('Settings') }}</a>
         </li>
 
     </ul>

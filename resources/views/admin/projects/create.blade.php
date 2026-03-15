@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Create New Project</h2>
+    <h2>{{ __('projects.create_new_project') }}</h2>
 
     @if($errors->any())
         <div class="alert alert-danger">
@@ -14,14 +14,14 @@
         @csrf
 
         <div class="mb-3">
-            <label>Project Name</label>
+            <label>{{ __('projects.project_name') }}</label>
             <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
         </div>
 
         <div class="mb-3">
-            <label>Client</label>
+            <label>{{ __('clients.client') }}</label>
             <select name="client_id" class="form-control" required>
-                <option value="">Select Client</option>
+                <option value="">{{ __('projects.select_client') }}</option>
                 @foreach($clients as $clientOption)
                     <option value="{{ $clientOption->id }}" {{ ($selectedClientId ?? old('client_id')) == $clientOption->id ? 'selected' : '' }}>
                         {{ $clientOption->name }}
@@ -31,36 +31,36 @@
         </div>
 
         <div class="mb-3">
-            <label>Project Type</label>
+            <label>{{ __('projects.project_type') }}</label>
             <select name="type" class="form-control" required>
-                <option value="">Select Type</option>
-                <option value="one-time" {{ old('type') == 'one-time' ? 'selected' : '' }}>One Time</option>
-                <option value="monthly" {{ old('type') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                <option value="yearly" {{ old('type') == 'yearly' ? 'selected' : '' }}>Yearly</option>
+                <option value="">{{ __('projects.select_type') }}</option>
+                <option value="one-time" {{ old('type') == 'one-time' ? 'selected' : '' }}>{{ __('projects.one_time') }}</option>
+                <option value="monthly" {{ old('type') == 'monthly' ? 'selected' : '' }}>{{ __('projects.monthly') }}</option>
+                <option value="yearly" {{ old('type') == 'yearly' ? 'selected' : '' }}>{{ __('projects.yearly') }}</option>
             </select>
         </div>
 
         <div class="mb-3">
-            <label>Budget</label>
+            <label>{{ __('projects.budget') }}</label>
             <input type="number" name="budget" step="0.01" class="form-control" value="{{ old('budget') }}">
         </div>
 
         <div class="mb-3">
-            <label>Start Date</label>
+            <label>{{ __('projects.start_date') }}</label>
             <input type="date" name="start_date" class="form-control" value="{{ old('start_date') }}" required>
         </div>
 
         <div class="mb-3">
-            <label>End Date</label>
+            <label>{{ __('projects.end_date') }}</label>
             <input type="date" name="end_date" class="form-control" value="{{ old('end_date') }}">
         </div>
 
         <div class="mb-3">
-            <label>Notes</label>
+            <label>{{ __('projects.notes') }}</label>
             <textarea name="notes" class="form-control">{{ old('notes') }}</textarea>
         </div>
 
-        <button class="btn btn-primary">Create Project</button>
+        <button class="btn btn-primary">{{ __('projects.create_project') }}</button>
     </form>
 </div>
 @endsection

@@ -48,9 +48,9 @@ class ProjectService extends Model
     // Accessors for displaying in views
     public function getRateTypeAttribute()
     {
-        if ($this->hours) return 'Hourly';
-        if ($this->days) return 'Daily';
-        if ($this->months) return 'Monthly';
+        if ($this->hours) return __('Hourly');
+        if ($this->days) return __('Daily');
+        if ($this->months) return __('Monthly');
         return '-';
     }
 

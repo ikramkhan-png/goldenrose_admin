@@ -66,7 +66,7 @@
 
         {{-- Buttons --}}
         <button class="btn btn-primary">Update</button>
-        <a href="{{ route('admin.client-services.index') }}" class="btn btn-secondary">Cancel</a>
+        <a href="{{ route('admin.client-services.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
     </form>
 </div>
 

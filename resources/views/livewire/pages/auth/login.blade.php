@@ -40,8 +40,8 @@ new #[Layout('admin.layouts.guest')] class extends Component
         <div class="logo">
             <i class="fas fa-building"></i>
         </div>
-        <h1>Golden Rose Construction</h1>
-        <p>Administration Portal</p>
+        <h1>{{ __('Golden Rose Construction') }}</h1>
+        <p>{{ __('Administration Portal') }}</p>
     </div>
 
     <!-- Form Body -->
@@ -57,7 +57,7 @@ new #[Layout('admin.layouts.guest')] class extends Component
             <!-- Email Address -->
             <div class="mb-3">
                 <label for="email" class="form-label">
-                    <i class="fas fa-envelope me-1"></i> Email Address
+                    <i class="fas fa-envelope me-1"></i> {{ __('Email Address') }}
                 </label>
                 <div class="input-group">
                     <span class="input-group-text">
@@ -85,7 +85,7 @@ new #[Layout('admin.layouts.guest')] class extends Component
             <!-- Password -->
             <div class="mb-3">
                 <label for="password" class="form-label">
-                    <i class="fas fa-lock me-1"></i> Password
+                    <i class="fas fa-lock me-1"></i> {{ __('Password') }}
                 </label>
                 <div class="input-group">
                     <span class="input-group-text">
@@ -120,13 +120,13 @@ new #[Layout('admin.layouts.guest')] class extends Component
                         name="remember"
                     >
                     <label class="form-check-label" for="remember">
-                        Remember me
+                        {{ __('Remember me') }}
                     </label>
                 </div>
 
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="forgot-link" wire:navigate>
-                        Forgot password?
+                        {{ __('Forgot password?') }}
                     </a>
                 @endif
             </div>
@@ -134,7 +134,7 @@ new #[Layout('admin.layouts.guest')] class extends Component
             <!-- Submit Button -->
             <button type="submit" class="btn btn-login">
                 <i class="fas fa-sign-in-alt me-2"></i>
-                Sign In to Dashboard
+                {{ __('Sign In to Dashboard') }}
             </button>
         </form>
     </div>
@@ -143,7 +143,7 @@ new #[Layout('admin.layouts.guest')] class extends Component
     <div class="login-footer">
         <p>
             <i class="fas fa-shield-alt me-1"></i>
-            Secure admin access only. All activities are monitored.
+            {{ __('Secure admin access only. All activities are monitored.') }}
         </p>
     </div>
 </div>

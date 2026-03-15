@@ -7,11 +7,11 @@
     <div class="client-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h3 class="mb-1 fw-semibold text-white">Service Details</h3>
-                <small class="text-white-50">View assigned service information</small>
+                <h3 class="mb-1 fw-semibold text-white">{{ __('client_services.service_details') }}</h3>
+                <small class="text-white-50">{{ __('client_services.view_assigned_service_information') }}</small>
             </div>
-            <a href="{{ route('admin.clients.show', $clientService->client_id) }}" class="btn btn-light btn-sm">
-                ← Back to Client
+            <a href="{{ route('clients.show', $clientService->client_id) }}" class="btn btn-light btn-sm">
+                ← {{ __('common.back_to_client') }}
             </a>
         </div>
     </div>
@@ -19,22 +19,22 @@
     {{-- ===== SERVICE INFO CARD ===== --}}
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-light">
-            <h5 class="mb-0 fw-semibold">Service Information</h5>
+            <h5 class="mb-0 fw-semibold">{{ __('client_services.service_information') }}</h5>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tr>
-                            <th style="width: 40%;">Client:</th>
+                            <th style="width: 40%;">{{ __('clients.client') }}:</th>
                             <td>{{ $clientService->client->name ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Service Type:</th>
+                            <th>{{ __('client_services.service_type') }}:</th>
                             <td>{{ class_basename($clientService->service_type ?? '') }}</td>
                         </tr>
                         <tr>
-                            <th>Service Name:</th>
+                            <th>{{ __('client_services.service_name') }}:</th>
                             <td>{{ $clientService->service->name ?? '-' }}</td>
                         </tr>
                     </table>
@@ -42,10 +42,10 @@
                 <div class="col-md-6">
                     <table class="table table-borderless">
                         <tr>
-                            <th style="width: 40%;">Rate Type:</th>
+                            <th style="width: 40%;">{{ __('client_services.rate_type') }}:</th>
                             <td>
                                 @if($clientService->hourly_rate > 0)
-                                    Hourly
+                                    {{ __('client_services.hourly') }}
                                 @elseif($clientService->daily_rate > 0)
                                     Daily
                                 @elseif($clientService->monthly_rate > 0)
@@ -56,21 +56,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>Duration:</th>
+                            <th>{{ __('client_services.duration') }}:</th>
                             <td>
                                 @if($clientService->hours > 0)
-                                    {{ $clientService->hours }} hours
+                                    {{ $clientService->hours }} {{ __('client_services.hours') }}
                                 @elseif($clientService->days > 0)
-                                    {{ $clientService->days }} days
+                                    {{ $clientService->days }} {{ __('client_services.days') }}
                                 @elseif($clientService->months > 0)
-                                    {{ $clientService->months }} months
+                                    {{ $clientService->months }} {{ __('client_services.months') }}
                                 @else
                                     -
                                 @endif
                             </td>
                         </tr>
                         <tr>
-                            <th>Rate:</th>
+                            <th>{{ __('client_services.rate') }}:</th>
                             <td class="fw-bold text-primary">
                                 @if($clientService->hourly_rate > 0)
                                     {{ number_format($clientService->hourly_rate, 2) }} /hr

@@ -37,9 +37,17 @@
                     <div style="flex: 1; min-width: 200px;">
                         <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('admin.period') }}</label>
                         <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
-                            {{ $selectedMonth->format('F Y') }}
+                            {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
                         </div>
                     </div>
+                    @if(request('month'))
+                    <div style="min-width: 120px;">
+                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">&nbsp;</label>
+                        <a href="{{ route('admin.salaries.index') }}" class="btn btn-outline-secondary w-100" style="padding: 12px 14px; border: 2px solid #6c757d; border-radius: 8px; font-weight: 500; font-size: 14px;">
+                            <i class="fas fa-times"></i> {{ __('Show All') }}
+                        </a>
+                    </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -133,7 +141,7 @@
     @else
         <div class="container-xl px-4">
             <div class="alert border-0" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 12px; padding: 20px; color: #667eea; border-left: 4px solid #667eea;">
-                <i class="bi bi-info-circle"></i> <strong>{{ __('admin.no_data_available') }}</strong> {{ __('admin.for_period', ['period' => $selectedMonth->format('F Y')]) }}
+                <i class="bi bi-info-circle"></i> <strong>{{ __('admin.no_data_available') }}</strong> {{ request('month') ? __('admin.for_period', ['period' => $selectedMonth->format('F Y')]) : __('All Data') }}
             </div>
         </div>
     @endif

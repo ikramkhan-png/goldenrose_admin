@@ -93,5 +93,9 @@ return [
     'cancel'                     => 'Cancel',
     'actions'                    => 'Actions',
     'confirm_delete'             => 'Are you sure?',
+    'total_paid'                 => 'Total Paid',
+    'remaining_balance'           => 'Remaining Balance',
+    'client_details'             => 'Client Details',
+'client'                   => 'Client',
 
 ];
