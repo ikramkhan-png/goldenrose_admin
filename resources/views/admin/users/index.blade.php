@@ -1,236 +1,217 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    @php $isAr = app()->getLocale() === 'ar'; @endphp
-    <div class="container-fluid mt-4 px-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
-        <!-- Page Header -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h1 class="fw-bold mb-2">
-                    <i class="fas fa-users"></i> {{ __('users.user_management') }}
-                </h1>
-                <p class="text-muted">{{ __('users.user_management_description') }}</p>
-            </div>
-            <div class="col-md-4 {{ $isAr ? 'text-start' : 'text-end' }}">
-                <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-user-plus"></i> {{ __('users.create_new_user') }}
-                </a>
-            </div>
+    {{-- PAGE HEADER --}}
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('users.user_management') }}</h4>
+            <p class="page-subtitle">{{ __('users.user_management_description') }}</p>
         </div>
-
-        {{-- MONTH FILTER --}}
-        <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
-            <div class="card-body p-4">
-                <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
-                    <div style="flex: 1; min-width: 250px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('admin.filter_by_month') }}</label>
-                        <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
-                               onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('admin.filter') }}</label>
-                        <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
-                            {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
-                        </div>
-                    </div>
-                    @if(request('month'))
-                    <div style="min-width: 120px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">&nbsp;</label>
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary w-100" style="padding: 12px 14px; border: 2px solid #6c757d; border-radius: 8px; font-weight: 500; font-size: 14px;">
-                            <i class="fas fa-times"></i> {{ __('Show All') }}
-                        </a>
-                    </div>
-                    @endif
-                </form>
-            </div>
-        </div>
-
-        <!-- Alert Messages -->
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><i class="fas fa-exclamation-circle"></i> {{ __('users.errors') }}:</strong>
-                <ul class="mb-0 mt-2">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="text-muted mb-2">{{ __('users.total_users') }}</h6>
-                        <h2 class="text-primary fw-bold">{{ \App\Models\User::count() }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="text-muted mb-2">{{ __('users.admin_users') }}</h6>
-                        <h2 class="text-danger fw-bold">{{ \App\Models\User::where('type', 'admin')->count() }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="text-muted mb-2">{{ __('users.client_users') }}</h6>
-                        <h2 class="text-info fw-bold">{{ \App\Models\User::where('type', 'client')->count() }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="text-muted mb-2">{{ __('users.employees') }}</h6>
-                        <h2 class="text-secondary fw-bold">{{ \App\Models\User::where('type', 'employee')->count() }}</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-bottom py-3">
-                <h5 class="mb-0">
-                    <i class="fas fa-list"></i>
-                    {{ __('users.all_users') }} ({{ $users->total() }})
-                </h5>
-            </div>
-            <div class="card-body p-0">
-                @if ($users->isEmpty())
-                    <div class="p-5 text-center">
-                        <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
-                        <p class="text-muted mt-3">
-                            {{ __('users.no_users') }}
-                            <a href="{{ route('admin.users.create') }}">{{ __('users.create_first_user') }}</a>
-                        </p>
-                    </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4">{{ __('users.name') }}</th>
-                                    <th>{{ __('users.email') }}</th>
-                                    <th>{{ __('users.phone') }}</th>
-                                    <th>{{ __('users.type') }}</th>
-                                    <th>{{ __('users.role') }}</th>
-                                    <th>{{ __('users.joined') }}</th>
-                                    <th class="{{ $isAr ? 'text-start ps-4' : 'text-end pe-4' }}">
-                                        {{ __('users.actions') }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($users as $user)
-                                    <tr>
-                                        <td class="ps-4">
-                                            <strong>{{ $user->name }}</strong>
-                                            @if (auth()->user()->id === $user->id)
-                                                <span class="badge bg-warning ms-2">{{ __('users.you') }}</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">{{ $user->email }}</small>
-                                        </td>
-                                        <td>
-                                            <small>{{ $user->phone ?? '-' }}</small>
-                                        </td>
-                                        <td>
-                                            @if ($user->type === 'admin')
-                                                <span class="badge bg-danger">👑 {{ __('users.type_admin') }}</span>
-                                            @elseif($user->type === 'client')
-                                                <span class="badge bg-info">👤 {{ __('users.type_client') }}</span>
-                                            @else
-                                                <span class="badge bg-secondary">👷 {{ __('users.type_employee') }}</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @forelse($user->roles as $role)
-                                                @if ($role->name === 'super_admin')
-                                                    <span class="badge bg-danger">{{ __('users.role_super_admin') }}</span>
-                                                @elseif($role->name === 'admin')
-                                                    <span
-                                                        class="badge bg-warning text-dark">{{ __('users.role_admin') }}</span>
-                                                @elseif(strpos($role->name, 'client') !== false)
-                                                    <span
-                                                        class="badge bg-info">{{ str_replace('_', ' ', ucfirst($role->name)) }}</span>
-                                                @else
-                                                    <span
-                                                        class="badge bg-secondary">{{ str_replace('_', ' ', ucfirst($role->name)) }}</span>
-                                                @endif
-                                            @empty
-                                                <span class="badge bg-light text-dark">{{ __('users.no_role') }}</span>
-                                            @endforelse
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                {{ $user->created_at->translatedFormat('M d, Y') }}
-                                            </small>
-                                        </td>
-                                        <td class="{{ $isAr ? 'ps-4 text-start' : 'pe-4 text-end' }}">
-                                            <a href="{{ route('admin.users.show', $user) }}"
-                                                class="btn btn-sm btn-outline-info" title="{{ __('users.view') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('admin.users.edit', $user) }}"
-                                                class="btn btn-sm btn-outline-warning" title="{{ __('users.edit') }}">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            @if (auth()->user()->id !== $user->id && !$user->hasRole('super_admin'))
-                                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
-                                                    style="display:inline;"
-                                                    onsubmit="return confirm('{{ __('users.confirm_delete') }}');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                        title="{{ __('users.delete') }}">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Pagination -->
-        @if ($users->hasPages())
-            <div class="d-flex justify-content-center">
-                {{ $users->links() }}
-            </div>
-        @endif
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-1"></i>{{ __('users.create_new_user') }}
+        </a>
     </div>
 
-    <style>
-        .table-hover tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.01);
-        }
-    </style>
+    {{-- STATS --}}
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div style="width:44px;height:44px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-users" style="color:#4f46e5;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;">{{ __('users.total_users') }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#1e293b;">{{ \App\Models\User::count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div style="width:44px;height:44px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-crown" style="color:#dc2626;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;">{{ __('users.admin_users') }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#1e293b;">{{ \App\Models\User::where('type', 'admin')->count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div style="width:44px;height:44px;border-radius:10px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-user-tie" style="color:#0284c7;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;">{{ __('users.client_users') }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#1e293b;">{{ \App\Models\User::where('type', 'client')->count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div style="width:44px;height:44px;border-radius:10px;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-hard-hat" style="color:#059669;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;">{{ __('users.employees') }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#1e293b;">{{ \App\Models\User::where('type', 'employee')->count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MONTH FILTER --}}
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-end gap-3 flex-wrap">
+                <div style="flex: 1; min-width: 220px;">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-alt me-1" style="color: #4f46e5;"></i>{{ __('admin.filter_by_month') }}
+                    </label>
+                    <input type="month" name="month" class="form-control"
+                           value="{{ request('month', now()->format('Y-m')) }}"
+                           onchange="this.form.submit()">
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label">
+                        <i class="fas fa-filter me-1" style="color: #4f46e5;"></i>{{ __('admin.filter') }}
+                    </label>
+                    <div class="filter-display">
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
+                    </div>
+                </div>
+                @if(request('month'))
+                <div style="min-width: 110px;">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-times me-1"></i>{{ __('Show All') }}
+                    </a>
+                </div>
+                @endif
+            </form>
+        </div>
+    </div>
+
+    @if ($errors->any())
+        <div class="p-3 mb-4" style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; border-radius: 8px;">
+            <strong><i class="fas fa-exclamation-circle me-2"></i>{{ __('users.errors') }}:</strong>
+            <ul class="mb-0 mt-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="p-3 mb-4" style="background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="p-3 mb-4" style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; border-radius: 8px;">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+        </div>
+    @endif
+
+    <div class="card">
+        <div class="card-body p-0">
+            @if ($users->isEmpty())
+                <div class="info-box m-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ __('users.no_users') }}
+                    <a href="{{ route('admin.users.create') }}" style="color: #4f46e5; font-weight: 600;">{{ __('users.create_first_user') }}</a>
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-styled mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{ __('users.name') }}</th>
+                                <th>{{ __('users.email') }}</th>
+                                <th>{{ __('users.phone') }}</th>
+                                <th>{{ __('users.type') }}</th>
+                                <th>{{ __('users.role') }}</th>
+                                <th>{{ __('users.joined') }}</th>
+                                <th class="td-center">{{ __('users.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td class="td-name">
+                                        {{ $user->name }}
+                                        @if (auth()->user()->id === $user->id)
+                                            <span class="badge ms-1" style="background: #fef3c7; color: #92400e; font-size: 10px; padding: 2px 7px; border-radius: 10px;">{{ __('users.you') }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="td-muted">{{ $user->email }}</td>
+                                    <td class="td-muted">{{ $user->phone ?? '-' }}</td>
+                                    <td>
+                                        @if ($user->type === 'admin')
+                                            <span class="badge" style="background: #fee2e2; color: #991b1b; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600;">{{ __('users.type_admin') }}</span>
+                                        @elseif($user->type === 'client')
+                                            <span class="badge" style="background: #dbeafe; color: #1e40af; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600;">{{ __('users.type_client') }}</span>
+                                        @else
+                                            <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600;">{{ __('users.type_employee') }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @forelse($user->roles as $role)
+                                            @if ($role->name === 'super_admin')
+                                                <span class="badge" style="background: #fee2e2; color: #991b1b; font-size: 11px; padding: 3px 9px; border-radius: 20px;">{{ __('users.role_super_admin') }}</span>
+                                            @elseif($role->name === 'admin')
+                                                <span class="badge" style="background: #fef3c7; color: #92400e; font-size: 11px; padding: 3px 9px; border-radius: 20px;">{{ __('users.role_admin') }}</span>
+                                            @else
+                                                <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 11px; padding: 3px 9px; border-radius: 20px;">{{ str_replace('_', ' ', ucfirst($role->name)) }}</span>
+                                            @endif
+                                        @empty
+                                            <span class="td-muted" style="font-size: 12px;">{{ __('users.no_role') }}</span>
+                                        @endforelse
+                                    </td>
+                                    <td class="td-muted">{{ $user->created_at->translatedFormat('M d, Y') }}</td>
+                                    <td class="td-center">
+                                        <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-info" title="{{ __('users.view') }}">
+                                            <i class="fas fa-eye me-1"></i>{{ __('users.view') }}
+                                        </a>
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning" title="{{ __('users.edit') }}">
+                                            <i class="fas fa-edit me-1"></i>{{ __('users.edit') }}
+                                        </a>
+                                        @if (auth()->user()->id !== $user->id && !$user->hasRole('super_admin'))
+                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline"
+                                                onsubmit="return confirm('{{ __('users.confirm_delete') }}');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" title="{{ __('users.delete') }}">
+                                                    <i class="fas fa-trash me-1"></i>{{ __('users.delete') }}
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    @if ($users->hasPages())
+        <div class="mt-3">{{ $users->links() }}</div>
+    @endif
+
+</div>
 @endsection

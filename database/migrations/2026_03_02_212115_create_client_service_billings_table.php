@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('client_service_id')
                   ->constrained('client_services')
                   ->onDelete('cascade');
-            $table->decimal('amount_billed', 12, 2);
+            $table->decimal('amount_billed', 12, 2)->default(0);
             $table->decimal('amount_paid', 12, 2)->default(0);
             $table->date('payment_date')->nullable();
             $table->enum('status', ['pending','paid'])->default('pending');

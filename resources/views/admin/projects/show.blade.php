@@ -80,7 +80,7 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Service</th>
@@ -126,7 +126,7 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Title</th>
@@ -189,7 +189,7 @@
 {{-- ===== STYLE BLOCK ===== --}}
 <style>
 .client-header{
-    background: linear-gradient(135deg, #1f2937, #374151);
+    background: #1a2535;
     border-radius: 14px;
     padding: 22px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);

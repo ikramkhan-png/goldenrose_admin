@@ -11,177 +11,168 @@
     @livewireStyles
     
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #f0f4f8;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-        
+
         .login-container {
             width: 100%;
-            max-width: 480px;
-            padding: 15px;
+            max-width: 460px;
+            padding: 16px;
         }
-        
+
         .login-card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
             overflow: hidden;
-            transition: transform 0.3s ease;
         }
-        
-        .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-        }
-        
+
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a2535;
             color: white;
-            padding: 40px 30px;
+            padding: 36px 32px;
             text-align: center;
         }
-        
+
         .login-header .logo {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            background: #4f46e5;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 0 auto 18px;
         }
-        
+
         .login-header .logo i {
-            font-size: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 32px;
+            color: #fff;
         }
-        
+
         .login-header h1 {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            color: #f1f5f9;
         }
-        
+
         .login-header p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 13px;
+            color: #94a3b8;
             margin: 0;
         }
-        
+
         .login-body {
-            padding: 40px 35px;
+            padding: 36px 32px;
         }
-        
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         .form-label {
+            display: block;
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
-            margin-bottom: 8px;
+            color: #374151;
+            font-size: 13px;
+            margin-bottom: 7px;
         }
-        
+
         .form-control {
-            border: 2px solid #e8ecf1;
-            background: #f8f9fc;
-            padding: 12px 15px;
-            font-size: 15px;
+            display: block;
+            width: 100%;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 12px 14px;
+            font-size: 14px;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            color: #1e293b;
+            line-height: 1.5;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
-        
+
         .form-control:focus {
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            border-color: #4f46e5;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+            outline: none;
         }
-        
-        .input-group-text {
-            background: #f8f9fc;
-            border: 2px solid #e8ecf1;
-            border-right: none;
-            color: #6c757d;
+
+        .form-control.is-invalid {
+            border-color: #ef4444;
         }
-        
-        .input-group .form-control {
-            border-left: none;
+
+        .invalid-feedback {
+            display: block;
+            font-size: 12px;
+            color: #dc2626;
+            margin-top: 5px;
         }
-        
-        .input-group:focus-within .input-group-text {
-            border-color: #667eea;
-            background: white;
-        }
-        
+
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4f46e5;
             border: none;
             color: white;
-            padding: 12px 30px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 15px;
             font-weight: 600;
             border-radius: 8px;
             width: 100%;
-            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        
+
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: #4338ca;
             color: white;
         }
-        
+
         .form-check-input:checked {
-            background-color: #667eea;
-            border-color: #667eea;
+            background-color: #4f46e5;
+            border-color: #4f46e5;
         }
-        
+
         .form-check-label {
-            font-size: 14px;
-            color: #6c757d;
+            font-size: 13px;
+            color: #64748b;
         }
-        
+
         .forgot-link {
-            color: #667eea;
+            color: #4f46e5;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
-            transition: color 0.3s ease;
         }
-        
+
         .forgot-link:hover {
-            color: #764ba2;
+            color: #4338ca;
+            text-decoration: underline;
         }
-        
+
         .login-footer {
-            background: #f8f9fc;
-            padding: 20px;
+            background: #f8fafc;
+            padding: 16px 20px;
             text-align: center;
-            border-top: 1px solid #e8ecf1;
+            border-top: 1px solid #e2e8f0;
         }
-        
+
         .login-footer p {
             margin: 0;
-            font-size: 13px;
-            color: #6c757d;
+            font-size: 12px;
+            color: #94a3b8;
         }
-        
-        .invalid-feedback {
-            font-size: 13px;
-            margin-top: 5px;
-        }
-        
+
         .alert {
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
         }
     </style>
 </head>

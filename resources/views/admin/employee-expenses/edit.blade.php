@@ -1,139 +1,106 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;">
-    
-    {{-- PAGE HEADER --}}
-    <div class="container-xl px-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">✏️ Edit Employee Expense</h1>
-                <p class="text-muted mb-0" style="font-size: 14px;">Update expense record for {{ $employee_expense->employee->name ?? 'Employee' }}</p>
-            </div>
-            <a href="{{ route('admin.employee-expenses.index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back to Expenses
-            </a>
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('admin.edit_employee_expense_title') }}</h4>
+            <p class="page-subtitle">{{ __('admin.employee_expense_subtitle') }}</p>
         </div>
+        <a href="{{ route('admin.employee-expenses.index') }}" class="btn btn-cancel">
+            <i class="fas fa-arrow-left me-1"></i>{{ __('admin.back_to_expenses') }}
+        </a>
     </div>
 
-    {{-- FORM CARD --}}
-    <div class="container-xl px-4">
-        <div class="card border-0" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
-            <div class="card-body p-4">
+    @if ($errors->any())
+        <div class="p-3 mb-4" style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; border-radius: 8px;">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $err)<li>{{ $err }}</li>@endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="form-card">
                 <form action="{{ route('admin.employee-expenses.update', $employee_expense) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="employee_id" class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                                👤 Employee <span class="text-danger">*</span>
-                            </label>
-                            <select name="employee_id" id="employee_id" class="form-select @error('employee_id') is-invalid @enderror" required
-                                    style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                                <option value="">Select Employee</option>
-                                @foreach($employees as $emp)
-                                    <option value="{{ $emp->id }}" {{ old('employee_id', $employee_expense->employee_id) == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('employee_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="amount" class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                                💰 Amount <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" step="0.01" name="amount" id="amount" 
-                                   class="form-control @error('amount') is-invalid @enderror" 
-                                   value="{{ old('amount', $employee_expense->amount) }}" required placeholder="0.00"
-                                   style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                            @error('amount')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="date" class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                                📅 Date <span class="text-danger">*</span>
-                            </label>
-                            <input type="date" name="date" id="date" 
-                                   class="form-control @error('date') is-invalid @enderror" 
-                                   value="{{ old('date', $employee_expense->date) }}" required
-                                   style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                            @error('date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="invoice" class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                                📎 Invoice/Receipt (Optional)
-                            </label>
-                            <input type="file" name="invoice" id="invoice" 
-                                   class="form-control @error('invoice') is-invalid @enderror" 
-                                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx"
-                                   style="padding: 10px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
-                            @if($employee_expense->invoice)
-                                <small class="text-success">
-                                    <i class="bi bi-check-circle"></i> Current file: 
-                                    <a href="{{ asset('storage/'.$employee_expense->invoice) }}" target="_blank">View Invoice</a>
-                                </small>
-                            @else
-                                <small class="text-muted">Accepted: PDF, JPG, PNG, DOC, DOCX, XLSX (Max 5MB)</small>
-                            @endif
-                            @error('invoice')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <div class="mb-4">
+                        <label for="employee_id" class="form-label">{{ __('admin.expense_employee') }} <span class="text-danger">*</span></label>
+                        <select name="employee_id" id="employee_id" class="form-select @error('employee_id') is-invalid @enderror" required>
+                            <option value="">{{ __('admin.select_employee_expense') }}</option>
+                            @foreach($employees as $emp)
+                                <option value="{{ $emp->id }}" {{ old('employee_id', $employee_expense->employee_id) == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('employee_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label for="description" class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                            📝 Description/Notes <span class="text-danger">*</span>
-                        </label>
-                        <textarea name="description" id="description" rows="3" 
+                        <label for="amount" class="form-label">{{ __('admin.expense_amount') }} <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" name="amount" id="amount"
+                               class="form-control @error('amount') is-invalid @enderror"
+                               value="{{ old('amount', $employee_expense->amount) }}" required placeholder="0.00">
+                        @error('amount')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="date" class="form-label">{{ __('admin.expense_date') }} <span class="text-danger">*</span></label>
+                        <input type="date" name="date" id="date"
+                               class="form-control @error('date') is-invalid @enderror"
+                               value="{{ old('date', $employee_expense->date) }}" required>
+                        @error('date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="invoice" class="form-label">{{ __('admin.invoice_receipt_optional') }}</label>
+                        <input type="file" name="invoice" id="invoice"
+                               class="form-control @error('invoice') is-invalid @enderror"
+                               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx">
+                        @if($employee_expense->invoice)
+                            <small class="text-muted">
+                                <a href="{{ asset('storage/'.$employee_expense->invoice) }}" target="_blank">{{ __('admin.view_current_invoice') }}</a>
+                            </small>
+                        @else
+                            <small class="text-muted">{{ __('admin.accepted_files') }}</small>
+                        @endif
+                        @error('invoice')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">{{ __('admin.description_notes') }} <span class="text-danger">*</span></label>
+                        <textarea name="description" id="description" rows="3"
                                   class="form-control @error('description') is-invalid @enderror" required
-                                  placeholder="E.g., Travel reimbursement for client meeting, Medical allowance, etc."
-                                  style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">{{ old('description', $employee_expense->description) }}</textarea>
+                                  placeholder="{{ __('admin.description_placeholder') }}">{{ old('description', $employee_expense->description) }}</textarea>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="alert" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 10px; border: none; border-left: 4px solid #667eea;">
-                        <i class="bi bi-info-circle text-primary"></i> 
-                        <strong>Note:</strong> This expense will be added to the employee's salary calculation for the month.
-                        <br>
-                        <small class="text-muted">Formula: Basic Salary + (Daily Rate × Days Worked) + Overtime + <strong>Expenses</strong> - Advances = Net Salary</small>
+                    <div class="p-3 mb-4" style="background: #f5f3ff; border-left: 4px solid #4f46e5; border-radius: 8px;">
+                        <strong>{{ __('admin.note') }}:</strong> {{ __('admin.expense_note_info') }}<br>
+                        <small class="text-muted">{{ __('admin.salary_formula') }}</small>
                     </div>
 
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                            <i class="bi bi-check-circle"></i> Update Expense
-                        </button>
-                        <a href="{{ route('admin.employee-expenses.index') }}" class="btn btn-outline-secondary" style="padding: 12px 24px; border-radius: 8px;">
-                            <i class="bi bi-x-circle"></i> Cancel
-                        </a>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ __('admin.update_expense') }}</button>
+                        <a href="{{ route('admin.employee-expenses.index') }}" class="btn btn-cancel">{{ __('admin.cancel_expense') }}</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
 </div>
-
-<style>
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #667eea !important;
-        background: white;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1) !important;
-    }
-</style>
 @endsection

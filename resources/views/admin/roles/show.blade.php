@@ -90,7 +90,7 @@
                     @else
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead class="table-light">
+                            <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>

@@ -29,36 +29,48 @@
     </form>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="p-3 mb-3" style="background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        </div>
     @endif
 
-    <table class="table table-bordered">
-        <tr>
-            <th>{{ __('admin.employee') }}</th>
-            <th>{{ __('admin.date') }}</th>
-            <th>{{ __('admin.check_in') }}</th>
-            <th>{{ __('admin.check_out') }}</th>
-            <th>{{ __('admin.actions') }}</th>
-        </tr>
-        @foreach($attendances as $att)
-        <tr>
-            <td>{{ $att->employee->name }}</td>
-            <td>{{ $att->date }}</td>
-            <td>{{ $att->check_in ?? '-' }}</td>
-            <td>{{ $att->check_out ?? '-' }}</td>
-            <td>
-                <a href="{{ route('admin.attendance.edit', $att->id) }}" class="btn btn-primary btn-sm">{{ __('admin.edit') }}</a>
-                <form action="{{ route('admin.attendance.destroy', $att->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-danger btn-sm" onclick="return confirm('{{ __('admin.confirm_delete_record') }}')">
-                        {{ __('admin.delete') }}
-                    </button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-    </table>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-styled mb-0">
+                    <thead>
+                        <tr>
+                            <th>{{ __('admin.employee') }}</th>
+                            <th>{{ __('admin.date') }}</th>
+                            <th>{{ __('admin.check_in') }}</th>
+                            <th>{{ __('admin.check_out') }}</th>
+                            <th class="td-center">{{ __('admin.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($attendances as $att)
+                        <tr>
+                            <td class="td-name">{{ $att->employee->name }}</td>
+                            <td>{{ $att->date }}</td>
+                            <td>{{ $att->check_in ?? '-' }}</td>
+                            <td>{{ $att->check_out ?? '-' }}</td>
+                            <td class="td-center">
+                                <a href="{{ route('admin.attendance.edit', $att->id) }}" class="btn btn-warning btn-sm">{{ __('admin.edit') }}</a>
+                                <form action="{{ route('admin.attendance.destroy', $att->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('{{ __('admin.confirm_delete_record') }}')">
+                                        {{ __('admin.delete') }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     {{ $attendances->links() }}
 </div>

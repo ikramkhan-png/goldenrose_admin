@@ -1,35 +1,64 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Edit Attendance</h2>
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
-    <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="mb-3">
-            <label>Employee</label>
-            <select name="employee_id" class="form-control" required>
-                @foreach($employees as $emp)
-                    <option value="{{ $emp->id }}" {{ $attendance->employee_id == $emp->id ? 'selected' : '' }}>
-                        {{ $emp->name }}
-                    </option>
-                @endforeach
-            </select>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('admin.edit_attendance') }}</h4>
+            <p class="page-subtitle">{{ __('admin.attendance') }}</p>
         </div>
-        <div class="mb-3">
-            <label>Date</label>
-            <input type="date" name="date" value="{{ $attendance->date }}" class="form-control" required>
+        <a href="{{ route('admin.salaries.index') }}?tab=attendance" class="btn btn-cancel">
+            <i class="fas fa-arrow-left me-1"></i>{{ __('admin.back') }}
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="form-card">
+                <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ __('admin.employee') }}</label>
+                        <select name="employee_id" class="form-select" required>
+                            @foreach($employees as $emp)
+                                <option value="{{ $emp->id }}" {{ $attendance->employee_id == $emp->id ? 'selected' : '' }}>
+                                    {{ $emp->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ __('admin.date') }}</label>
+                        <input type="date" name="date" value="{{ $attendance->date }}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ __('admin.check_in') }}</label>
+                        <input type="time" name="check_in" value="{{ $attendance->check_in }}" class="form-control">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ __('admin.check_out') }}</label>
+                        <input type="time" name="check_out" value="{{ $attendance->check_out }}" class="form-control">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>{{ __('admin.update') }}
+                        </button>
+                        <a href="{{ route('admin.salaries.index') }}?tab=attendance" class="btn btn-cancel">
+                            {{ __('admin.cancel') }}
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label>Check In</label>
-            <input type="time" name="check_in" value="{{ $attendance->check_in }}" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label>Check Out</label>
-            <input type="time" name="check_out" value="{{ $attendance->check_out }}" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
+    </div>
+
 </div>
 @endsection

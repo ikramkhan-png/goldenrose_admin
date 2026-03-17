@@ -2,113 +2,130 @@
 
 @section('content')
 @php $isAr = app()->getLocale() === 'ar'; @endphp
-<div class="container mt-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+
+    {{-- PAGE HEADER --}}
+    <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-            <h2>📦 {{ __('admin.project_expenses') }}</h2>
-            <small class="text-muted">{{ __('admin.project_expenses_subtitle') }}</small>
+            <h4 class="page-title">{{ __('admin.project_expenses') }}</h4>
+            <p class="page-subtitle">{{ __('admin.project_expenses_subtitle') }}</p>
         </div>
-        <a href="{{ route('admin.expenses.create') }}" class="btn btn-success">{{ __('admin.add_project_expense') }}</a>
+        <a href="{{ route('admin.expenses.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>{{ __('admin.add_project_expense') }}
+        </a>
     </div>
 
-    <div class="alert alert-info mb-3">
-        <i class="fas fa-info-circle"></i>
+    <div class="info-box mb-4">
+        <i class="fas fa-info-circle me-2"></i>
         <strong>{{ __('admin.note') }}:</strong>
         {{ __('admin.project_expenses_note') }}
-        <a href="{{ route('admin.employee-expenses.index') }}" class="alert-link">{{ __('admin.employee_expenses') }}</a>.
+        <a href="{{ route('admin.employee-expenses.index') }}" style="color: #4f46e5; font-weight: 600;">{{ __('admin.employee_expenses') }}</a>.
     </div>
 
     {{-- FILTERS --}}
-    <form method="GET" action="{{ route('admin.expenses.index') }}" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <label class="form-label">{{ __('admin.project') }}</label>
-            <input type="text" name="project_id" value="{{ request('project_id') }}" class="form-control" placeholder="{{ __('admin.project_id_or_empty') }}">
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ route('admin.expenses.index') }}" class="d-flex align-items-end gap-3 flex-wrap">
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label">{{ __('admin.project') }}</label>
+                    <input type="text" name="project_id" value="{{ request('project_id') }}"
+                           class="form-control" placeholder="{{ __('admin.project_id_or_empty') }}">
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label">{{ __('admin.month') }}</label>
+                    <input type="month" name="month" value="{{ request('month') }}" class="form-control">
+                </div>
+                <div class="d-flex gap-2 align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>{{ __('admin.filter') }}
+                    </button>
+                    <a href="{{ route('admin.expenses.index') }}" class="btn btn-secondary">{{ __('admin.reset') }}</a>
+                </div>
+            </form>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">{{ __('admin.month') }}</label>
-            <input type="month" name="month" value="{{ request('month') }}" class="form-control">
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary me-2">{{ __('admin.filter') }}</button>
-            <a href="{{ route('admin.expenses.index') }}" class="btn btn-secondary">{{ __('admin.reset') }}</a>
-        </div>
-    </form>
+    </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="p-3 mb-4" style="background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        </div>
     @endif
 
     @if($expenses->count())
-    <div class="card border-0" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); overflow: hidden;">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table mb-0" style="font-size: 13px;">
-                    <thead>
-                        <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.project') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.category') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.amount') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.date') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.description') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.invoice') }}</th>
-                            <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.actions') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($expenses as $expense)
-                        <tr style="border-bottom: 1px solid #f0f2f7; transition: all 0.2s; background: white;">
-                            <td style="padding: 16px; color: #2c3e50; font-weight: 600;">
-                                @if($expense->project)
-                                    <a href="{{ route('admin.internalDetails.show', $expense->project->id) }}" class="text-decoration-none">
-                                        {{ $expense->project->name }}
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-styled mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{ __('admin.project') }}</th>
+                                <th>{{ __('admin.category') }}</th>
+                                <th>{{ __('admin.amount') }}</th>
+                                <th>{{ __('admin.date') }}</th>
+                                <th>{{ __('admin.description') }}</th>
+                                <th>{{ __('admin.invoice') }}</th>
+                                <th class="td-center">{{ __('admin.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($expenses as $expense)
+                            <tr>
+                                <td class="td-name">
+                                    @if($expense->project)
+                                        <a href="{{ route('admin.internalDetails.show', $expense->project->id) }}"
+                                           style="color: #4f46e5; text-decoration: none;">
+                                            {{ $expense->project->name }}
+                                        </a>
+                                    @else
+                                        <span class="td-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+                                        {{ __('admin.category_' . $expense->category) }}
+                                    </span>
+                                </td>
+                                <td class="td-warn">{{ number_format($expense->amount, 2) }}</td>
+                                <td class="td-accent">{{ $expense->date }}</td>
+                                <td class="td-muted">{{ $expense->description }}</td>
+                                <td>
+                                    @if($expense->invoice)
+                                        <a href="{{ asset('storage/' . $expense->invoice) }}" target="_blank"
+                                           class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye me-1"></i>{{ __('admin.view') }}
+                                        </a>
+                                    @else
+                                        <span class="td-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="td-center">
+                                    <a href="{{ route('admin.expenses.edit', $expense->id) }}"
+                                       class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit me-1"></i>{{ __('admin.edit') }}
                                     </a>
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td style="padding: 16px;">
-                                <span class="badge bg-secondary">
-                                    {{ __('admin.category_' . $expense->category) }}
-                                </span>
-                            </td>
-                            <td style="padding: 16px; color: #f39c12; font-weight: 600;">{{ number_format($expense->amount, 2) }}</td>
-                            <td style="padding: 16px; color: #667eea;">{{ $expense->date }}</td>
-                            <td style="padding: 16px; color: #555;">{{ $expense->description }}</td>
-                            <td style="padding: 16px;">
-                                @if($expense->invoice)
-                                    <a href="{{ asset('storage/' . $expense->invoice) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download"></i> {{ __('admin.view') }}
-                                    </a>
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td style="padding: 16px; text-align: center;">
-                                <div class="d-flex gap-2 justify-content-center">
-                                    <a href="{{ route('admin.expenses.edit', $expense->id) }}" class="btn btn-sm btn-warning" style="padding: 6px 12px; border-radius: 6px;">
-                                        <i class="bi bi-pencil"></i> {{ __('admin.edit') }}
-                                    </a>
-                                    <form action="{{ route('admin.expenses.destroy', $expense->id) }}" method="POST" style="display: inline;">
+                                    <form action="{{ route('admin.expenses.destroy', $expense->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" style="padding: 6px 12px; border-radius: 6px;" onclick="return confirm('{{ __('admin.confirm_delete') }}');">
-                                            <i class="bi bi-trash"></i> {{ __('admin.delete') }}
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('{{ __('admin.confirm_delete') }}')">
+                                            <i class="fas fa-trash me-1"></i>{{ __('admin.delete') }}
                                         </button>
                                     </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    {{ $expenses->links() }}
+        <div class="mt-3">{{ $expenses->links() }}</div>
     @else
-        <div class="alert border-0" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 12px; padding: 20px; color: #667eea; border-left: 4px solid #667eea;">
-            <i class="bi bi-info-circle"></i> <strong>{{ __('admin.no_data_available') }}</strong>
+        <div class="info-box">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>{{ __('admin.no_data_available') }}</strong>
         </div>
     @endif
+
 </div>
 @endsection

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.config\\\\.\\(js|ts\\)$\")",
+      "Bash(xargs sed:*)",
+      "Bash(sed -i 's/class=\"\"card border-0 shadow-sm\"\"/class=\"\"card\"\"/g' resources/views/admin/settings/index.blade.php)",
+      "Bash(sed -i 's/class=\"\"alert alert-info\"\"/class=\"\"info-box\"\"/g' resources/views/admin/settings/index.blade.php)",
+      "Bash(sed -i 's/class=\"\"alert alert-info mt-3\"\"/class=\"\"info-box mt-3\"\"/g' resources/views/admin/settings/index.blade.php)",
+      "Bash(sed -i 's/class=\"\"alert alert-warning mt-3\"\"/class=\"\"info-box mt-3\"\" style=\"\"background:#fffbeb;border-left-color:#d97706;color:#92400e;\"\"/g' resources/views/admin/settings/index.blade.php)"
+    ]
+  }
+}

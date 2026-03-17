@@ -1,74 +1,102 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    @php $isAr = app()->getLocale() === 'ar'; @endphp
-    <div class="container" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+@php $isAr = app()->getLocale() === 'ar'; @endphp
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
-        <h2>{{ __('departments.departments') }}</h2>
-        
-        {{-- MONTH FILTER --}}
-        <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
-            <div class="card-body p-4">
-                <form action="{{ route('admin.departments.index') }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
-                    <div style="flex: 1; min-width: 250px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('admin.filter_by_month') }}</label>
-                        <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
-                               onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('departments.departments') }}</h4>
+            <p class="page-subtitle">{{ __('departments.departments_description') }}</p>
+        </div>
+        <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>{{ __('departments.add_department') }}
+        </a>
+    </div>
+
+    {{-- MONTH FILTER --}}
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <form action="{{ route('admin.departments.index') }}" method="GET" class="d-flex align-items-end gap-3 flex-wrap">
+                <div style="flex: 1; min-width: 220px;">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-alt me-1" style="color: #4f46e5;"></i>{{ __('admin.filter_by_month') }}
+                    </label>
+                    <input type="month" name="month" class="form-control"
+                           value="{{ request('month', now()->format('Y-m')) }}"
+                           onchange="this.form.submit()">
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label">
+                        <i class="fas fa-filter me-1" style="color: #4f46e5;"></i>{{ __('admin.filter') }}
+                    </label>
+                    <div class="filter-display">
+                        {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
                     </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('admin.filter') }}</label>
-                        <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
-                            {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('All Data') }}
-                        </div>
-                    </div>
-                    @if(request('month'))
-                    <div style="min-width: 120px;">
-                        <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">&nbsp;</label>
-                        <a href="{{ route('admin.departments.index') }}" class="btn btn-outline-secondary w-100" style="padding: 12px 14px; border: 2px solid #6c757d; border-radius: 8px; font-weight: 500; font-size: 14px;">
-                            <i class="fas fa-times"></i> {{ __('Show All') }}
-                        </a>
-                    </div>
-                    @endif
-                </form>
+                </div>
+                @if(request('month'))
+                <div style="min-width: 110px;">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ route('admin.departments.index') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-times me-1"></i>{{ __('Show All') }}
+                    </a>
+                </div>
+                @endif
+            </form>
+        </div>
+    </div>
+
+    @if (session('success'))
+        <div class="p-3 mb-4" style="background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        </div>
+    @endif
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-styled mb-0">
+                    <thead>
+                        <tr>
+                            <th>{{ __('departments.name') }}</th>
+                            <th>{{ __('departments.description') }}</th>
+                            <th>{{ __('admin.created_date') }}</th>
+                            <th class="td-center">{{ __('departments.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($departments as $dep)
+                            <tr>
+                                <td class="td-name">{{ $dep->name }}</td>
+                                <td class="td-muted">{{ $dep->description ?? '-' }}</td>
+                                <td class="td-muted">{{ $dep->created_at->format('Y-m-d') }}</td>
+                                <td class="td-center">
+                                    <a href="{{ route('admin.departments.edit', $dep->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit me-1"></i>{{ __('departments.edit') }}
+                                    </a>
+                                    <form action="{{ route('admin.departments.destroy', $dep->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('{{ __('departments.confirm_delete') }}')">
+                                            <i class="fas fa-trash me-1"></i>{{ __('departments.delete') }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-5 td-muted">
+                                    <i class="fas fa-inbox" style="font-size: 28px; opacity: 0.3; display: block; margin-bottom: 10px;"></i>
+                                    {{ __('departments.no_departments') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <a href="{{ route('admin.departments.create') }}" class="btn btn-success mb-2">
-            {{ __('departments.add_department') }}
-        </a>
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        <table class="table table-bordered">
-            <tr>
-                <th>{{ __('departments.name') }}</th>
-                <th>{{ __('departments.description') }}</th>
-                <th>{{ __('admin.created_date') }}</th>
-                <th>{{ __('departments.actions') }}</th>
-            </tr>
-            @foreach ($departments as $dep)
-                <tr>
-                    <td>{{ $dep->name }}</td>
-                    <td>{{ $dep->description }}</td>
-                    <td>{{ $dep->created_at->format('Y-m-d') }}</td>
-                    <td>
-                        <a href="{{ route('admin.departments.edit', $dep->id) }}"
-                            class="btn btn-primary btn-sm">{{ __('departments.edit') }}</a>
-                        <form action="{{ route('admin.departments.destroy', $dep->id) }}" method="POST"
-                            style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('{{ __('departments.confirm_delete') }}')">
-                                {{ __('departments.delete') }}
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-
     </div>
+
+</div>
 @endsection

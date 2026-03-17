@@ -2,124 +2,108 @@
 
 @section('content')
 @php $isAr = app()->getLocale() === 'ar'; @endphp
-<div class="salary-container" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 30px 0;" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
-    
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+
     {{-- PAGE HEADER --}}
-    <div class="container-xl px-4 mb-5">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h1 class="h2 fw-bold text-dark mb-1" style="letter-spacing: -0.5px;">💰 {{ __('admin.advances') }}</h1>
-                        <p class="text-muted mb-0" style="font-size: 14px;">{{ __('admin.salary_management_subtitle') }}</p>
-                    </div>
-                    <a href="{{ route('admin.advances.create') }}" class="btn fw-semibold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                        <i class="bi bi-plus-lg"></i> {{ __('admin.add_advance') }}
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('admin.advances') }}</h4>
+            <p class="page-subtitle">{{ __('admin.salary_management_subtitle') }}</p>
+        </div>
+        <a href="{{ route('admin.advances.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>{{ __('admin.add_advance') }}
+        </a>
+    </div>
+
+    {{-- TABS --}}
+    <div class="payroll-tabs">
+        <a href="{{ route('admin.salaries.index') }}" class="payroll-tab">
+            <i class="fas fa-money-check-alt me-1"></i>{{ __('admin.salaries') }}
+        </a>
+        <a href="{{ route('admin.salaries.index') }}?tab=attendance" class="payroll-tab">
+            <i class="fas fa-calendar-check me-1"></i>{{ __('admin.attendance') }}
+        </a>
+        <a href="{{ route('admin.advances.index') }}" class="payroll-tab active">
+            <i class="fas fa-hand-holding-usd me-1"></i>{{ __('admin.advances') }}
+        </a>
+        <a href="{{ route('admin.overtimes.index') }}" class="payroll-tab">
+            <i class="fas fa-clock me-1"></i>{{ __('admin.overtime') }}
+        </a>
+        <a href="{{ route('admin.employee-expenses.index') }}" class="payroll-tab">
+            <i class="fas fa-receipt me-1"></i>{{ __('admin.employee_expenses') }}
+        </a>
+    </div>
+
+    {{-- FILTERS --}}
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ route('admin.advances.index') }}" class="d-flex align-items-end gap-3 flex-wrap">
+                <div style="flex: 1; min-width: 200px;">
+                    <label class="form-label">{{ __('admin.employee') }}</label>
+                    <select name="employee_id" class="form-select">
+                        <option value="">{{ __('admin.all_employees') }}</option>
+                        @foreach($employees ?? [] as $emp)
+                            <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>
+                                {{ $emp->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <label class="form-label">{{ __('admin.month') }}</label>
+                    <input type="month" name="month" value="{{ request('month') }}" class="form-control">
+                </div>
+                <div class="d-flex gap-2 align-items-end" style="padding-bottom: 0;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>{{ __('admin.filter') }}
+                    </button>
+                    <a href="{{ route('admin.advances.index') }}" class="btn btn-secondary">
+                        {{ __('admin.reset') }}
                     </a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
-    {{-- TABS & NAVIGATION --}}
-    <div class="container-xl px-4 mb-4">
-        <ul class="nav nav-tabs nav-fill gap-2 mb-4" role="tablist" style="background: white; padding: 8px 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}" role="tab"
-                   style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-wallet2"></i> {{ __('admin.salaries') }}
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link fw-semibold" href="{{ route('admin.salaries.index') }}?tab=attendance" role="tab"
-                   style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-calendar-check"></i> {{ __('admin.attendance') }}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fw-semibold active" href="{{ route('admin.advances.index') }}"
-                   style="border-radius: 8px; transition: all 0.2s; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <i class="bi bi-cash-coin"></i> {{ __('admin.advances') }}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fw-semibold" href="{{ route('admin.overtimes.index') }}"
-                   style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-clock-history"></i> {{ __('admin.overtime') }}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fw-semibold" href="{{ route('admin.employee-expenses.index') }}"
-                   style="border-radius: 8px; transition: all 0.2s; color: #666;">
-                    <i class="bi bi-receipt"></i> {{ __('admin.employee_expenses') }}
-                </a>
-            </li>
-        </ul>
-    </div>
+    @if(session('success'))
+        <div class="alert p-3 mb-4" style="background: #f0fdf4; color: #166534; border: none; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        </div>
+    @endif
 
-    {{-- MAIN CONTENT CONTAINER --}}
-    <div class="container-xl px-4">
-        {{-- FILTERS --}}
-        <form method="GET" action="{{ route('admin.advances.index') }}" class="row g-2 mb-3">
-            <div class="col-md-4">
-                <label class="form-label">{{ __('admin.employee') }}</label>
-                <select name="employee_id" class="form-select">
-                    <option value="">{{ __('admin.all_employees') }}</option>
-                    @foreach($employees ?? [] as $emp)
-                        <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>
-                            {{ $emp->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">{{ __('admin.month') }}</label>
-                <input type="month" name="month" value="{{ request('month') }}" class="form-control">
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">{{ __('admin.filter') }}</button>
-                <a href="{{ route('admin.advances.index') }}" class="btn btn-secondary">{{ __('admin.reset') }}</a>
-            </div>
-        </form>
-
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        @if($advances->count())
-        <div class="card border-0" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); overflow: hidden;">
+    @if($advances->count())
+        <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table mb-0" style="font-size: 13px;">
+                    <table class="table table-styled mb-0">
                         <thead>
-                            <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.employee') }}</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.amount') }}</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.date') }}</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none;">{{ __('admin.notes') }}</th>
-                                <th style="padding: 18px 16px; font-weight: 600; border: none; text-align: center;">{{ __('admin.actions') }}</th>
+                            <tr>
+                                <th>{{ __('admin.employee') }}</th>
+                                <th>{{ __('admin.amount') }}</th>
+                                <th>{{ __('admin.date') }}</th>
+                                <th>{{ __('admin.notes') }}</th>
+                                <th class="td-center">{{ __('admin.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($advances as $adv)
-                            <tr style="border-bottom: 1px solid #f0f2f7; transition: all 0.2s; background: white;">
-                                <td style="padding: 16px; color: #2c3e50; font-weight: 600;">{{ $adv->employee?->name ?? '-' }}</td>
-                                <td style="padding: 16px; color: #e74c3c; font-weight: 600;">{{ number_format($adv->amount, 2) }}</td>
-                                <td style="padding: 16px; color: #667eea;">{{ $adv->date }}</td>
-                                <td style="padding: 16px; color: #555;">{{ $adv->notes ?? '-' }}</td>
-                                <td style="padding: 16px; text-align: center;">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <a href="{{ route('admin.advances.edit', $adv->id) }}" class="btn btn-sm btn-warning" style="padding: 6px 12px; border-radius: 6px;">
-                                            <i class="bi bi-pencil"></i> {{ __('admin.edit') }}
-                                        </a>
-                                        <form action="{{ route('admin.advances.destroy', $adv->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" style="padding: 6px 12px; border-radius: 6px;" onclick="return confirm('{{ __('admin.confirm_delete') }}');">
-                                                <i class="bi bi-trash"></i> {{ __('admin.delete') }}
-                                            </button>
-                                        </form>
-                                    </div>
+                            <tr>
+                                <td class="td-name">{{ $adv->employee?->name ?? '-' }}</td>
+                                <td class="td-neg">{{ number_format($adv->amount, 2) }}</td>
+                                <td class="td-accent">{{ $adv->date }}</td>
+                                <td class="td-muted">{{ $adv->notes ?? '-' }}</td>
+                                <td class="td-center">
+                                    <a href="{{ route('admin.advances.edit', $adv->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit me-1"></i>{{ __('admin.edit') }}
+                                    </a>
+                                    <form action="{{ route('admin.advances.destroy', $adv->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('{{ __('admin.confirm_delete') }}')">
+                                            <i class="fas fa-trash me-1"></i>{{ __('admin.delete') }}
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach
@@ -128,13 +112,13 @@
                 </div>
             </div>
         </div>
-        {{ $advances->links() }}
-        @else
-            <div class="alert border-0" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 12px; padding: 20px; color: #667eea; border-left: 4px solid #667eea;">
-                <i class="bi bi-info-circle"></i> <strong>{{ __('admin.no_data_available') }}</strong>
-            </div>
-        @endif
-    </div>
+        <div class="mt-3">{{ $advances->links() }}</div>
+    @else
+        <div class="info-box">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>{{ __('admin.no_data_available') }}</strong>
+        </div>
+    @endif
 
 </div>
 @endsection

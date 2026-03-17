@@ -9,7 +9,7 @@
     <x-page-header title="{{ __('projects.project_dashboard') }}" description="{{ __('projects.page_description') }}" />
 
     {{-- PROJECT HEADER CARD --}}
-    <div class="card mb-4 border-0 shadow-sm p-4" style="background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: white;">
+    <div class="card mb-4 border-0 shadow-sm p-4" style="background: #4f46e5; color: white;">
         <div class="row">
             <div class="col-md-8">
                 <h4 class="fw-bold mb-2">{{ $project->name }}</h4>
@@ -34,25 +34,25 @@
     </div>
 
     {{-- ===== MONTH FILTER ===== --}}
-    <div class="card border-0 mb-4" style="background: white; border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
+    <div class="card mb-4" style="background: white;">
         <div class="card-body p-4">
             <form action="{{ request()->url() }}" method="GET" class="d-flex align-items-end gap-4 flex-wrap">
                 <input type="hidden" name="tab" value="{{ $tab }}">
                 <div style="flex: 1; min-width: 250px;">
-                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📅 {{ __('projects.filter_by_month') }}</label>
+                    <label class="form-label fw-bold" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">📅 {{ __('projects.filter_by_month') }}</label>
                     <input type="month" name="month" class="form-control" value="{{ request('month', now()->format('Y-m')) }}"
-                           onchange="this.form.submit()" style="padding: 12px 14px; border: 2px solid #e8ecf1; border-radius: 8px; font-weight: 500; background: #f8f9fc; font-size: 14px;">
+                           onchange="this.form.submit()">
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📆 {{ __('projects.filter') }}</label>
-                    <div style="padding: 12px 14px; border: 2px solid #667eea; border-radius: 8px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); font-weight: 600; color: #667eea; font-size: 14px;">
+                    <label class="form-label fw-bold" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">📆 {{ __('projects.filter') }}</label>
+                    <div class="filter-display">
                         {{ request('month') ? \Carbon\Carbon::createFromFormat('Y-m', request('month'))->format('F Y') : __('projects.show_all') }}
                     </div>
                 </div>
                 @if(request('month'))
                 <div style="min-width: 120px;">
-                    <label class="form-label fw-bold" style="color: #2c3e50; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">&nbsp;</label>
-                    <a href="{{ request()->url() }}" class="btn btn-outline-secondary w-100" style="padding: 12px 14px; border: 2px solid #6c757d; border-radius: 8px; font-weight: 500; font-size: 14px;">
+                    <label class="form-label fw-bold" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">&nbsp;</label>
+                    <a href="{{ request()->url() }}" class="btn btn-secondary w-100">
                         <i class="fas fa-times"></i> {{ __('projects.show_all') }}
                     </a>
                 </div>
@@ -103,7 +103,7 @@
     @if($tab === 'overview')
     <div class="row">
         <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);">
+            <div class="card border-0 shadow-sm p-4" style="background: #eff6ff;">
                 <h4 class="fw-bold mb-2">{{ __('projects.project_details') }}</h4>
                 <p class="mb-2"><strong>{{ __('projects.status') }}:</strong> <span class="badge bg-primary">Active</span></p>
                 <p class="mb-2"><strong>Type:</strong> {{ ucfirst($project->type) }}</p>
@@ -112,7 +112,7 @@
             </div>
         </div>
         <div class="col-md-6 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #764ba215 0%, #667eea15 100%);">
+            <div class="card border-0 shadow-sm p-4" style="background: #f5f3ff;">
                 <h6 class="fw-bold text-dark mb-4">{{ __('projects.client_information') }}</h6>
                 <p class="mb-2"><strong>{{ __('projects.name') }}:</strong> {{ $project->client->name }}</p>
                 <p class="mb-2"><strong>{{ __('projects.email') }}:</strong> {{ $project->client->email }}</p>
@@ -397,7 +397,7 @@
     <div class="row">
         {{-- TOTAL CONTRACT VALUE CARD --}}
         <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="card border-0 shadow-sm p-4" style="background: #4f46e5; color: white;">
                 <h6 class="fw-bold mb-2">💼 {{ __('projects.total_contract_value') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($totalContractValue, 2) }}</h3>
                 <p class="mb-0 small">{{ __('projects.budget') }}: {{ number_format($budget, 2) }} + {{ __('projects.billed') }}: {{ number_format($totalBilled, 2) }}</p>
@@ -406,7 +406,7 @@
 
         {{-- TOTAL PAID CARD --}}
         <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+            <div class="card border-0 shadow-sm p-4" style="background: #059669; color: white;">
                 <h6 class="fw-bold mb-2">💵 {{ __('projects.total_paid') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($totalPaid, 2) }}</h3>
                 <p class="mb-0 small">{{ __('projects.received_from_client') }}</p>
@@ -415,7 +415,7 @@
 
         {{-- REMAINING BALANCE CARD --}}
         <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, {{ $remainingBalance > 0 ? '#f093fb 0%, #f5576c' : '#11998e 0%, #38ef7d' }} 100%); color: white;">
+            <div class="card border-0 shadow-sm p-4" style="background: {{ $remainingBalance > 0 ? '#dc2626' : '#059669' }}; color: white;">
                 <h6 class="fw-bold mb-2">⏳ {{ __('projects.remaining_balance') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($remainingBalance, 2) }}</h3>
                 <p class="mb-0 small">{{ $remainingBalance > 0 ? __('projects.due_from_client') : __('projects.fully_paid') }}</p>
@@ -424,7 +424,7 @@
 
         {{-- NET PROFIT CARD --}}
         <div class="col-md-3 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, {{ $netProfit >= 0 ? '#4facfe 0%, #00f2fe' : '#d9534f 0%, #c12c2c' }} 100%); color: white;">
+            <div class="card border-0 shadow-sm p-4" style="background: {{ $netProfit >= 0 ? '#0284c7' : '#dc2626' }}; color: white;">
                 <h6 class="fw-bold mb-2">📈 {{ __('projects.net_profit') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($netProfit, 2) }}</h3>
                 <p class="mb-0 small">{{ $netProfit >= 0 ? __('projects.profit') : __('projects.loss') }}</p>
@@ -436,7 +436,7 @@
     <div class="row">
         {{-- SERVICES COST CARD --}}
         <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333;">
+            <div class="card border-0 shadow-sm p-4" style="background: #fdf2f8; color: #1e293b;">
                 <h6 class="fw-bold mb-2">📦 {{ __('projects.services_cost') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($serviceCost, 2) }}</h3>
                 <p class="mb-0 small">{{ __('projects.total_service_charges') }}</p>
@@ -445,7 +445,7 @@
 
         {{-- TOTAL EXPENSES CARD --}}
         <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+            <div class="card border-0 shadow-sm p-4" style="background: #f0fdfa; color: #1e293b;">
                 <h6 class="fw-bold mb-2">💸 {{ __('projects.total_expenses') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($totalExpenses, 2) }}</h3>
                 <p class="mb-0 small">{{ __('projects.all_project_expenses') }}</p>
@@ -454,7 +454,7 @@
 
         {{-- TOTAL COSTS CARD --}}
         <div class="col-md-4 mb-3">
-            <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333;">
+            <div class="card border-0 shadow-sm p-4" style="background: #fff7ed; color: #1e293b;">
                 <h6 class="fw-bold mb-2">🧾 {{ __('projects.total_costs') }}</h6>
                 <h3 class="fw-bold mb-3">{{ number_format($totalCosts, 2) }}</h3>
                 <div class="progress" style="height: 5px; background: rgba(0,0,0,0.1);">
@@ -467,7 +467,7 @@
 
     {{-- DETAILED CALCULATION BREAKDOWN --}}
     <div class="card border-0 shadow-sm mt-4">
-        <div class="card-body p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e8eaf6 100%);">
+        <div class="card-body p-4" style="background: #f8fafc;">
             <h6 class="fw-bold text-dark">🧮 {{ __('projects.calculations') }}</h6>
             <div class="row">
                 <div class="col-md-6">
@@ -564,11 +564,9 @@
         vertical-align: middle;
     }
 
-    /* Buttons shadow and hover */
+    /* Buttons */
     .btn-shadow:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        transition: all 0.2s ease-in-out;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
 </style>
 @endsection

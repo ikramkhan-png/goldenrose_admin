@@ -53,77 +53,51 @@ new #[Layout('admin.layouts.guest')] class extends Component
             </div>
         @endif
 
-        <form wire:submit="login">
+        <form wire:submit="login" style="display: flex; flex-direction: column; gap: 0;">
             <!-- Email Address -->
-            <div class="mb-3">
-                <label for="email" class="form-label">
-                    <i class="fas fa-envelope me-1"></i> {{ __('Email Address') }}
-                </label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-at"></i>
-                    </span>
-                    <input 
-                        wire:model="form.email" 
-                        id="email" 
-                        type="email" 
-                        name="email" 
-                        class="form-control @error('form.email') is-invalid @enderror" 
-                        placeholder="admin@goldenrose.com"
-                        required 
-                        autofocus 
-                        autocomplete="username"
-                    >
-                </div>
+            <div class="form-group">
+                <label for="email" class="form-label">{{ __('Email Address') }}</label>
+                <input
+                    wire:model="form.email"
+                    id="email"
+                    type="email"
+                    name="email"
+                    class="form-control @error('form.email') is-invalid @enderror"
+                    placeholder="admin@goldenrose.com"
+                    required
+                    autofocus
+                    autocomplete="username"
+                >
                 @error('form.email')
-                    <div class="invalid-feedback d-block">
-                        {{ $message }}
-                    </div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
 
             <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label">
-                    <i class="fas fa-lock me-1"></i> {{ __('Password') }}
-                </label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-key"></i>
-                    </span>
-                    <input 
-                        wire:model="form.password" 
-                        id="password" 
-                        type="password" 
-                        name="password" 
-                        class="form-control @error('form.password') is-invalid @enderror" 
-                        placeholder="Enter your password"
-                        required 
-                        autocomplete="current-password"
-                    >
-                </div>
+            <div class="form-group">
+                <label for="password" class="form-label">{{ __('Password') }}</label>
+                <input
+                    wire:model="form.password"
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="form-control @error('form.password') is-invalid @enderror"
+                    placeholder="••••••••"
+                    required
+                    autocomplete="current-password"
+                >
                 @error('form.password')
-                    <div class="invalid-feedback d-block">
-                        {{ $message }}
-                    </div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
 
             <!-- Remember Me & Forgot Password -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="form-check">
-                    <input 
-                        wire:model="form.remember" 
-                        class="form-check-input" 
-                        type="checkbox" 
-                        id="remember" 
-                        name="remember"
-                    >
-                    <label class="form-check-label" for="remember">
-                        {{ __('Remember me') }}
-                    </label>
-                </div>
-
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; cursor: pointer; font-weight: 400;">
+                    <input wire:model="form.remember" type="checkbox" id="remember" name="remember"
+                        style="width: 15px; height: 15px; accent-color: #4f46e5;">
+                    {{ __('Remember me') }}
+                </label>
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="forgot-link" wire:navigate>
                         {{ __('Forgot password?') }}
@@ -132,8 +106,8 @@ new #[Layout('admin.layouts.guest')] class extends Component
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-login">
-                <i class="fas fa-sign-in-alt me-2"></i>
+            <button type="submit" class="btn btn-login" style="margin-top: 4px;">
+                <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
                 {{ __('Sign In to Dashboard') }}
             </button>
         </form>

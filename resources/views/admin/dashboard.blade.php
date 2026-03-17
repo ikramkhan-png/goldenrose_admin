@@ -3,122 +3,125 @@
 @section('content')
     @php $isAr = app()->getLocale() === 'ar'; @endphp
 
-    <div class="container-fluid px-4 py-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+    <div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 
-        <!-- Welcome Header -->
+        <!-- Page Header -->
         <div class="mb-4">
-            <h2 class="mb-2">
-                {{ __('dashboard.welcome_back') }},
-                <strong>{{ auth()->user()->name }}</strong>! 👋
-            </h2>
-            <p class="text-muted">{{ __('dashboard.dashboard_overview') }}</p>
+            <h4 style="font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">
+                {{ __('dashboard.dashboard_overview') }}
+            </h4>
+            <p style="color: #64748b; font-size: 14px; margin: 0;">
+                {{ __('dashboard.welcome_back') }}, <strong>{{ auth()->user()->name }}</strong>
+            </p>
         </div>
 
-        <!-- Statistics Cards Row -->
-        <div class="row mb-4 g-3">
+        <!-- ═══════════════════════════
+             PRIMARY STAT CARDS
+        ════════════════════════════ -->
+        <div class="row g-3 mb-4">
 
-            <!-- Total Users Card -->
+            <!-- Total Users -->
             <div class="col-md-6 col-lg-3">
-                <a href="{{ route('admin.users.index') }}" style="text-decoration: none; color: inherit;">
-                    <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden stat-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="text-muted small">{{ __('dashboard.total_users') }}</span>
-                                    <h3 class="mb-0 mt-1" style="color: #4A90E2;">{{ $totalUsers ?? 0 }}</h3>
+                <a href="{{ route('admin.users.index') }}" style="text-decoration: none;">
+                    <div class="card h-100" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div class="card-body" style="padding: 20px;">
+                            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="width: 46px; height: 46px; border-radius: 12px; background: #eff6ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-users" style="color: #3b82f6; font-size: 18px;"></i>
                                 </div>
-                                <div style="font-size: 2.5rem;">👥</div>
                             </div>
-                            <div class="small text-success mt-2">
-                                ↑ {{ $newUsersThisMonth ?? 0 }} {{ __('dashboard.this_month') }}
+                            <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.total_users') }}</div>
+                            <div style="font-size: 30px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1;">{{ $totalUsers ?? 0 }}</div>
+                            <div style="font-size: 12px; color: #10b981; margin-top: 8px;">
+                                <i class="fas fa-arrow-up me-1"></i>{{ $newUsersThisMonth ?? 0 }} {{ __('dashboard.this_month') }}
                             </div>
                         </div>
-                        <div class="card-top-bar" style="background: linear-gradient(to right, #4A90E2, #50E3C2);"></div>
                     </div>
                 </a>
             </div>
 
-            <!-- Active Clients Card -->
+            <!-- Active Clients -->
             <div class="col-md-6 col-lg-3">
-                <a href="{{ route('admin.clients.index') }}" style="text-decoration: none; color: inherit;">
-                    <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden stat-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="text-muted small">{{ __('dashboard.active_clients') }}</span>
-                                    <h3 class="mb-0 mt-1" style="color: #7B68EE;">{{ $totalClients ?? 0 }}</h3>
+                <a href="{{ route('admin.clients.index') }}" style="text-decoration: none;">
+                    <div class="card h-100" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div class="card-body" style="padding: 20px;">
+                            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="width: 46px; height: 46px; border-radius: 12px; background: #f5f3ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-briefcase" style="color: #6366f1; font-size: 18px;"></i>
                                 </div>
-                                <div style="font-size: 2.5rem;">💼</div>
                             </div>
-                            <div class="small text-info mt-2">
-                                {{ __('dashboard.service_clients') }}: {{ $serviceClients ?? 0 }} |
+                            <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.active_clients') }}</div>
+                            <div style="font-size: 30px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1;">{{ $totalClients ?? 0 }}</div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                                {{ __('dashboard.service_clients') }}: {{ $serviceClients ?? 0 }} &nbsp;·&nbsp;
                                 {{ __('dashboard.project_clients') }}: {{ $projectClients ?? 0 }}
                             </div>
                         </div>
-                        <div class="card-top-bar" style="background: linear-gradient(to right, #7B68EE, #E94B3C);"></div>
                     </div>
                 </a>
             </div>
 
-            <!-- Active Projects Card -->
+            <!-- Active Projects -->
             <div class="col-md-6 col-lg-3">
-                <a href="{{ route('admin.projects.index') }}" style="text-decoration: none; color: inherit;">
-                    <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden stat-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="text-muted small">{{ __('dashboard.active_projects') }}</span>
-                                    <h3 class="mb-0 mt-1" style="color: #F5A623;">{{ $totalProjects ?? 0 }}</h3>
+                <a href="{{ route('admin.projects.index') }}" style="text-decoration: none;">
+                    <div class="card h-100" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div class="card-body" style="padding: 20px;">
+                            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="width: 46px; height: 46px; border-radius: 12px; background: #fffbeb; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-folder-open" style="color: #f59e0b; font-size: 18px;"></i>
                                 </div>
-                                <div style="font-size: 2.5rem;">📊</div>
                             </div>
-                            <div class="small text-warning mt-2">
-                                {{ __('dashboard.in_progress') }}: {{ $projectsInProgress ?? 0 }}
+                            <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.active_projects') }}</div>
+                            <div style="font-size: 30px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1;">{{ $totalProjects ?? 0 }}</div>
+                            <div style="font-size: 12px; color: #f59e0b; margin-top: 8px;">
+                                <i class="fas fa-spinner me-1"></i>{{ __('dashboard.in_progress') }}: {{ $projectsInProgress ?? 0 }}
                             </div>
                         </div>
-                        <div class="card-top-bar" style="background: linear-gradient(to right, #F5A623, #B8E986);"></div>
                     </div>
                 </a>
             </div>
 
-            <!-- Team Members Card -->
+            <!-- Employees -->
             <div class="col-md-6 col-lg-3">
-                <a href="{{ route('admin.employees.index') }}" style="text-decoration: none; color: inherit;">
-                    <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden stat-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="text-muted small">{{ __('dashboard.employee_size') }}</span>
-                                    <h3 class="mb-0 mt-1" style="color: #50E3C2;">{{ $totalEmployees ?? 0 }}</h3>
+                <a href="{{ route('admin.employees.index') }}" style="text-decoration: none;">
+                    <div class="card h-100" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div class="card-body" style="padding: 20px;">
+                            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="width: 46px; height: 46px; border-radius: 12px; background: #f0fdfa; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-user-tie" style="color: #0d9488; font-size: 18px;"></i>
                                 </div>
-                                <div style="font-size: 2.5rem;">👷</div>
                             </div>
-                            <div class="small text-info mt-2">
-                                {{ __('dashboard.department') }}: {{ $departments ?? 0 }}
+                            <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.employee_size') }}</div>
+                            <div style="font-size: 30px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1;">{{ $totalEmployees ?? 0 }}</div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                                <i class="fas fa-building me-1"></i>{{ __('dashboard.department') }}: {{ $departments ?? 0 }}
                             </div>
                         </div>
-                        <div class="card-top-bar" style="background: linear-gradient(to right, #50E3C2, #4A90E2);"></div>
                     </div>
                 </a>
             </div>
 
         </div>
 
-        <!-- Secondary Statistics Row -->
-        <div class="row mb-4 g-3">
+        <!-- ═══════════════════════════
+             SECONDARY STAT CARDS
+        ════════════════════════════ -->
+        <div class="row g-3 mb-4">
 
-            <!-- Total Revenue -->
+            <!-- Revenue -->
             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <span class="text-muted small">{{ __('dashboard.total_revenue') }}</span>
-                                <h3 class="mb-0 mt-1" style="color: #2DBA4E;">
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.total_revenue') }}</div>
+                                <div style="font-size: 22px; font-weight: 700; color: #059669; margin-top: 6px;">
                                     ${{ number_format($totalRevenue ?? 0, 2) }}
-                                </h3>
+                                </div>
                             </div>
-                            <div style="font-size: 2rem;">💰</div>
+                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #f0fdf4; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-dollar-sign" style="color: #059669; font-size: 16px;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -126,31 +129,35 @@
 
             <!-- Services -->
             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <span class="text-muted small">{{ __('dashboard.services') }}</span>
-                                <h3 class="mb-0 mt-1" style="color: #9013FE;">{{ $totalServices ?? 0 }}</h3>
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.services') }}</div>
+                                <div style="font-size: 22px; font-weight: 700; color: #7c3aed; margin-top: 6px;">{{ $totalServices ?? 0 }}</div>
                             </div>
-                            <div style="font-size: 2rem;">🛎️</div>
+                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #f5f3ff; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-concierge-bell" style="color: #7c3aed; font-size: 16px;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Today's Attendance -->
+            <!-- Attendance -->
             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <span class="text-muted small">{{ __('dashboard.today_attendance') }}</span>
-                                <h3 class="mb-0 mt-1" style="color: #417505;">
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.today_attendance') }}</div>
+                                <div style="font-size: 22px; font-weight: 700; color: #0284c7; margin-top: 6px;">
                                     {{ $presentToday ?? 0 }}/{{ $totalEmployees ?? 0 }}
-                                </h3>
+                                </div>
                             </div>
-                            <div style="font-size: 2rem;">✓</div>
+                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #f0f9ff; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-check" style="color: #0284c7; font-size: 16px;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,14 +165,16 @@
 
             <!-- Admin Users -->
             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <span class="text-muted small">{{ __('dashboard.admin_users') }}</span>
-                                <h3 class="mb-0 mt-1" style="color: #E74C3C;">{{ $adminUsers ?? 0 }}</h3>
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">{{ __('dashboard.admin_users') }}</div>
+                                <div style="font-size: 22px; font-weight: 700; color: #dc2626; margin-top: 6px;">{{ $adminUsers ?? 0 }}</div>
                             </div>
-                            <div style="font-size: 2rem;">🔐</div>
+                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #fef2f2; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-shield-alt" style="color: #dc2626; font-size: 16px;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,37 +182,39 @@
 
         </div>
 
-        <!-- Charts Section -->
-        <div class="row mb-4 g-3">
+        <!-- ═══════════════════════════
+             CHARTS ROW
+        ════════════════════════════ -->
+        <div class="row g-3 mb-4">
 
             <!-- User Growth Chart -->
             <div class="col-lg-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-bottom">
-                        <h5 class="mb-0">{{ __('dashboard.user_growth') }}</h5>
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 12px 12px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #4f46e5;"></div>
+                            <span style="font-size: 14px; font-weight: 600; color: #1e293b;">{{ __('dashboard.user_growth') }}</span>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <div
-                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 250px; border-radius: 8px; display: flex; align-items: flex-end; padding: 20px; gap: 10px;">
-                            @php
-                                $data = [65, 80, 95, 110, 125, 140];
-
-                                // Months in English or Arabic depending on locale
-                                $months = $isAr
-                                    ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو']
-                                    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-                            @endphp
-                            @foreach ($data as $value)
-                                <div class="chart-bar"
-                                    style="flex: 1; background: rgba(255,255,255,0.3); height: {{ ($value / 150) * 100 }}%; border-radius: 4px; transition: all 0.3s; cursor: pointer;"
-                                    onmouseover="this.style.background='rgba(255,255,255,0.6)'"
-                                    onmouseout="this.style.background='rgba(255,255,255,0.3)'">
+                    <div class="card-body" style="padding: 20px 20px 12px;">
+                        @php
+                            $data = [65, 80, 95, 110, 125, 140];
+                            $months = $isAr
+                                ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو']
+                                : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                            $maxVal = max($data);
+                        @endphp
+                        <div style="display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-bottom: 4px;">
+                            @foreach ($data as $i => $value)
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 4px;">
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">{{ $value }}</span>
+                                    <div style="width: 100%; border-radius: 6px 6px 0 0; background: {{ $i === count($data)-1 ? '#4f46e5' : '#c7d2fe' }}; height: {{ round(($value / $maxVal) * 140) }}px;"></div>
                                 </div>
                             @endforeach
                         </div>
-                        <div class="d-flex justify-content-around mt-3 small text-muted">
+                        <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
                             @foreach ($months as $month)
-                                <div>{{ $month }}</div>
+                                <div style="flex: 1; text-align: center; font-size: 11px; color: #94a3b8; font-weight: 500;">{{ $month }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -212,42 +223,51 @@
 
             <!-- Client Distribution -->
             <div class="col-lg-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-bottom">
-                        <h5 class="mb-0">{{ __('dashboard.client_distribution') }}</h5>
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 12px 12px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1;"></div>
+                            <span style="font-size: 14px; font-weight: 600; color: #1e293b;">{{ __('dashboard.client_distribution') }}</span>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center justify-content-center" style="gap: 30px;">
-                            <div
-                                style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#4A90E2 0deg 144deg, #7B68EE 144deg 288deg, #F5A623 288deg 360deg); position: relative; flex-shrink: 0;">
-                                <div
-                                    style="width: 100px; height: 100px; border-radius: 50%; background: white; position: absolute; top: 25px; left: 25px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
-                                    👥
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 32px; justify-content: center;">
+                            @php
+                                $total = max(($totalClients ?? 0), 1);
+                                $svc   = $serviceClients ?? 0;
+                                $prj   = $projectClients ?? 0;
+                                $oth   = max(0, $total - $svc - $prj);
+                                $svcDeg = round(($svc / $total) * 360);
+                                $prjDeg = round(($prj / $total) * 360);
+                                $othDeg = 360 - $svcDeg - $prjDeg;
+                            @endphp
+                            <div style="width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(#3b82f6 0deg {{ $svcDeg }}deg, #6366f1 {{ $svcDeg }}deg {{ $svcDeg + $prjDeg }}deg, #e2e8f0 {{ $svcDeg + $prjDeg }}deg 360deg); position: relative; flex-shrink: 0;">
+                                <div style="width: 90px; height: 90px; border-radius: 50%; background: white; position: absolute; top: 25px; left: 25px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                    <span style="font-size: 18px; font-weight: 700; color: #1e293b;">{{ $totalClients ?? 0 }}</span>
+                                    <span style="font-size: 10px; color: #94a3b8;">total</span>
                                 </div>
                             </div>
-                            <div class="d-flex flex-column" style="gap: 15px;">
-                                <div class="d-flex align-items-center" style="gap: 10px;">
-                                    <div
-                                        style="width: 20px; height: 20px; background: #4A90E2; border-radius: 4px; flex-shrink: 0;">
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 12px; height: 12px; border-radius: 3px; background: #3b82f6; flex-shrink: 0;"></div>
+                                    <div>
+                                        <div style="font-size: 12px; color: #64748b;">{{ __('dashboard.service_clients') }}</div>
+                                        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">{{ $serviceClients ?? 0 }}</div>
                                     </div>
-                                    <span class="small">{{ __('dashboard.service_clients') }}:
-                                        {{ $serviceClients ?? 0 }}</span>
                                 </div>
-                                <div class="d-flex align-items-center" style="gap: 10px;">
-                                    <div
-                                        style="width: 20px; height: 20px; background: #7B68EE; border-radius: 4px; flex-shrink: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 12px; height: 12px; border-radius: 3px; background: #6366f1; flex-shrink: 0;"></div>
+                                    <div>
+                                        <div style="font-size: 12px; color: #64748b;">{{ __('dashboard.project_clients') }}</div>
+                                        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">{{ $projectClients ?? 0 }}</div>
                                     </div>
-                                    <span class="small">{{ __('dashboard.project_clients') }}:
-                                        {{ $projectClients ?? 0 }}</span>
                                 </div>
-                                <div class="d-flex align-items-center" style="gap: 10px;">
-                                    <div
-                                        style="width: 20px; height: 20px; background: #F5A623; border-radius: 4px; flex-shrink: 0;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 12px; height: 12px; border-radius: 3px; background: #e2e8f0; flex-shrink: 0;"></div>
+                                    <div>
+                                        <div style="font-size: 12px; color: #64748b;">{{ __('dashboard.other') }}</div>
+                                        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">{{ $oth }}</div>
                                     </div>
-                                    <span class="small">
-                                        {{ __('dashboard.other') }}:
-                                        {{ ($totalClients ?? 0) - ($serviceClients ?? 0) - ($projectClients ?? 0) }}
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -257,41 +277,42 @@
 
         </div>
 
-        <!-- Quick Actions Section -->
-        <div class="row mb-4">
+        <!-- ═══════════════════════════
+             QUICK ACTIONS
+        ════════════════════════════ -->
+        <div class="row g-3 mb-4">
             <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-bottom">
-                        <h5 class="mb-0">{{ __('dashboard.quick_actions') }}</h5>
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 12px 12px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></div>
+                            <span style="font-size: 14px; font-weight: 600; color: #1e293b;">{{ __('dashboard.quick_actions') }}</span>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap gap-3">
+                    <div class="card-body" style="padding: 20px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
 
                             @if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin'))
-                                <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                                    <i class="fas fa-user-plus"></i>
-                                    {{ __('dashboard.create_user') }}
+                                <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-user-plus me-1"></i>{{ __('dashboard.create_user') }}
                                 </a>
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-info">
-                                    <i class="fas fa-users"></i>
-                                    {{ __('dashboard.manage_users') }}
+                                <a href="{{ route('admin.users.index') }}" class="btn btn-sm"
+                                    style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
+                                    <i class="fas fa-users me-1"></i>{{ __('dashboard.manage_users') }}
+                                </a>
+                                <a href="{{ route('admin.clients.index') }}" class="btn btn-sm"
+                                    style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;">
+                                    <i class="fas fa-briefcase me-1"></i>{{ __('dashboard.view_clients') }}
+                                </a>
+                                <a href="{{ route('admin.projects.index') }}" class="btn btn-sm"
+                                    style="background: #fffbeb; color: #92400e; border: 1px solid #fde68a;">
+                                    <i class="fas fa-folder-open me-1"></i>{{ __('dashboard.view_projects') }}
                                 </a>
                             @endif
 
-                            @if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin'))
-                                <a href="{{ route('admin.clients.index') }}" class="btn btn-success">
-                                    <i class="fas fa-building"></i>
-                                    {{ __('dashboard.view_clients') }}
-                                </a>
-                                <a href="{{ route('admin.projects.index') }}" class="btn btn-warning">
-                                    <i class="fas fa-chart-bar"></i>
-                                    {{ __('dashboard.view_projects') }}
-                                </a>
-                            @endif
-
-                            <a href="{{ route('profile') }}" class="btn btn-secondary">
-                                <i class="fas fa-user-circle"></i>
-                                {{ __('dashboard.my_profile') }}
+                            <a href="{{ route('profile') }}" class="btn btn-sm"
+                                style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
+                                <i class="fas fa-user-circle me-1"></i>{{ __('dashboard.my_profile') }}
                             </a>
 
                         </div>
@@ -300,28 +321,34 @@
             </div>
         </div>
 
-        <!-- System Information Section -->
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-bottom">
-                        <h5 class="mb-0">{{ __('dashboard.system_information') }}</h5>
+        <!-- ═══════════════════════════
+             SYSTEM INFORMATION
+        ════════════════════════════ -->
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; background: #fff; border-radius: 12px 12px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #64748b;"></div>
+                            <span style="font-size: 14px; font-weight: 600; color: #1e293b;">{{ __('dashboard.system_information') }}</span>
+                        </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding: 20px;">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <small class="text-muted d-block">{{ __('dashboard.last_backup') }}</small>
-                                <span>{{ now()->translatedFormat('M d, Y @ h:i A') }}</span>
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;">{{ __('dashboard.last_backup') }}</div>
+                                <div style="font-size: 14px; color: #374151; font-weight: 500;">{{ now()->translatedFormat('M d, Y @ h:i A') }}</div>
                             </div>
                             <div class="col-md-4">
-                                <small class="text-muted d-block">{{ __('dashboard.system_status') }}</small>
-                                <span class="badge bg-success">
-                                    🟢 {{ __('dashboard.online_operational') }}
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;">{{ __('dashboard.system_status') }}</div>
+                                <span style="display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; color: #166534; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; border: 1px solid #bbf7d0;">
+                                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block;"></span>
+                                    {{ __('dashboard.online_operational') }}
                                 </span>
                             </div>
                             <div class="col-md-4">
-                                <small class="text-muted d-block">{{ __('dashboard.current_time') }}</small>
-                                <span class="text-info">{{ now()->translatedFormat('M d, Y @ h:i A') }}</span>
+                                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;">{{ __('dashboard.current_time') }}</div>
+                                <div style="font-size: 14px; color: #374151; font-weight: 500;">{{ now()->translatedFormat('M d, Y @ h:i A') }}</div>
                             </div>
                         </div>
                     </div>
@@ -329,54 +356,12 @@
             </div>
         </div>
 
-    </div><!-- end container-fluid -->
+    </div><!-- end container -->
 
+    @if ($isAr)
     <style>
-        /* Shared card hover effect */
-        .card {
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        /* Top colour bar on stat cards */
-        .card-top-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-        }
-
-        .btn {
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        /* RTL tweaks — only applied when the page is Arabic */
-        [dir="rtl"] .d-flex.gap-3 {
-            flex-direction: row-reverse;
-        }
-
-        [dir="rtl"] .card-top-bar {
-            left: auto;
-            right: 0;
-        }
-
-        [dir="rtl"] .text-muted.small,
-        [dir="rtl"] .small {
-            text-align: right;
-        }
-
-        /* Arabic font for better rendering */
-        [dir="rtl"] {
-            font-family: 'Segoe UI', Tahoma, 'Arabic Typesetting', Arial, sans-serif;
-        }
+        [dir="rtl"] { font-family: 'Segoe UI', Tahoma, 'Arabic Typesetting', Arial, sans-serif; }
     </style>
+    @endif
+
 @endsection

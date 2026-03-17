@@ -2,86 +2,62 @@
 
 @section('content')
 @php $isAr = app()->getLocale() === 'ar'; @endphp
-<div class="container-fluid px-4 py-4" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
+<div dir="{{ $isAr ? 'rtl' : 'ltr' }}">
     <!-- Header -->
-    <div class="mb-4">
-        <h2 class="mb-2">⚙️ {{ __('admin.system_settings') }}</h2>
-        <p class="text-muted">{{ __('admin.system_settings_subtitle') }}</p>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h4 class="page-title">{{ __('admin.system_settings') }}</h4>
+            <p class="page-subtitle">{{ __('admin.system_settings_subtitle') }}</p>
+        </div>
     </div>
 
     <!-- Alerts -->
     @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>{{ __('admin.error') }}</strong>
-            <ul class="mb-0 {{ $isAr ? 'me-3' : 'ms-3' }}">
+        <div class="p-3 mb-4" style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; border-radius: 8px;">
+            <strong><i class="fas fa-exclamation-circle me-2"></i>{{ __('admin.error') }}</strong>
+            <ul class="mb-0 mt-1 {{ $isAr ? 'me-3' : 'ms-3' }}">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="p-3 mb-4" style="background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; border-radius: 8px;">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="p-3 mb-4" style="background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; border-radius: 8px;">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
         </div>
     @endif
 
     <!-- Tabs Navigation -->
-    <div class="nav-tabs-wrapper mb-4">
-        <ul class="nav nav-tabs" role="tablist" style="border-bottom: 2px solid #e9ecef;">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" 
-                    type="button" role="tab" aria-controls="general" aria-selected="true">
-                    🏢 {{ __('admin.general') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" 
-                    type="button" role="tab" aria-controls="system" aria-selected="false">
-                    ⚙️ {{ __('admin.system') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="email-tab" data-bs-toggle="tab" data-bs-target="#email" 
-                    type="button" role="tab" aria-controls="email" aria-selected="false">
-                    📧 {{ __('admin.email') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" 
-                    type="button" role="tab" aria-controls="notifications" aria-selected="false">
-                    🔔 {{ __('admin.notifications') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" 
-                    type="button" role="tab" aria-controls="security" aria-selected="false">
-                    🔐 {{ __('admin.security') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" 
-                    type="button" role="tab" aria-controls="backup" aria-selected="false">
-                    💾 {{ __('admin.backup') }}
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" 
-                    type="button" role="tab" aria-controls="maintenance" aria-selected="false">
-                    🛠️ {{ __('admin.maintenance') }}
-                </button>
-            </li>
-        </ul>
+    <div class="payroll-tabs mb-4">
+        <button class="payroll-tab active" id="general-tab" data-bs-target="#general" type="button">
+            <i class="fas fa-building me-1"></i>{{ __('admin.general') }}
+        </button>
+        <button class="payroll-tab" id="system-tab" data-bs-target="#system" type="button">
+            <i class="fas fa-cog me-1"></i>{{ __('admin.system') }}
+        </button>
+        <button class="payroll-tab" id="email-tab" data-bs-target="#email" type="button">
+            <i class="fas fa-envelope me-1"></i>{{ __('admin.email') }}
+        </button>
+        <button class="payroll-tab" id="notifications-tab" data-bs-target="#notifications" type="button">
+            <i class="fas fa-bell me-1"></i>{{ __('admin.notifications') }}
+        </button>
+        <button class="payroll-tab" id="security-tab" data-bs-target="#security" type="button">
+            <i class="fas fa-lock me-1"></i>{{ __('admin.security') }}
+        </button>
+        <button class="payroll-tab" id="backup-tab" data-bs-target="#backup" type="button">
+            <i class="fas fa-database me-1"></i>{{ __('admin.backup') }}
+        </button>
+        <button class="payroll-tab" id="maintenance-tab" data-bs-target="#maintenance" type="button">
+            <i class="fas fa-tools me-1"></i>{{ __('admin.maintenance') }}
+        </button>
     </div>
 
     <!-- Tab Content -->
@@ -89,7 +65,7 @@
         
         <!-- GENERAL SETTINGS TAB -->
         <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
@@ -149,7 +125,7 @@
 
         <!-- SYSTEM SETTINGS TAB -->
         <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
@@ -206,11 +182,11 @@
 
         <!-- EMAIL SETTINGS TAB -->
         <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <h5 class="mb-3">📧 Email Configuration</h5>
                     
-                    <div class="alert alert-info">
+                    <div class="info-box">
                         <i class="fas fa-info-circle"></i> Email settings are configured in your <code>.env</code> file.
                         Contact your system administrator to change mail driver or credentials.
                     </div>
@@ -251,7 +227,7 @@
 
         <!-- NOTIFICATIONS SETTINGS TAB -->
         <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
@@ -306,7 +282,7 @@
 
         <!-- SECURITY SETTINGS TAB -->
         <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
@@ -343,7 +319,7 @@
                             </div>
                         </div>
 
-                        <div class="alert alert-warning mt-3">
+                        <div class="info-box mt-3" style="background:#fffbeb;border-left-color:#d97706;color:#92400e;">
                             <i class="fas fa-shield-alt"></i> <strong>Security Tip:</strong> 
                             Make sure all admin users have strong passwords and use unique accounts.
                         </div>
@@ -360,7 +336,7 @@
 
         <!-- BACKUP SETTINGS TAB -->
         <div class="tab-pane fade" id="backup" role="tabpanel" aria-labelledby="backup-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
@@ -422,7 +398,7 @@
 
         <!-- MAINTENANCE TAB -->
         <div class="tab-pane fade" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
-            <div class="card border-0 shadow-sm">
+            <div class="card">
                 <div class="card-body">
                     <h5 class="mb-4">🛠️ Maintenance Tools</h5>
 
@@ -486,7 +462,7 @@
                         </div>
                     </div>
 
-                    <div class="alert alert-info mt-3">
+                    <div class="info-box mt-3">
                         <i class="fas fa-info-circle"></i> <strong>Note:</strong> 
                         These tools should be used with caution. Make sure to backup your database before running maintenance operations.
                     </div>
@@ -497,40 +473,31 @@
     </div>
 </div>
 
-<style>
-    .nav-tabs .nav-link {
-        color: #6c757d;
-        border: none;
-        border-bottom: 3px solid transparent;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
+<script>
+    // Custom tab switching — independent of Bootstrap Tab plugin
+    document.querySelectorAll('.payroll-tab[data-bs-target]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var targetId = this.getAttribute('data-bs-target');
 
-    .nav-tabs .nav-link:hover {
-        color: #0d6efd;
-        border-bottom-color: #0d6efd;
-    }
+            // Deactivate all tab buttons
+            document.querySelectorAll('.payroll-tab').forEach(function(b) {
+                b.classList.remove('active');
+            });
 
-    .nav-tabs .nav-link.active {
-        color: #0d6efd;
-        background: transparent;
-        border-bottom-color: #0d6efd;
-    }
+            // Hide all tab panes
+            document.querySelectorAll('.tab-content .tab-pane').forEach(function(pane) {
+                pane.classList.remove('show', 'active');
+            });
 
-    .card {
-        transition: all 0.3s ease;
-    }
-
-    .card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-check-label {
-        cursor: pointer;
-        user-select: none;
-    }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            // Activate clicked button and show target pane
+            this.classList.add('active');
+            var pane = document.querySelector(targetId);
+            if (pane) {
+                pane.classList.add('show', 'active');
+            }
+        });
+    });
+</script>
 
 @endsection
